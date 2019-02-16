@@ -151,6 +151,20 @@ void zio_dvalue_set(zdev_t *dev, double dvalue)
 	*fifo->dvalue = dvalue;
 }
 
+void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
+{
+	zio_fifo_t *fifo = &dev->fifo;
+	int idx;
+
+	fifo->ivalue = (uint32_t *)fifo->value;
+
+	fifo->value_len++;
+	idx = fifo->value_len % MAX_VALUE_DOUBLE_SIZE;
+	fifo->ivalue[idx] = ivalue;
+
+	*fifo->ivalue = ivalue;
+}
+
 double zio_dvalue_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -161,7 +175,17 @@ double zio_dvalue_get(zdev_t *dev)
 	return (*fifo->dvalue);
 }
 
-double zio_dvalue_avg(zdev_t *dev)
+double zio_ivalue_get(zdev_t *dev)
+{
+	zio_fifo_t *fifo = &dev->fifo;
+
+	if (!fifo->ivalue)
+		return (0);
+
+	return (*fifo->ivalue);
+}
+
+double zio_dvalue_avg(zdev_t *dev, int max_cycles)
 {
 	zio_fifo_t *fifo = &dev->fifo;
 	double avg;
@@ -172,11 +196,11 @@ double zio_dvalue_avg(zdev_t *dev)
 		return (0);
 
 	avg = 0;
-	max = fifo->value_len % MAX_VALUE_DOUBLE_SIZE;
-	for (idx = 0; idx <= max; idx++) {
+	max_cycles = MIN(max_cycles, fifo->value_len % MAX_VALUE_DOUBLE_SIZE);
+	for (idx = 0; idx <= max_cycles; idx++) {
 		avg += fifo->dvalue[idx];
 	}
-	avg /= (max+1);
+	avg /= (max_cycles+1);
 
 	return (avg);
 }

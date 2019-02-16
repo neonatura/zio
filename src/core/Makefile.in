@@ -130,8 +130,9 @@ libzio_a_AR = $(AR) $(ARFLAGS)
 libzio_a_LIBADD =
 am__objects_1 = libzio_a-zio_cycle.$(OBJEXT) \
 	libzio_a-zio_error.$(OBJEXT) libzio_a-zio_debug.$(OBJEXT) \
-	libzio_a-zio_dev.$(OBJEXT) libzio_a-zio_gps.$(OBJEXT) \
-	libzio_a-zio_itemp.$(OBJEXT) libzio_a-zio_pin.$(OBJEXT) \
+	libzio_a-zio_dev.$(OBJEXT) libzio_a-zio_dht.$(OBJEXT) \
+	libzio_a-zio_gps.$(OBJEXT) libzio_a-zio_itemp.$(OBJEXT) \
+	libzio_a-zio_motion.$(OBJEXT) libzio_a-zio_pin.$(OBJEXT) \
 	libzio_a-zio_time.$(OBJEXT) libzio_a-zio_therm.$(OBJEXT)
 am__objects_2 =
 am_libzio_a_OBJECTS = $(am__objects_1) $(am__objects_2)
@@ -324,14 +325,15 @@ zio_sources = \
 	$(srcdir)/zio_error.c \
 	$(srcdir)/zio_debug.c \
 	$(srcdir)/zio_dev.c \
+	$(srcdir)/zio_dht.c \
 	$(srcdir)/zio_gps.c \
 	$(srcdir)/zio_itemp.c \
+	$(srcdir)/zio_motion.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_time.c \
 	$(srcdir)/dev/zio_therm.c
 
 
-#	$(srcdir)/zio_dht.c 
 #	$(srcdir)/zio_gyro.c
 #	$(srcdir)/zio_speaker.c
 # $(srcdir)/zio_i2c.c
@@ -341,9 +343,11 @@ zio_headers = \
 	$(srcdir)/zio_cycle.h \
 	$(srcdir)/zio_debug.h \
 	$(srcdir)/zio_dev.h \
+	$(srcdir)/zio_dht.h \
 	$(srcdir)/zio_error.h \
 	$(srcdir)/zio_gps.h \
 	$(srcdir)/zio_itemp.h \
+	$(srcdir)/zio_motion.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_time.h \
 	$(srcdir)/dev/zio_therm.h
@@ -438,9 +442,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_cycle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_dev.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_dht.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_gps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_itemp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_motion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_pin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_therm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_time.Po@am__quote@
@@ -522,6 +528,20 @@ libzio_a-zio_dev.obj: $(srcdir)/zio_dev.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_dev.obj `if test -f '$(srcdir)/zio_dev.c'; then $(CYGPATH_W) '$(srcdir)/zio_dev.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_dev.c'; fi`
 
+libzio_a-zio_dht.o: $(srcdir)/zio_dht.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_dht.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_dht.Tpo -c -o libzio_a-zio_dht.o `test -f '$(srcdir)/zio_dht.c' || echo '$(srcdir)/'`$(srcdir)/zio_dht.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_dht.Tpo $(DEPDIR)/libzio_a-zio_dht.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_dht.c' object='libzio_a-zio_dht.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_dht.o `test -f '$(srcdir)/zio_dht.c' || echo '$(srcdir)/'`$(srcdir)/zio_dht.c
+
+libzio_a-zio_dht.obj: $(srcdir)/zio_dht.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_dht.obj -MD -MP -MF $(DEPDIR)/libzio_a-zio_dht.Tpo -c -o libzio_a-zio_dht.obj `if test -f '$(srcdir)/zio_dht.c'; then $(CYGPATH_W) '$(srcdir)/zio_dht.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_dht.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_dht.Tpo $(DEPDIR)/libzio_a-zio_dht.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_dht.c' object='libzio_a-zio_dht.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_dht.obj `if test -f '$(srcdir)/zio_dht.c'; then $(CYGPATH_W) '$(srcdir)/zio_dht.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_dht.c'; fi`
+
 libzio_a-zio_gps.o: $(srcdir)/zio_gps.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_gps.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_gps.Tpo -c -o libzio_a-zio_gps.o `test -f '$(srcdir)/zio_gps.c' || echo '$(srcdir)/'`$(srcdir)/zio_gps.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_gps.Tpo $(DEPDIR)/libzio_a-zio_gps.Po
@@ -549,6 +569,20 @@ libzio_a-zio_itemp.obj: $(srcdir)/zio_itemp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_itemp.c' object='libzio_a-zio_itemp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_itemp.obj `if test -f '$(srcdir)/zio_itemp.c'; then $(CYGPATH_W) '$(srcdir)/zio_itemp.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_itemp.c'; fi`
+
+libzio_a-zio_motion.o: $(srcdir)/zio_motion.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_motion.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_motion.Tpo -c -o libzio_a-zio_motion.o `test -f '$(srcdir)/zio_motion.c' || echo '$(srcdir)/'`$(srcdir)/zio_motion.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_motion.Tpo $(DEPDIR)/libzio_a-zio_motion.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_motion.c' object='libzio_a-zio_motion.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_motion.o `test -f '$(srcdir)/zio_motion.c' || echo '$(srcdir)/'`$(srcdir)/zio_motion.c
+
+libzio_a-zio_motion.obj: $(srcdir)/zio_motion.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_motion.obj -MD -MP -MF $(DEPDIR)/libzio_a-zio_motion.Tpo -c -o libzio_a-zio_motion.obj `if test -f '$(srcdir)/zio_motion.c'; then $(CYGPATH_W) '$(srcdir)/zio_motion.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_motion.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_motion.Tpo $(DEPDIR)/libzio_a-zio_motion.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_motion.c' object='libzio_a-zio_motion.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_motion.obj `if test -f '$(srcdir)/zio_motion.c'; then $(CYGPATH_W) '$(srcdir)/zio_motion.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_motion.c'; fi`
 
 libzio_a-zio_pin.o: $(srcdir)/zio_pin.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_pin.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_pin.Tpo -c -o libzio_a-zio_pin.o `test -f '$(srcdir)/zio_pin.c' || echo '$(srcdir)/'`$(srcdir)/zio_pin.c

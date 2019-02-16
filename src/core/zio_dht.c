@@ -3,12 +3,13 @@
 #include "zio.h"
  
  
-void zio_dht_init(zdev_t *dev)
+int zio_dht_open(zdev_t *dev)
 {
+	PIN_MODE( PIN_DHT, INPUT );
 	zio_dev_on(dev);
 }
  
-void zio_dht_read(zdev_t *dev)
+int zio_dht_read(zdev_t *dev)
 {
 	int data[5] = { 0, 0, 0, 0, 0 };
 	uint8_t laststate	= HIGH;
@@ -17,19 +18,21 @@ void zio_dht_read(zdev_t *dev)
 
 	data[0] = data[1] = data[2] = data[3] = data[4] = 0;
  
+#if 0
 	/* pull pin down for 18 milliseconds */
-	DIGITAL_MODE( PIN_DHT_SIG, OUTPUT );
-	DIGITAL_WRITE( PIN_DHT_SIG, LOW );
+	PIN_MODE( PIN_DHT, OUTPUT );
+	DIGITAL_WRITE( PIN_DHT, LOW );
 	delay( 18 );
+#endif
  
 	/* prepare to read the pin */
-	DIGITAL_MODE( PIN_DHT_SIG, INPUT );
+	PIN_MODE( PIN_DHT, INPUT );
  
 	/* detect change and read data */
 	for ( i = 0; i < MAX_DHT_TIMINGS; i++ )
 	{
 		counter = 0;
-		while ( DIGITAL_READ( PIN_DHT_SIG ) == laststate )
+		while ( DIGITAL_READ( PIN_DHT ) == laststate )
 		{
 			counter++;
 			delayMicroseconds( 1 );
@@ -38,7 +41,7 @@ void zio_dht_read(zdev_t *dev)
 				break;
 			}
 		}
-		laststate = DIGITAL_READ( PIN_DHT_SIG );
+		laststate = DIGITAL_READ( PIN_DHT );
 		if ( counter == 255 )
 			break;
  
@@ -75,39 +78,68 @@ void zio_dht_read(zdev_t *dev)
 		}
 
 		/* store last obtained value. */
+		zio_dvalue_set(dev, c);
+#if 0
 		dev->dvalue = (double *)dev->value;
 		dev->dvalue[0] = c;
 		dev->dvalue[1] = h;
+#endif
+return (0);
 	} else  {
-		zio_error_incr();
+//		zio_error_incr();
+fprintf(stderr, "DEBUG: zio_dht_read: error\n"); 
+return (ZERR_INVAL);
 	}
 
+	
 }
 
-void zio_dht_timer(zdev_t *dev)
+int zio_dht_poll(zdev_t *dev)
 {
-	if (is_zio_dev_on(dev))
-		zio_dht_read(dev);
+
+	if (!is_zio_dev_on(dev))
+		return (ZERR_INVAL);
+
+	if (0 == (dev->stat.freq_cycle % 256)) {
+		PIN_MODE( PIN_DHT, OUTPUT );
+		DIGITAL_WRITE( PIN_DHT, LOW );
+		return (ZERR_AGAIN);
+	} else if (1 == (dev->stat.freq_cycle % 256)) {
+		PIN_MODE( PIN_DHT, INPUT );
+		return (zio_dht_read(dev));
+	}
+
+	return (ZERR_AGAIN);
 }
 
-void zio_dht_term(zdev_t *dev)
+int zio_dht_print(zdev_t *dev, int mode, void *retbuf)
+{
+	char buf[256];
+
+	if (mode == ZIO_FMT_FAHRENHEIT) {
+					sprintf(retbuf, "%-2.2fF", zio_therm_f(zio_dvalue_avg(dev, 4)));
+	} else if (mode == ZIO_FMT_KELVIN) {
+					sprintf(retbuf, "%-2.2fK", zio_therm_k(zio_dvalue_avg(dev, 4)));
+	} else /* mode == ZIO_FMT_CELSIUS */ {
+					sprintf(retbuf, "%-2.2fC", zio_dvalue_avg(dev, 4));
+	}
+
+	return (0);
+}
+
+int zio_dht_close(zdev_t *dev)
 {
 	zio_dev_off(dev);
 }
 
-int zdev_temp_c(zdev_t *dev)
+zdev_t zio_dht_device =
 {
-	return (dev->dvalue[0]);
-}
+        "dht", /* contoller: internal temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_GEO,
+        /* op */
+        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
+        /* param */
+        { /* freq_min */ 0.055, /* freq_max */ 0.055 } /* 18ms */
+};
 
-int zdev_temp_f(zdev_t *dev)
-{
-	return (dev->dvalue[0] * 1.8 + 32);
-}
 
-int zio_dev_humidity(zdev_t *dev)
-{
-	return (dev->dvalue[1]);
-}
-
- 

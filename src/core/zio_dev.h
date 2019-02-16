@@ -13,9 +13,13 @@ extern zdev_t *zio_device_table;
 
 void zio_dvalue_set(zdev_t *dev, double dvalue);
 
+void zio_ivalue_set(zdev_t *dev, uint32_t ivalue);
+
 double zio_dvalue_get(zdev_t *dev);
 
-double zio_dvalue_avg(zdev_t *dev);
+double zio_ivalue_get(zdev_t *dev);
+
+double zio_dvalue_avg(zdev_t *dev, int max_cycles);
 
 int zio_dev_register(zdev_t *dev);
 
@@ -41,13 +45,13 @@ void zio_error(zdev_t *dev, int err, char *tag);
 	((_dev)->param.freq_max * 2)
 
 
-#ifdef USE_WIRINGPI
+#ifdef HAVE_LIBWIRINGPI
 
 #define ANALOG_READ(_pin) analogRead(ANALOG_PIN_BASE+(_pin))
 #define ANALOG_WRITE(_pin, _val) analogWrite(ANALOG_PIN_BASE+(_pin), (_val))
 #define DIGITAL_READ(_pin) digitalRead(_pin)
 #define DIGITAL_WRITE(_pin, _val) digitalWrite((_pin), (_val))
-#define DIGITAL_MODE(_pin, _mode) digitalMode((_pin), (_val))
+#define PIN_MODE(_pin, _mode) pinMode((_pin), (_mode))
 #define ZIO_I2C_INIT(_addr) wiringPiI2CSetup(_addr)
 #define ZIO_I2C_READ(_dev) wiringPiI2CRead((_dev)->dev_fd)
 #define ZIO_I2C_WRITE(_dev, _val) wiringPiI2CWrite((_dev)->dev_fd, (_val))
@@ -68,7 +72,7 @@ void zio_error(zdev_t *dev, int err, char *tag);
 #define ANALOG_WRITE(_pin, _val)
 #define DIGITAL_READ(_pin)
 #define DIGITAL_WRITE(_pin, _val)
-#define DIGITAL_MODE(_pin, _mode)
+#define PIN_MODE(_pin, _mode)
 #define ZIO_I2C_INIT(_addr)
 #define ZIO_I2C_READ(_dev)
 #define ZIO_I2C_WRITE(_dev, _val)

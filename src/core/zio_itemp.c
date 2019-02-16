@@ -58,11 +58,11 @@ int zio_itemp_print(zdev_t *dev, int mode, void *retbuf)
 	char buf[256];
 
 	if (mode == ZIO_FMT_FAHRENHEIT) {
-		sprintf(retbuf, "%-2.2fF", zio_therm_f(zio_dvalue_avg(dev)));
+		sprintf(retbuf, "%-2.2fF", zio_therm_f(zio_dvalue_avg(dev, 4)));
 	} else if (mode == ZIO_FMT_KELVIN) {
-		sprintf(retbuf, "%-2.2fK", zio_therm_k(zio_dvalue_avg(dev)));
+		sprintf(retbuf, "%-2.2fK", zio_therm_k(zio_dvalue_avg(dev, 4)));
 	} else /* mode == ZIO_FMT_CELSIUS */ {
-		sprintf(retbuf, "%-2.2fC", zio_dvalue_avg(dev));
+		sprintf(retbuf, "%-2.2fC", zio_dvalue_avg(dev, 4));
 	}
 
 	return (0);

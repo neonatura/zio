@@ -22,6 +22,7 @@ void zio_dev_cycle(zdev_t *dev)
 		}
 	}
 
+	dev->stat.freq_cycle++;
 }
 
 void zio_cycle(void)
@@ -41,7 +42,7 @@ void zio_cycle(void)
 void zio_cycle_loop(void)
 {
 	while (1) {
-		zio_msleep(2);
+		zio_msleep(1);
 		zio_cycle();
 	}
 }

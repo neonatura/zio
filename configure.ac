@@ -181,20 +181,10 @@ AM_CONDITIONAL([FREEBSD], [test x$opsys = xfreebsd])
 AC_PROG_CC
 gl_EARLY
 
-#AC_PROG_CXX
-#AM_PROG_AS
-#AC_EXEEXT
-#AC_PROG_YACC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-#AC_PROG_MAKE_SET
-#AC_PROG_MKDIR_P
 AC_PROG_LIBTOOL
-#AC_PROG_YACC
-#AM_PROG_CC_C_O
-#AM_PROG_GCJ
-
-#AC_SYS_LARGEFILE
+AM_PROG_CC_C_O
 AC_ISC_POSIX
 AC_C_INLINE
 
@@ -228,6 +218,8 @@ AC_CHECK_SIZEOF(long)
 
 
 AC_CHECK_FUNCS([clock_gettime])
+
+AC_CHECK_LIB([wiringPi], [pinMode])
 
 #AC_CHECK_LIB([share], [get_libshare_version], , 
 #  AC_MSG_ERROR("libshare (runtime library) is required")

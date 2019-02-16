@@ -9,7 +9,7 @@ int zio_debug_open(zdev_t *dev)
 	if (is_zio_dev_on(dev))
 		return (0);
 
-	fd = open(SYS_DEBUG_PATH, O_RDWR | O_CREAT, 0666);
+	fd = open(SYS_DEBUG_PATH, O_WRONLY | O_CREAT | O_APPEND, 0666);
 	if (fd == -1) {
 		return (fd);
 	}

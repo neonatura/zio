@@ -18,7 +18,7 @@
 /* autoconf */
 #include "config.h"
 
-#ifdef USE_WIRINGPI
+#ifdef HAVE_LIBWIRINGPI
 #include <wiringPi.h>
 #endif
 
@@ -48,9 +48,11 @@
 #define ZDEV_PHOTO 6 /* Light Intensity */
 #define ZDEV_HUMIDITY 7 /* Humidity */
 #define ZDEV_LOG 8 
+#define ZDEV_MOTION 9
 
 #define ZMOD_NULL 0
 #define ZMOD_INTERNAL 1
+#define ZMOD_GEO 2
 
 /* device flag to indicate that device is being powered. */
 #define DEVF_POWER (1 << 0)
@@ -115,6 +117,9 @@ typedef struct zio_stat_t
 	/* The preferred number of MS between each device poll. */
 	uint32_t freq_pref;
 
+	/* iteration count */
+	uint32_t freq_cycle;
+
 	/* The next time that a poll will take place. */
 	uint64_t freq_stamp;
 } zio_stat_t;
@@ -171,10 +176,12 @@ typedef struct zio_gyro_t
 #include "zio_cycle.h"
 #include "zio_debug.h"
 #include "zio_dev.h"
+#include "zio_dht.h"
 #include "zio_error.h"
 #include "zio_geo.h"
 #include "zio_gps.h"
 #include "zio_i2c.h"
+#include "zio_motion.h"
 #include "zio_pin.h"
 #include "zio_speaker.h"
 #include "zio_time.h"
