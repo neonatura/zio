@@ -35,14 +35,12 @@ int zio_dht_read(zdev_t *dev)
 		while (DIGITAL_READ( dev->def_pin ) == laststate) {
 			counter++;
 			delayMicroseconds( 1 );
-			if ( counter == 255 )
-			{
-fprintf(stderr, "DEBUG: zio_dht_read: timeout\n");
+			if ( counter == 128 ) {
 				break;
 			}
 		}
 		laststate = DIGITAL_READ( dev->def_pin );
-		if ( counter == 255 )
+		if ( counter == 128 )
 			break;
  
 		/* ignore first 3 transitions */

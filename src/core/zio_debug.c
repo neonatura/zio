@@ -22,9 +22,16 @@ int zio_debug_open(zdev_t *dev)
  
 int zio_debug_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
+	char tbuf[256];
+	time_t now;
 
 	if (!is_zio_dev_on(dev))
 		return (ZERR_AGAIN);
+
+	now = time(NULL);
+	memset(tbuf, 0, sizeof(tbuf));
+	strftime(tbuf, sizeof(tbuf)-1, "%H:%M:%S ", localtime(&now));
+	write(dev->dev_fd, tbuf, strlen(tbuf));
 
 	write(dev->dev_fd, data, data_len);
 	write(dev->dev_fd, "\n", 1);

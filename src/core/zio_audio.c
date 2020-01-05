@@ -31,6 +31,7 @@ static const uint16_t _intro_samples[INTRO_SAMPLES] = {
 
 int zio_audio_init(zdev_t *dev)
 {
+	pinMode(PIN_AUDIO_OUT, OUTPUT);
 	ZIO_TONE_INIT(PIN_AUDIO_OUT);
 }
 
@@ -87,7 +88,8 @@ int zio_audio_timer(zdev_t *dev)
 
 int zio_audio_term(zdev_t *dev)
 {
-	ZIO_TONE(PIN_AUDIO_OUT, 0);
+	ZIO_TONE_TERM(PIN_AUDIO_OUT);
+	pinMode(PIN_AUDIO_OUT, INPUT);
 	zio_timer_decr(dev);
 	zio_dev_off(dev);
 }

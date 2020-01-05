@@ -282,7 +282,7 @@ void zio_debug(zdev_t *dev)
 		return;
 
 	memset(buf, 0, sizeof(buf));
-	sprintf(buf, "[%s] ", zio_dev_name(dev)); 
+	sprintf(buf, "%s ", zio_dev_name(dev)); 
 	if (dev->type == ZDEV_THERM) {
 		(*dev->op.print)(dev, fmt_therm, buf + strlen(buf));
 	} else {
