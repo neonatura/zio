@@ -3,10 +3,19 @@
 #ifndef __ZIO_DEV_H__
 #define __ZIO_DEV_H__
 
+#ifdef HAVE_LIBWIRINGPI
+#include <softTone.h>
+#endif
+
 #define PCF8591_HID 0x48
 
 #define ANALOG_PIN_BASE 0x64 /* 100 */
 
+#define DEFAULT_PCF8591_ADDRESS 0x48
+
+#define STRATUM_MIN 0
+#define STRATUM_MAX 255
+#define STRATUM_MID 127
 
 extern zdev_t *zio_device_table;
 
@@ -59,7 +68,18 @@ void zio_error(zdev_t *dev, int err, char *tag);
 #define ZIO_I2C_REG_WRITE(_dev, _reg, _val) wiringPiI2CWriteReg8((_dev)->dev_fd, (_reg), (_val))
 #define ZIO_I2C_REG16_READ(_dev, _reg) wiringPiI2CReadReg16((_dev)->dev_fd, (_reg))
 #define ZIO_I2C_REG16_WRITE(_dev, _reg, _val) wiringPiI2CWriteReg16((_dev)->dev_fd, (_reg), (_val))
-#define PCF8591_INIT() pcf8591Setup(ANALOG_PIN_BASE, 0x48) 
+#define ANALOG_PIN(_addr) \
+	(ANALOG_PIN_BASE + (4 * ((_addr) - DEFAULT_PCF8591_ADDRESS)))
+#define PCF8591_INIT(_addr) pcf8591Setup(ANALOG_PIN(_addr), (_addr))
+
+/* softTone.h */
+#define ZIO_TONE_INIT(_pin) \
+	softToneCreate(_pin)
+#define ZIO_TONE_TERM(_pin) \
+	softToneWrite((_pin), 0)
+#define ZIO_TONE(_pin, _val) \
+	softToneWrite((_pin), (_val))
+
 
 #else /* !WIRINGPI */
 
@@ -68,9 +88,9 @@ void zio_error(zdev_t *dev, int err, char *tag);
 #define INPUT 0 
 #define OUTPUT 1
 
-#define ANALOG_READ(_pin)
+#define ANALOG_READ(_pin) 0
 #define ANALOG_WRITE(_pin, _val)
-#define DIGITAL_READ(_pin)
+#define DIGITAL_READ(_pin) 0
 #define DIGITAL_WRITE(_pin, _val)
 #define PIN_MODE(_pin, _mode)
 #define ZIO_I2C_INIT(_addr)
@@ -80,11 +100,12 @@ void zio_error(zdev_t *dev, int err, char *tag);
 #define ZIO_I2C_REG_WRITE(_dev, _reg, _val)
 #define ZIO_I2C_REG16_READ(_dev, _reg)
 #define ZIO_I2C_REG16_WRITE(_dev, _reg, _val)
-#define PCF8591_INIT() ZERR_INVAL
+#define PCF8591_INIT(_addr) ZERR_INVAL
 
 #endif
 
-
+#define REGISTER_PCF8591_DEVICE() \
+	PCF8591_INIT(DEFAULT_PCF8591_ADDRESS)
 
 
 #endif /* ndef __ZIO_DEV_H__ */

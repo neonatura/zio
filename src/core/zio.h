@@ -40,15 +40,16 @@
 #define MAX_VALUE_DOUBLE_SIZE 512
 
 #define ZDEV_NULL 0
-#define ZDEV_THERM 1 /* temperature */
-#define ZDEV_GEO 2 /* lat/lon/ele */
-#define ZDEV_AUDIO 3 /* Analog Microphone / Speaker */
-#define ZDEV_NET 4
-#define ZDEV_POWER 5 /* Battery Voltage */
-#define ZDEV_PHOTO 6 /* Light Intensity */
-#define ZDEV_HUMIDITY 7 /* Humidity */
-#define ZDEV_LOG 8 
-#define ZDEV_MOTION 9
+#define ZDEV_LOG 1
+#define ZDEV_THERM 2 /* temperature */
+#define ZDEV_GEO 3 /* lat/lon/ele */
+#define ZDEV_AUDIO 4 /* Analog Microphone / Speaker */
+#define ZDEV_NET 5 
+#define ZDEV_POWER 6 /* Battery Voltage */
+#define ZDEV_PHOTO 7 /* Light Intensity */
+#define ZDEV_HUMIDITY 8 /* Humidity */
+#define ZDEV_MOTION 9 
+
 
 #define ZMOD_NULL 0
 #define ZMOD_INTERNAL 1
@@ -59,6 +60,8 @@
 #define DEVF_START (1 << 1)
 #define DEVF_INPUT (1 << 2)
 #define DEVF_OUTPUT (1 << 3)
+#define DEVF_DUMMY (1 << 4)
+#define DEVF_MODULE (1 << 5)
 
 #define ZIO_FMT_FAHRENHEIT 1000
 #define ZIO_FMT_KELVIN 1001
@@ -141,6 +144,12 @@ typedef struct zdev_t
 	/* A abreviated name of the device. */
   const char *label;
 
+	/* default data pin */
+	int def_pin;
+
+	/* level of accuracy (0best - 255worst) */
+	uint32_t stratum;
+
 	uint32_t type;
 
 	/* The state of the device. */
@@ -177,16 +186,18 @@ typedef struct zio_gyro_t
 #include "zio_debug.h"
 #include "zio_dev.h"
 #include "zio_dht.h"
+#include "zio_dummy_temp.h"
 #include "zio_error.h"
 #include "zio_geo.h"
 #include "zio_gps.h"
 #include "zio_i2c.h"
+#include "zio_mod.h"
 #include "zio_motion.h"
 #include "zio_pin.h"
 #include "zio_speaker.h"
+#include "zio_therm.h"
 #include "zio_time.h"
 #include "zio_itemp.h"
 
-#include "dev/zio_therm.h"
 
 #endif /* __ZIO_H__ */

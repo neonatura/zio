@@ -38,7 +38,6 @@ void zio_cycle(void)
 
 }
 
-
 void zio_cycle_loop(void)
 {
 	while (1) {

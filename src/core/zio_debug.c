@@ -46,7 +46,7 @@ int zio_debug_close(zdev_t *dev)
 
 zdev_t zio_debug_device =
 {
-	"debug", /* contoller: activity log */
+	"debug", PIN_NULL, STRATUM_MAX, /* contoller: activity log */
 	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_debug_open, NULL, zio_debug_write, NULL, zio_debug_close },

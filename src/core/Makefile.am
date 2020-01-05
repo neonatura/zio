@@ -1,17 +1,20 @@
 
 
 zio_sources = \
+	$(srcdir)/zio_audio.c \
 	$(srcdir)/zio_cycle.c \
 	$(srcdir)/zio_error.c \
 	$(srcdir)/zio_debug.c \
 	$(srcdir)/zio_dev.c \
 	$(srcdir)/zio_dht.c \
+	$(srcdir)/zio_dummy_temp.c \
 	$(srcdir)/zio_gps.c \
 	$(srcdir)/zio_itemp.c \
+	$(srcdir)/zio_mod.c \
 	$(srcdir)/zio_motion.c \
 	$(srcdir)/zio_pin.c \
-	$(srcdir)/zio_time.c \
-	$(srcdir)/dev/zio_therm.c
+	$(srcdir)/zio_therm.c \
+	$(srcdir)/zio_time.c
 
 #	$(srcdir)/zio_gyro.c
 #	$(srcdir)/zio_speaker.c
@@ -24,13 +27,15 @@ zio_headers = \
 	$(srcdir)/zio_debug.h \
 	$(srcdir)/zio_dev.h \
 	$(srcdir)/zio_dht.h \
+	$(srcdir)/zio_dummy_temp.h \
 	$(srcdir)/zio_error.h \
 	$(srcdir)/zio_gps.h \
 	$(srcdir)/zio_itemp.h \
+	$(srcdir)/zio_mod.h \
 	$(srcdir)/zio_motion.h \
 	$(srcdir)/zio_pin.h \
-	$(srcdir)/zio_time.h \
-	$(srcdir)/dev/zio_therm.h
+	$(srcdir)/zio_therm.h \
+	$(srcdir)/zio_time.h
 
 #$(srcdir)/zio_dht.h
 #	$(srcdir)/zio_gyro.h 

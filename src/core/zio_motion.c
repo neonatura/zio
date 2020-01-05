@@ -53,7 +53,7 @@ int zio_motion_print(zdev_t *dev, int mode, void *retbuf)
 
 zdev_t zio_motion_device =
 {
-	"motion", /* HC-SR501 PIR motion sensor */
+	"motion", PIN_MOTION, STRATUM_MAX, /* HC-SR501 PIR motion sensor */
 	ZDEV_MOTION, DEVF_START | DEVF_INPUT, ZMOD_GEO,
 	/* op */
 	{ zio_motion_open, zio_motion_read, NULL, zio_motion_print, zio_motion_close, zio_motion_poll },
