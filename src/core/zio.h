@@ -20,6 +20,7 @@
 
 #ifdef HAVE_LIBWIRINGPI
 #include <wiringPi.h>
+#include <pcf8591.h>
 #endif
 
 #ifndef FALSE
@@ -196,6 +197,7 @@ typedef struct zio_gyro_t
 #include "zio_pin.h"
 #include "zio_speaker.h"
 #include "zio_therm.h"
+#include "zio_thermistor.h"
 #include "zio_time.h"
 #include "zio_itemp.h"
 

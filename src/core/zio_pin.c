@@ -1,9 +1,6 @@
 /* Copyright 2018 Neo Natura */
 
 #include "zio.h"
-#ifdef USE_WIRINGPI
-#include <pcf8591.h>
-#endif
 
 void zio_pin_on(int pin)
 {

@@ -14,6 +14,7 @@ zio_sources = \
 	$(srcdir)/zio_motion.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_therm.c \
+	$(srcdir)/zio_thermistor.c \
 	$(srcdir)/zio_time.c
 
 #	$(srcdir)/zio_gyro.c
@@ -35,6 +36,7 @@ zio_headers = \
 	$(srcdir)/zio_motion.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_therm.h \
+	$(srcdir)/zio_thermistor.h \
 	$(srcdir)/zio_time.h
 
 #$(srcdir)/zio_dht.h

@@ -3,7 +3,6 @@
 #ifndef __ZIO_PIN_H__
 #define __ZIO_PIN_H__
 
-
 /* an "inaccessible" pin */
 #define PIN_NULL -1
 
@@ -20,6 +19,9 @@
 #define PIN_9 9
 #define PIN_15 15
 #define PIN_16 16
+#define PIN_21 21
+#define PIN_22 22
+#define PIN_26 26
 
 /* analog pins */
 #define PIN_A0 100 /* RW */

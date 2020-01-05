@@ -1,6 +1,8 @@
 /* Copyright 2018 Neo Natura */
 
 #include "zio.h"
+
+#define MAX_DHT_TIMINGS 85
  
 int zio_dht_open(zdev_t *dev)
 {
@@ -28,20 +30,20 @@ int zio_dht_read(zdev_t *dev)
 	PIN_MODE( dev->def_pin, INPUT );
  
 	/* detect change and read data */
-//	for ( i = 0; i < MAX_DHT_TIMINGS; i++ )
-	{
+	for ( i = 0; i < MAX_DHT_TIMINGS; i++ ) {
 		counter = 0;
 		while (DIGITAL_READ( dev->def_pin ) == laststate) {
 			counter++;
 			delayMicroseconds( 1 );
 			if ( counter == 255 )
 			{
+fprintf(stderr, "DEBUG: zio_dht_read: timeout\n");
 				break;
 			}
 		}
 		laststate = DIGITAL_READ( dev->def_pin );
 		if ( counter == 255 )
-			return (ZERR_AGAIN);//break;
+			break;
  
 		/* ignore first 3 transitions */
 		if ( (i >= 4) && (i % 2 == 0) ) {
@@ -51,6 +53,9 @@ int zio_dht_read(zdev_t *dev)
 				data[j / 8] |= 1;
 			j++;
 		}
+
+		if (j >= 40)
+			break;
 	}
  
 	/*
@@ -80,9 +85,7 @@ int zio_dht_read(zdev_t *dev)
 		return (0);
 	} 
 
-fprintf(stderr, "DEBUG: zio_dht_read: error\n"); 
-return (ZERR_INVAL);
-
+	return (ZERR_INVAL);
 }
 
 int zio_dht_poll(zdev_t *dev)
@@ -91,11 +94,11 @@ int zio_dht_poll(zdev_t *dev)
 	if (!is_zio_dev_on(dev))
 		return (ZERR_INVAL);
 
-	if (0 == (dev->stat.freq_cycle % 256)) {
+	if (0 == (dev->stat.freq_cycle % 128)) {
 		PIN_MODE( dev->def_pin, OUTPUT );
 		DIGITAL_WRITE( dev->def_pin, LOW );
 		return (ZERR_AGAIN);
-	} else if (1 == (dev->stat.freq_cycle % 256)) {
+	} else if (1 == (dev->stat.freq_cycle % 128)) {
 		PIN_MODE( dev->def_pin, INPUT );
 		return (zio_dht_read(dev));
 	}
@@ -125,31 +128,31 @@ int zio_dht_close(zdev_t *dev)
 
 zdev_t zio_dht0_device =
 {
-        "dht0", PIN_DHT0, 1, /* contoller: internal temperature */
-        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_GEO,
+        "dht0", PIN_DHT0, 4, /* contoller: internal temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.066 } /* 18ms - 15ms */
+        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
 };
 
 zdev_t zio_dht1_device =
 {
-        "dht1", PIN_DHT1, 1, /* contoller: internal temperature */
-        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_GEO,
+        "dht1", PIN_DHT1, 4, /* contoller: internal temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.066 } /* 18ms - 15ms */
+        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
 };
 
 zdev_t zio_dht2_device =
 {
-        "dht2", PIN_DHT2, 1, /* contoller: internal temperature */
-        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_GEO,
+        "dht2", PIN_DHT2, 4, /* contoller: internal temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.066 } /* 18ms - 15ms */
+        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
 };
 

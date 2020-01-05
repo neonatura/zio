@@ -70,11 +70,11 @@ int zio_itemp_print(zdev_t *dev, int mode, void *retbuf)
 
 zdev_t zio_itemp_device =
 {
-	"itemp", PIN_NULL, 2, /* contoller: internal temperature */
+	"itemp", PIN_NULL, STRATUM_MID, /* contoller: internal temperature */
 	ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_itemp_open, zio_itemp_read, NULL, zio_itemp_print, zio_itemp_close, zio_itemp_poll },
 	/* param */
-	{ /* freq_min */ 0.5, /* freq_max */ 5 }
+	{ /* freq_min */ 1, /* freq_max */ 10 }
 };
 
