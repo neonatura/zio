@@ -39,6 +39,7 @@ static char **nmea_split_var(char *text, int *idx_p)
 
 void zio_gps_setTime(char *time_str, char *day_str)
 {
+	struct tm tm;
 	int yr = year();
 	int mon = month();
 	int d = day();
@@ -79,7 +80,16 @@ void zio_gps_setTime(char *time_str, char *day_str)
 	s = atof(buf);
 
 	if (d && mon && yr) {
-		zio_time_set(h, m, (int)s, d, mon, yr);
+		memset(&tm, 0, sizeof(tm));
+		tm.tm_sec = (int)s;
+		tm.tm_min = m;
+		tm.tm_hour = h;
+		tm.tm_mday = d;
+		tm.tm_mon = mon;
+		tm.tm_year = yr;
+		tm.tm_isdst = -1;
+		time_t t = mktime(&tm);
+		zio_time_set(mktime(&tm));
 	}
 
 }

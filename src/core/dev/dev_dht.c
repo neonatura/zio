@@ -19,13 +19,6 @@ int zio_dht_read(zdev_t *dev)
 
 	data[0] = data[1] = data[2] = data[3] = data[4] = 0;
  
-#if 0
-	/* pull pin down for 18 milliseconds */
-	PIN_MODE( PIN_DHT, OUTPUT );
-	DIGITAL_WRITE( PIN_DHT, LOW );
-	delay( 18 );
-#endif
- 
 	/* prepare to read the pin */
 	PIN_MODE( dev->def_pin, INPUT );
  
@@ -92,11 +85,11 @@ int zio_dht_poll(zdev_t *dev)
 	if (!is_zio_dev_on(dev))
 		return (ZERR_INVAL);
 
-	if (0 == (dev->stat.freq_cycle % 128)) {
+	if (512 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, OUTPUT );
 		DIGITAL_WRITE( dev->def_pin, LOW );
 		return (ZERR_AGAIN);
-	} else if (1 == (dev->stat.freq_cycle % 128)) {
+	} else if (513 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, INPUT );
 		return (zio_dht_read(dev));
 	}

@@ -13,6 +13,10 @@
 
 #define DEFAULT_PCF8591_ADDRESS 0x48
 
+#define DEFAULT_DS3231_I2C_ADDRESS 0x68
+
+#define DEFAULT_LCD_I2C_ADDR 0x27
+
 #define STRATUM_MIN 0
 #define STRATUM_MAX 255
 #define STRATUM_MID 127
@@ -24,9 +28,13 @@ void zio_dvalue_set(zdev_t *dev, double dvalue);
 
 void zio_ivalue_set(zdev_t *dev, uint32_t ivalue);
 
+void zio_value_set(zdev_t *dev, uint64_t lvalue);
+
 double zio_dvalue_get(zdev_t *dev);
 
-double zio_ivalue_get(zdev_t *dev);
+uint32_t zio_ivalue_get(zdev_t *dev);
+
+uint64_t zio_value_get(zdev_t *dev);
 
 double zio_dvalue_avg(zdev_t *dev, int max_cycles);
 
@@ -47,6 +55,17 @@ void zio_debug(zdev_t *dev);
 
 void zio_error(zdev_t *dev, int err, char *tag);
 
+uint64_t zio_fifo_span(zdev_t *dev);
+
+int zio_write(zdev_t *dev, uint8_t *data, size_t data_len);
+
+void zio_print(zdev_t *dev, int format, char *ret_buf);
+
+void zio_notify(zdev_t *dev);
+
+zdev_t *zio_dev_get_name(zdev_t *dev, const char *name);
+
+void zio_notify_text(zdev_t *dev, char *text);
 
 
 /** The time (in milliseconds) to wait before accessing a device. */

@@ -4,7 +4,7 @@
 
 void zio_dev_cycle(zdev_t *dev)
 {
-	uint64_t now = zio_mtime();
+	uint64_t now = zio_time();
 	int err;
 
 	if (now < dev->stat.freq_stamp) {
@@ -16,7 +16,10 @@ void zio_dev_cycle(zdev_t *dev)
 	if (dev->op.timer) {
 		err = (*dev->op.timer)(dev);
 		if (!err) {
-			zio_debug(dev);
+			if (dev->flags & DEVF_MODULE)
+				zio_notify(dev);
+			else
+				zio_debug(dev);
 		} else if (err != ZERR_AGAIN) {
 			zio_error(dev, err, "timer");
 		}

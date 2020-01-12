@@ -91,7 +91,7 @@ int zio_mod_release(zdev_t *dev)
 
 const char *zio_dev_name(zdev_t *dev)
 {
-	if (!dev) return (NULL);
+	if (!dev) return ("!");
 	return (dev->label);
 }
 
@@ -142,13 +142,14 @@ void zio_dvalue_set(zdev_t *dev, double dvalue)
 	zio_fifo_t *fifo = &dev->fifo;
 	int idx;
 
-	fifo->dvalue = (double *)fifo->value;
+	if (!fifo->dvalue)
+		return;
 
-	fifo->value_len++;
 	idx = fifo->value_len % MAX_VALUE_DOUBLE_SIZE;
-	fifo->dvalue[idx] = dvalue;
+	fifo->value_len++;
 
-	*fifo->dvalue = dvalue;
+	fifo->dvalue[idx] = dvalue;
+	fifo->value_stamp = zio_time();
 }
 
 void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
@@ -156,33 +157,74 @@ void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
 	zio_fifo_t *fifo = &dev->fifo;
 	int idx;
 
-	fifo->ivalue = (uint32_t *)fifo->value;
+	if (!fifo->ivalue)
+		return;
 
+	idx = fifo->value_len % MAX_VALUE_I32_SIZE;
 	fifo->value_len++;
-	idx = fifo->value_len % MAX_VALUE_DOUBLE_SIZE;
-	fifo->ivalue[idx] = ivalue;
 
-	*fifo->ivalue = ivalue;
+	fifo->ivalue[idx] = ivalue;
+	fifo->value_stamp = zio_time();
+}
+
+void zio_value_set(zdev_t *dev, uint64_t lvalue)
+{
+	zio_fifo_t *fifo = &dev->fifo;
+	int idx;
+
+	if (!fifo->lvalue)
+		return;
+
+	idx = fifo->value_len % MAX_VALUE_I64_SIZE;
+	fifo->value_len++;
+
+	fifo->lvalue[idx] = lvalue;
+	fifo->value_stamp = zio_time();
 }
 
 double zio_dvalue_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
+	int idx;
 
 	if (!fifo->dvalue)
 		return (0);
 
-	return (*fifo->dvalue);
+	if (fifo->value_len == 0)
+		return (0);
+
+	idx = (fifo->value_len - 1);
+	return (fifo->dvalue[idx]);
 }
 
-double zio_ivalue_get(zdev_t *dev)
+uint32_t zio_ivalue_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
+	int idx;
 
 	if (!fifo->ivalue)
 		return (0);
 
-	return (*fifo->ivalue);
+	if (fifo->value_len == 0)
+		return (0);
+
+	idx = (fifo->value_len - 1);
+	return (fifo->ivalue[idx]);
+}
+
+uint64_t zio_value_get(zdev_t *dev)
+{
+	zio_fifo_t *fifo = &dev->fifo;
+	int idx;
+
+	if (!fifo->lvalue)
+		return (0);
+
+	if (fifo->value_len == 0)
+		return (0);
+
+	idx = (fifo->value_len - 1);
+	return (fifo->lvalue[idx]);
 }
 
 double zio_dvalue_avg(zdev_t *dev, int max_cycles)
@@ -197,10 +239,11 @@ double zio_dvalue_avg(zdev_t *dev, int max_cycles)
 
 	avg = 0;
 	max_cycles = MIN(max_cycles, fifo->value_len % MAX_VALUE_DOUBLE_SIZE);
-	for (idx = 0; idx <= max_cycles; idx++) {
+	for (idx = 0; idx < max_cycles; idx++) {
 		avg += fifo->dvalue[idx];
 	}
-	avg /= (max_cycles+1);
+	if (max_cycles != 0)
+		avg /= max_cycles;
 
 	return (avg);
 }
@@ -216,6 +259,7 @@ void zio_fifo_init(zdev_t *dev)
 {
 	dev->fifo.dvalue = (double *)dev->fifo.value;
 	dev->fifo.ivalue = (uint32_t *)dev->fifo.value;
+	dev->fifo.lvalue = (uint64_t *)dev->fifo.value;
 }
 
 int zio_dev_init(zdev_t *dev)
@@ -225,7 +269,7 @@ int zio_dev_init(zdev_t *dev)
 
 	freq = (dev->param.freq_min + dev->param.freq_max) / 2;
 	dev->stat.freq = MAX(HERTZ, freq * 1000);
-	dev->stat.freq_stamp = zio_mtime() + zio_dev_startup_wait(dev) * 1000;
+	dev->stat.freq_stamp = zio_time() + zio_dev_startup_wait(dev) * 1000;
 
 	zio_fifo_init(dev);
 
@@ -250,7 +294,12 @@ int zio_dev_register(zdev_t *dev)
 	dev->stat.freq = (dev->param.freq_min + dev->param.freq_max) / 2;
 	dev->stat.freq = MAX(HERTZ, dev->stat.freq);
 
-	return (zio_dev_init(dev));
+	err = zio_dev_init(dev);
+	if (err)
+		return (err);
+
+	zio_notify_text(dev, "init");
+	return (0);
 }
 
 zdev_t *zio_dev_get(int module, int type, int flags)
@@ -272,23 +321,108 @@ zdev_t *zio_dev_get(int module, int type, int flags)
 	return (NULL);
 }
 
+zdev_t *zio_dev_get_name(zdev_t *in_dev, const char *name)
+{
+	zdev_t *dev;
+
+	for (dev = zio_device_table; dev; dev = dev->next) {
+		if (in_dev->module != ZMOD_NULL && 
+				dev->module != in_dev->module)
+			continue;
+
+		if (0 == strcasecmp(dev->label, name)) {
+			/* matched criteria specified. */
+			return (dev);
+		}
+	}
+
+	return (NULL);
+}
+
+zdev_t *zio_mod_get(int module, int type)
+{
+	return (zio_dev_get(module, type, DEVF_MODULE));
+}
+
+void zio_print(zdev_t *dev, int format, char *ret_buf)
+{
+	if (!dev->op.print)
+		return;
+	(*dev->op.print)(dev, 0, ret_buf);
+}
+
 void zio_debug(zdev_t *dev)
 {
 	zdev_t *debug;
 	char buf[256];
+	char buf2[256];
 
-	debug = zio_dev_get(ZMOD_INTERNAL, ZDEV_LOG, 0);
+	debug = zio_dev_get_name(dev, "log");
 	if (!debug)
 		return;
 
 	memset(buf, 0, sizeof(buf));
-	sprintf(buf, "%s ", zio_dev_name(dev)); 
-	if (dev->type == ZDEV_THERM) {
-		(*dev->op.print)(dev, fmt_therm, buf + strlen(buf));
-	} else {
-		(*dev->op.print)(dev, 0, buf + strlen(buf));
-	}
-	zio_debug_write(debug, buf, strlen(buf));
+	memset(buf2, 0, sizeof(buf2));
+	if (dev->type == ZDEV_THERM)
+		zio_print(dev, fmt_therm, buf2); 
+	else
+		zio_print(dev, 0, buf2); 
+	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
+	zio_write(debug, buf, strlen(buf));
+}
+
+void zio_notify(zdev_t *dev)
+{
+	zdev_t *debug;
+	char buf[256];
+	char buf2[256];
+
+	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_LOG);
+	if (!debug)
+		return;
+
+	memset(buf, 0, sizeof(buf));
+	memset(buf2, 0, sizeof(buf2));
+	if (dev->type == ZDEV_THERM)
+		zio_print(dev, fmt_therm, buf2); 
+	else
+		zio_print(dev, 0, buf2); 
+	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
+	zio_write(debug, buf, strlen(buf));
+}
+
+void zio_notify_text(zdev_t *dev, char *text)
+{
+	zdev_t *debug;
+	char buf[256];
+
+	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_LOG);
+	if (!debug)
+		return;
+
+	memset(buf, 0, sizeof(buf));
+	sprintf(buf, "%s %s", zio_dev_name(dev), text);
+	zio_write(debug, buf, strlen(buf));
+}
+
+int zio_write(zdev_t *dev, uint8_t *data, size_t data_len)
+{
+	char tbuf[256];
+	time_t now;
+	int err;
+
+	if (!is_zio_dev_on(dev))
+		return (ZERR_AGAIN);
+
+
+        if (!dev->op.write)
+		return (ZERR_INVAL);
+
+	err = (*dev->op.write)(dev, data, data_len);
+	if (err)
+		return (err);
+
+	return (0);
 }
 
 void zio_error(zdev_t *dev, int err, char *tag)
@@ -296,15 +430,20 @@ void zio_error(zdev_t *dev, int err, char *tag)
 	zdev_t *debug;
 	char buf[256];
 
-	debug = zio_dev_get(ZMOD_INTERNAL, ZDEV_LOG, 0);
+	debug = zio_dev_get_name(dev, "log");
 	if (!debug)
 		return;
 
 	memset(buf, 0, sizeof(buf));
-	sprintf(buf, "[%s] %s: %s (code %d).", 
+	sprintf(buf, "%s %s: %s (%d).", 
 			zio_dev_name(dev), tag, strerror(-err), err); 
+	zio_write(debug, buf, strlen(buf));
+}
 
-	(*dev->op.print)(dev, ZIO_FMT_FAHRENHEIT, buf);
-	zio_debug_write(debug, buf, strlen(buf) + 1);
+uint64_t zio_fifo_span(zdev_t *dev)
+{
+	if (!dev)
+		return (0);
+	return (zio_time() - dev->fifo.value_stamp);
 }
 

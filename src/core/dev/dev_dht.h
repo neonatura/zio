@@ -1,7 +1,7 @@
 /* Copyright 2018 Neo Natura */
 
-#ifndef __ZIO_DHT_H__
-#define __ZIO_DHT_H__
+#ifndef __DEV_DHT_H__
+#define __DEV_DHT_H__
 
 extern zdev_t zio_dht0_device;
 extern zdev_t zio_dht1_device;
@@ -13,5 +13,5 @@ extern zdev_t zio_dht2_device;
 
 #define REGISTER_DHT_DEVICE REGISTER_DHT0_DEVICE
 
-#endif /* ndef __ZIO_DHT_H__ */
+#endif /* ndef __DEV_DHT_H__ */
 

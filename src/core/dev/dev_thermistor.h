@@ -1,7 +1,7 @@
 /* Copyright 2018 Neo Natura */
 
-#ifndef __ZIO_THERMISTOR_H__
-#define __ZIO_THERMISTOR_H__
+#ifndef __DEV_THERMISTOR_H__
+#define __DEV_THERMISTOR_H__
 
 extern zdev_t zio_thermistor0_device;
 extern zdev_t zio_thermistor1_device;
@@ -15,5 +15,5 @@ extern zdev_t zio_thermistor3_device;
 
 #define REGISTER_THERMISTOR_DEVICE REGISTER_THERMISTOR0_DEVICE
 
-#endif /* ndef __ZIO_THERMISTOR_H__ */
+#endif /* ndef __DEV_THERMISTOR_H__ */
 

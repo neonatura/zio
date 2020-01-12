@@ -2,13 +2,18 @@
 
 #include "zio.h"
 
- 
 int zio_motion_open(zdev_t *dev)
 {
+	int err;
 
-	zio_dev_on(dev);
+	if (dev->def_pin == PIN_NULL)
+		return (ZERR_INVAL);
 
-	PIN_MODE(PIN_SR501, INPUT);
+	err = zio_dev_on(dev);
+	if (err)
+		return (err);
+
+	PIN_MODE(dev->def_pin, INPUT);
 
 	return (0);
 }
@@ -16,7 +21,7 @@ int zio_motion_open(zdev_t *dev)
 int zio_motion_read(zdev_t *dev)
 {
 
-	zio_ivalue_set(dev, DIGITAL_READ(PIN_SR501));
+	zio_ivalue_set(dev, DIGITAL_READ(dev->def_pin));
 
 	return (0);
 }
@@ -53,7 +58,7 @@ int zio_motion_print(zdev_t *dev, int mode, void *retbuf)
 
 zdev_t zio_motion_device =
 {
-	"motion", PIN_MOTION, STRATUM_MAX, /* HC-SR501 PIR motion sensor */
+	"motion", PIN_MOTION, STRATUM_MAX,
 	ZDEV_MOTION, DEVF_START | DEVF_INPUT, ZMOD_GEO,
 	/* op */
 	{ zio_motion_open, zio_motion_read, NULL, zio_motion_print, zio_motion_close, zio_motion_poll },

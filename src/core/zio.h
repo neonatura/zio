@@ -39,6 +39,8 @@
 
 #define MAX_VALUE_BUFFER_SIZE 4096
 #define MAX_VALUE_DOUBLE_SIZE 512
+#define MAX_VALUE_I32_SIZE 1024
+#define MAX_VALUE_I64_SIZE 512
 
 #define ZDEV_NULL 0
 #define ZDEV_LOG 1
@@ -50,6 +52,7 @@
 #define ZDEV_PHOTO 7 /* Light Intensity */
 #define ZDEV_HUMIDITY 8 /* Humidity */
 #define ZDEV_MOTION 9 
+#define ZDEV_TIME 10
 
 
 #define ZMOD_NULL 0
@@ -105,6 +108,7 @@ typedef struct zio_fifo_t
 	uint64_t value_stamp;
   unsigned char value[MAX_VALUE_BUFFER_SIZE];
 	uint32_t *ivalue;
+	uint64_t *lvalue;
   double *dvalue;
 } zio_fifo_t;
 
@@ -184,22 +188,28 @@ typedef struct zio_gyro_t
 
 #include "zio_audio.h"
 #include "zio_cycle.h"
-#include "zio_debug.h"
 #include "zio_dev.h"
-#include "zio_dht.h"
-#include "zio_dummy_temp.h"
 #include "zio_error.h"
 #include "zio_geo.h"
 #include "zio_gps.h"
 #include "zio_i2c.h"
 #include "zio_mod.h"
-#include "zio_motion.h"
 #include "zio_pin.h"
 #include "zio_speaker.h"
-#include "zio_therm.h"
-#include "zio_thermistor.h"
 #include "zio_time.h"
-#include "zio_itemp.h"
+#include "dev/dev_debug.h"
+#include "dev/dev_dht.h"
+#include "dev/dev_dummy_temp.h"
+#include "dev/dev_itemp.h"
+#include "dev/dev_itime.h"
+#include "dev/dev_lcd.h"
+#include "dev/dev_log.h"
+#include "dev/dev_motion.h"
+#include "dev/dev_rtc.h"
+#include "dev/dev_rtemp.h"
+#include "dev/dev_time.h"
+#include "dev/dev_therm.h"
+#include "dev/dev_thermistor.h"
 
 
 #endif /* __ZIO_H__ */

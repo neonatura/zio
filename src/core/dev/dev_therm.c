@@ -15,6 +15,8 @@ int zio_therm_read(zdev_t *dev)
 	double d;
 
 	d = zio_mod_dvalue_avg(dev);
+	if (d == 0.00)
+		return (ZERR_AGAIN); /* skip */
 
 	/* store last obtained value. */
 	zio_dvalue_set(dev, d);
@@ -67,11 +69,11 @@ double zio_therm_f(double c)
 zdev_t zio_therm_device =
 {
 	"therm", PIN_NULL, 0, /* contoller: internal temperature */
-	ZDEV_THERM, DEVF_START | DEVF_INPUT | DEVF_MODULE, ZMOD_INTERNAL, 
+	ZDEV_THERM, DEVF_START | DEVF_MODULE, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_therm_open, zio_therm_read, NULL, zio_therm_print, zio_therm_close, zio_therm_poll },
 	/* param */
-	{ /* freq_min */ 1, /* freq_max */ 10 }
+	{ /* freq_min */ 60, /* freq_max */ 120 }
 };
 
 
