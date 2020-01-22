@@ -21,7 +21,10 @@
 #define PIN_16 16
 #define PIN_21 21
 #define PIN_22 22
+#define PIN_24 24
+#define PIN_25 25
 #define PIN_26 26
+#define PIN_27 27
 
 /* analog pins */
 #define PIN_A0 100 /* RW */
@@ -60,7 +63,8 @@
 #define PIN_RXD PIN_16
 
 /* GC-SR501 Motion Sensor */
-#define PIN_SR501 PIN_7
+#define PIN_SR501_0 PIN_25
+#define PIN_SR501_1 PIN_27
 
 /* soft-pwm applied to a transistor. */
 #define PIN_SPWM0 PIN_4
@@ -110,22 +114,25 @@
 /* proprietary DHT11 communication for temp/humidity */
 #define PIN_DHT0 PIN_21
 #define PIN_DHT1 PIN_22
-#define PIN_DHT2 PIN_26
 
-#define PIN_MOTION PIN_SR501
+/* Digital pin output of the SR501 PIR motion sensor. */
+#define PIN_MOTION_0 PIN_SR501_0
+#define PIN_MOTION_1 PIN_SR501_1
 
 #else
 
 #define PIN_DHT0 PIN_NULL
 #define PIN_DHT1 PIN_NULL
-#define PIN_DHT2 PIN_NULL
 
 #define PIN_SPEAKER_OUT PIN_NULL
 
-#define PIN_MOTION PIN_NULL
+#define PIN_MOTION_0 PIN_NULL
+#define PIN_MOTION_1 PIN_NULL
 
 #endif /* HAVE_LIBWIRINGPI */
 
+
+#define PIN_MOTION PIN_MOTION_0
 
 #define PIN_AUDIO_OUT PIN_SPEAKER_OUT
 

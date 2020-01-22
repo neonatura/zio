@@ -129,21 +129,12 @@ zdev_t zio_dht0_device =
 
 zdev_t zio_dht1_device =
 {
-        "dht1", PIN_DHT1, 4, /* contoller: internal temperature */
-        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
+        "dht1", PIN_DHT1, 4, /* contoller: extrrnal temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_EXTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
         { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
 };
 
-zdev_t zio_dht2_device =
-{
-        "dht2", PIN_DHT2, 4, /* contoller: internal temperature */
-        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
-        /* op */
-        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
-        /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
-};
 

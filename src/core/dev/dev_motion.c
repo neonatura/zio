@@ -20,8 +20,12 @@ int zio_motion_open(zdev_t *dev)
  
 int zio_motion_read(zdev_t *dev)
 {
+	int val = 0;
 
-	zio_ivalue_set(dev, DIGITAL_READ(dev->def_pin));
+	if (DIGITAL_READ(dev->def_pin))
+		val = 1;
+
+	zio_ivalue_set(dev, val);
 
 	return (0);
 }
@@ -56,13 +60,23 @@ int zio_motion_print(zdev_t *dev, int mode, void *retbuf)
 	return (0);
 }
 
-zdev_t zio_motion_device =
+zdev_t zio_motion0_device =
 {
-	"motion", PIN_MOTION, STRATUM_MAX,
-	ZDEV_MOTION, DEVF_START | DEVF_INPUT, ZMOD_GEO,
+	"motion0", PIN_MOTION_0, 1,
+	ZDEV_MOTION, DEVF_START | DEVF_INPUT, ZMOD_EXTERNAL,
 	/* op */
 	{ zio_motion_open, zio_motion_read, NULL, zio_motion_print, zio_motion_close, zio_motion_poll },
 	/* param */
-	{ /* freq_min */ 1.0, /* freq_max */ 2.0 }
+	{ /* freq_min */ 0.2, /* freq_max */ 15 }
+};
+
+zdev_t zio_motion1_device =
+{
+	"motion1", PIN_MOTION_1, 1,
+	ZDEV_MOTION, DEVF_START | DEVF_INPUT, ZMOD_EXTERNAL,
+	/* op */
+	{ zio_motion_open, zio_motion_read, NULL, zio_motion_print, zio_motion_close, zio_motion_poll },
+	/* param */
+	{ /* freq_min */ 0.2, /* freq_max */ 15 }
 };
 

@@ -57,6 +57,7 @@
 
 #define ZMOD_NULL 0
 #define ZMOD_INTERNAL 1
+#define ZMOD_EXTERNAL 2
 #define ZMOD_GEO 2
 
 /* device flag to indicate that device is being powered. */
