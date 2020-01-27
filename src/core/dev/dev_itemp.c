@@ -74,6 +74,6 @@ zdev_t zio_itemp_device =
 	/* op */
 	{ zio_itemp_open, zio_itemp_read, NULL, zio_itemp_print, zio_itemp_close, zio_itemp_poll },
 	/* param */
-	{ /* freq_min */ 30, /* freq_max */ 60 }
+	{ /* freq_min */ 30, /* freq_max */ 60, 0, PIN_NULL }
 };
 

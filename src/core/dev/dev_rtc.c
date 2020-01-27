@@ -116,6 +116,6 @@ zdev_t zio_rtc_device =
 	/* op */
 	{ zio_rtc_open, zio_rtc_read, NULL, zio_rtc_print, zio_rtc_close, zio_rtc_poll },
 	/* param */
-	{ /* freq_min */ 15, /* freq_max */ 60 }
+	{ /* freq_min */ 15, /* freq_max */ 60, 0, PIN_NULL }
 };
 

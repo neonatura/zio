@@ -89,7 +89,7 @@ zdev_t zio_thermistor0_device =
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10 }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
 };
 
 zdev_t zio_thermistor1_device =
@@ -99,7 +99,7 @@ zdev_t zio_thermistor1_device =
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10 }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
 };
 
 zdev_t zio_thermistor2_device =
@@ -109,7 +109,7 @@ zdev_t zio_thermistor2_device =
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10 }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
 };
 
 zdev_t zio_thermistor3_device =
@@ -119,6 +119,6 @@ zdev_t zio_thermistor3_device =
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10 }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
 };
 

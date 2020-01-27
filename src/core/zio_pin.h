@@ -21,6 +21,7 @@
 #define PIN_16 16
 #define PIN_21 21
 #define PIN_22 22
+#define PIN_23 23
 #define PIN_24 24
 #define PIN_25 25
 #define PIN_26 26
@@ -63,8 +64,9 @@
 #define PIN_RXD PIN_16
 
 /* GC-SR501 Motion Sensor */
-#define PIN_SR501_0 PIN_25
-#define PIN_SR501_1 PIN_27
+#define PIN_SR501_0 PIN_0
+#define PIN_SR501_1 PIN_2
+#define PIN_SR501_2 PIN_3
 
 /* soft-pwm applied to a transistor. */
 #define PIN_SPWM0 PIN_4
@@ -82,8 +84,7 @@
 //#define PIN_HEAT_PWR PIN_RELAY3
 
 /* [soft] pwm audio output */
-#define PIN_SPEAKER_OUT PIN_3
-#define PIN_SPEAKER_PWR /* for amplifier */
+#define PIN_SPEAKER PIN_7
 
 #ifdef ZIO_GPSBEE
 #define PIN_GPS_TX PIN_TXD
@@ -112,32 +113,47 @@
 #endif
 
 /* proprietary DHT11 communication for temp/humidity */
-#define PIN_DHT0 PIN_21
-#define PIN_DHT1 PIN_22
+#define PIN_DHT0 PIN_25
+#define PIN_DHT0_PWR PIN_24
+#define PIN_DHT1 PIN_23
 
-/* Digital pin output of the SR501 PIR motion sensor. */
-#define PIN_MOTION_0 PIN_SR501_0
-#define PIN_MOTION_1 PIN_SR501_1
+/* dual LEDs for recv/send notification. */
+#define PIN_LED0 PIN_26
+#define PIN_LED1 PIN_27
 
 #else
 
 #define PIN_DHT0 PIN_NULL
 #define PIN_DHT1 PIN_NULL
 
-#define PIN_SPEAKER_OUT PIN_NULL
+#define PIN_SPEAKER PIN_NULL
 
 #define PIN_MOTION_0 PIN_NULL
 #define PIN_MOTION_1 PIN_NULL
+
+/* GC-SR501 Motion Sensor */
+#define PIN_SR501_0 PIN_NULL
+#define PIN_SR501_1 PIN_NULL
+#define PIN_SR501_2 PIN_NULL
+
+#define PIN_LED0 PIN_NULL
+#define PIN_LED1 PIN_NULL
 
 #endif /* HAVE_LIBWIRINGPI */
 
 
 #define PIN_MOTION PIN_MOTION_0
 
-#define PIN_AUDIO_OUT PIN_SPEAKER_OUT
-
 #define PIN_DHT PIN_DHT0
 
+/* Digital pin output of the SR501 PIR motion sensor. */
+#define PIN_MOTION_0 PIN_SR501_0
+#define PIN_MOTION_1 PIN_SR501_1
+#define PIN_MOTION_2 PIN_SR502_2
+
+#define PIN_LED PIN_LED0
+#define PIN_LED_RX PIN_LED0
+#define PIN_LED_TX PIN_LED1
 
 void zio_pin_on(int pin);
 

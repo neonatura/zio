@@ -16,7 +16,7 @@
 #define LCD_CMD 0
 #define LCD_CHR 1
 
-void zio_lcd_wait(zdev_t *dev, int bits)
+int zio_lcd_twi1602_wait(zdev_t *dev, int bits)
 {
 	delayMicroseconds(500);
 	ZIO_I2C_REG_READ(dev, (bits | LCD_ENABLE));
@@ -25,7 +25,7 @@ void zio_lcd_wait(zdev_t *dev, int bits)
 	delayMicroseconds(500);
 }
 
-void zio_lcd_byte(zdev_t *dev, int bits, int mode)
+int zio_lcd_twi1602_byte(zdev_t *dev, int bits, int mode)
 {
 	int bits_high;
 	int bits_low;
@@ -40,12 +40,12 @@ void zio_lcd_byte(zdev_t *dev, int bits, int mode)
 	zio_lcd_wait(dev, bits_low);
 }
 
-void zio_lcd_line(zdev_t *dev, int line)
+int zio_lcd_twi1602_line(zdev_t *dev, int line)
 {
 	zio_lcd_byte(dev, line, LCD_CMD);
 }
 
-void zio_lcd_init(zdev_t *dev)
+void zio_lcd_twi1602_init(zdev_t *dev)
 {
 	zio_lcd_byte(dev, 0x33, LCD_CMD); /* initialize #1 */
 	zio_lcd_byte(dev, 0x32, LCD_CMD); /* initialize #2 */
@@ -55,7 +55,7 @@ void zio_lcd_init(zdev_t *dev)
 	zio_lcd_byte(dev, 0x01, LCD_CMD); /* clear display */
 }
  
-int zio_lcd_open(zdev_t *dev)
+int zio_lcd_twi1602_open(zdev_t *dev)
 {
 	int err;
 	int fd;
@@ -63,7 +63,7 @@ int zio_lcd_open(zdev_t *dev)
 	if (is_zio_dev_on(dev))
 		return (0);
 
-	fd = ZIO_I2C_INIT(DEFAULT_LCD_I2C_ADDR);
+	fd = ZIO_I2C_INIT(dev->def_pin);
 	if (fd < 0)
 		return (ZERR_INVAL);
 
@@ -74,7 +74,7 @@ int zio_lcd_open(zdev_t *dev)
 	return (0);
 }
  
-int zio_lcd_write(zdev_t *dev, uint8_t *data, size_t data_len)
+int zio_lcd_twi1602_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 	int i;
 
@@ -108,7 +108,7 @@ int zio_lcd_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	return (0);
 }
 
-int zio_lcd_close(zdev_t *dev)
+int zio_lcd_twi1602_close(zdev_t *dev)
 {
 
 	if (!is_zio_dev_on(dev))
@@ -119,13 +119,13 @@ int zio_lcd_close(zdev_t *dev)
 	return (0);
 }
 
-zdev_t zio_lcd_device =
+zdev_t zio_lcd_twi1602_device =
 {
-	"lcd", PIN_NULL, STRATUM_MAX, /* contoller: activity log */
+	"lcd16", DEFAULT_LCD_I2C_ADDR, STRATUM_MAX, /* contoller: activity log */
 	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
 	/* op */
-	{ zio_lcd_open, NULL, zio_lcd_write, NULL, zio_lcd_close },
+	{ zio_lcd_twi1602_open, NULL, zio_lcd_twi1602_write, NULL, zio_lcd_twi1602_close },
 	/* param */
-	{ /* freq_min */ 1, /* freq_max */ 60 }
+	{ /* freq_min */ 1, /* freq_max */ 60, 0, PIN_NULL }
 };
 

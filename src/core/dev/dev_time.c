@@ -59,6 +59,6 @@ zdev_t zio_time_device =
 	/* op */
 	{ zio_time_open, zio_time_read, NULL, zio_time_print, zio_time_close, zio_time_poll },
 	/* param */
-	{ /* freq_min */ 60, /* freq_max */ 120 }
+	{ /* freq_min */ 60, /* freq_max */ 120, 0, PIN_NULL }
 };
 

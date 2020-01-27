@@ -58,6 +58,6 @@ zdev_t zio_log_device =
 	/* op */
 	{ zio_log_open, NULL, zio_log_write, NULL, zio_log_close },
 	/* param */
-	{ /* freq_min */ 1, /* freq_max */ 60 }
+	{ /* freq_min */ 1, /* freq_max */ 60, 0, PIN_NULL }
 };
 

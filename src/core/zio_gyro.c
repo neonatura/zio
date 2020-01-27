@@ -16,7 +16,7 @@ void zio_gyro_init(zdev_t *dev)
 {
 	int fd;
 
-	fd = ZIO_I2C_INIT(devAddr);
+	fd = ZIO_I2C_INIT(dev->dev_fd);
 	if (fd == -1) {
 		return;
 	}
@@ -68,4 +68,6 @@ zio_gyro_t *zio_gyro_value(zdev_t *dev)
 {
 	return ((zio_gyro_t *)dev->value);
 }
+
+//MPU6050_DEFAULT_ADDRESS
 

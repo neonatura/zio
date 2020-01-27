@@ -42,6 +42,6 @@ zdev_t zio_debug_device =
 	/* op */
 	{ zio_debug_open, NULL, zio_debug_write, NULL, zio_debug_close },
 	/* param */
-	{ /* freq_min */ 0.5, /* freq_max */ 5 }
+	{ /* freq_min */ 0.5, /* freq_max */ 5, 0, PIN_NULL }
 };
 

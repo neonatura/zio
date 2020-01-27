@@ -357,6 +357,9 @@ void zio_debug(zdev_t *dev)
 	char buf[256];
 	char buf2[256];
 
+	if (!dev->op.print)
+		return; /* n/a */
+
 	debug = zio_dev_get_name(dev, "log");
 	if (!debug)
 		return;

@@ -2,8 +2,6 @@
 
 #include "zio.h"
 
-static unsigned char _zio_audio_buffer[ZIO_AUDIO_FREQ];
-
 #define BEEP_SAMPLES 14
 static const uint16_t _beep_samples[BEEP_SAMPLES] = {
 	NOTE_B4, NOTE_B4, 0, 0, NOTE_B4, NOTE_B4,
@@ -11,6 +9,25 @@ static const uint16_t _beep_samples[BEEP_SAMPLES] = {
 	NOTE_D5, NOTE_D5
 };
 
+#define NEGATIVE_BEEP_SAMPLES 14
+static const uint16_t _negative_beep_samples[NEGATIVE_BEEP_SAMPLES] = {
+    NOTE_D5, NOTE_D5,
+    NOTE_D4, NOTE_D3, 0, 0, NOTE_D3, NOTE_D3,
+    NOTE_F2, NOTE_F2, 0, 0, NOTE_F2, NOTE_F2
+};
+
+#define POSITIVE_BEEP_SAMPLES 28
+static const uint16_t _positive_beep_samples[POSITIVE_BEEP_SAMPLES] = {
+        NOTE_E4, NOTE_E4, NOTE_E4,
+        NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G3,
+        0, 0,
+
+        NOTE_C4, NOTE_G3, NOTE_E3,
+        NOTE_A3, NOTE_B3, NOTE_B3, NOTE_A3,
+        NOTE_G3, NOTE_E4, NOTE_G4, NOTE_A4,
+        NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3,
+        0, 0
+};
 
 #define INTRO_SAMPLES 38
 static const uint16_t _intro_samples[INTRO_SAMPLES] = {
@@ -29,78 +46,71 @@ static const uint16_t _intro_samples[INTRO_SAMPLES] = {
 	0, 0,
 };
 
-int zio_audio_init(zdev_t *dev)
+
+
+int zio_audio_intro(void)
 {
-	pinMode(PIN_AUDIO_OUT, OUTPUT);
-	ZIO_TONE_INIT(PIN_AUDIO_OUT);
+	zdev_t *mod;
+
+	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
+
+	return (zio_write(mod,
+		(uint8_t *)_intro_samples, INTRO_SAMPLES*2));
 }
 
-int zio_audio_write(zdev_t *dev, uint16_t *data, size_t data_len)
+int zio_beep(void)
 {
-	unsigned char *raw;
+	zdev_t *mod;
 
-	raw = (unsigned char *)dev->fifo.value;
-	
-	data_len = MIN(data_len, (MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len) / 2);
-	memcpy((uint16_t *)raw, data, data_len);
-	dev->fifo.value_len += data_len;
+	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
+	if (!mod)
+		return (ZERR_INVAL);
 
-	zio_dev_on(dev);
-	zio_timer_incr(dev);
+	return (zio_write(mod,
+		(uint8_t *)_beep_samples, BEEP_SAMPLES*2));
 }
 
-int zio_audio_timer(zdev_t *dev)
+int zio_beep_negative(void)
 {
-	static const double freq = 1000 / ZIO_AUDIO_FREQ;
-	static uint64_t last_t;
-	uint64_t t = zio_mtime();
-	uint16_t sample;
+	zdev_t *mod;
+
+	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
+	if (!mod)
+		return (ZERR_INVAL);
+
+	return (zio_write(mod,
+		(uint8_t *)_negative_beep_samples, NEGATIVE_BEEP_SAMPLES*2));
+}
+
+int zio_beep_positive(void)
+{
+	zdev_t *mod;
+
+	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
+	if (!mod)
+		return (ZERR_INVAL);
+
+	return (zio_write(mod,
+		(uint8_t *)_positive_beep_samples, POSITIVE_BEEP_SAMPLES*2));
+}
+
+int zio_audio_dtalk(uint8_t *data, size_t data_len)
+{
+	uint8_t buff[1024];
+	uint16_t *ar = (uint16_t *)buff;
+	zdev_t *mod;
 	int len;
-	int idx;
 
-	if (!is_zio_dev_on(dev))
-		return;
+	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
+	if (!mod)
+		return (ZERR_INVAL);
 
-	if ((t/1000) != last_t) {
-		if (dev->fifo.value_of == 0) {
-			zio_audio_term(dev);
-			return;
-		}
-		last_t = (t/1000);
-
-		len = MIN(ZIO_AUDIO_FREQ, dev->fifo.value_of);
-		memset(_zio_audio_buffer, 0, ZIO_AUDIO_FREQ);
-		memcpy(_zio_audio_buffer, dev->fifo.value, len);
-		if (dev->fifo.value_of > len)
-			memmove(dev->fifo.value, dev->fifo.value + len, dev->fifo.value_of - len);
-		dev->fifo.value_of -= len;
+	len = 0;
+	memset(buff, 0, sizeof(buff));
+	for (len = 0; len < data_len && len < 512; len++) {
+		ar[len] = ((unsigned int)data[len] % 42) * ((unsigned int)data[len] / 6) + NOTE_F1;
 	}
 
-	idx = ((uint32_t)(t / freq) % ZIO_AUDIO_FREQ);
-	sample = _zio_audio_buffer[idx];
-	if (sample == NOTE_NONE) {
-		ZIO_TONE(PIN_AUDIO_OUT, 0);
-	} else {
-		ZIO_TONE(PIN_AUDIO_OUT, sample);
-	}
-
-}
-
-int zio_audio_term(zdev_t *dev)
-{
-	ZIO_TONE_TERM(PIN_AUDIO_OUT);
-	pinMode(PIN_AUDIO_OUT, INPUT);
-	zio_timer_decr(dev);
-	zio_dev_off(dev);
-}
-
-int zio_audio_write_intro(zdev_t *dev)
-{
-	return (zio_audio_write(dev, (uint16_t *)_intro_samples, INTRO_SAMPLES));
-}
-
-int zio_audio_beep(zdev_t *dev)
-{
-	return (zio_audio_write(dev, (uint16_t *)_beep_samples, BEEP_SAMPLES));
+	return (zio_write(mod, buff, len*2));
 }
 

@@ -73,7 +73,7 @@ zdev_t zio_therm_device =
 	/* op */
 	{ zio_therm_open, zio_therm_read, NULL, zio_therm_print, zio_therm_close, zio_therm_poll },
 	/* param */
-	{ /* freq_min */ 60, /* freq_max */ 120 }
+	{ /* freq_min */ 60, /* freq_max */ 120, 0, PIN_NULL }
 };
 
 

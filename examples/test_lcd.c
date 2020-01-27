@@ -9,10 +9,14 @@ int main(int argc, char *argv[])
 
 	wiringPiSetup();
 
-	/* 16x2 I2C LCD */
+	/* 128x64 I2C OLED LCD */
 	REGISTER_LCD_DEVICE();
 
+	REGISTER_SPEAKER_DEVICE();
+	REGISTER_AUDIO_DEVICE();
+
 	/* internal */
+	REGISTER_LED_DEVICE();
 	REGISTER_LOG_DEVICE();
 	REGISTER_DEBUG_DEVICE();
 	REGISTER_DUMMY_TEMP_DEVICE();
@@ -25,7 +29,7 @@ int main(int argc, char *argv[])
         REGISTER_RTC_DEVICE();
         REGISTER_RTEMP_DEVICE();
 
-	/* DHT on pin 21 */
+	/* DHT11 */
 	REGISTER_DHT_DEVICE();
 
 	zio_cycle_loop();

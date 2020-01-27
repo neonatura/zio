@@ -9,16 +9,20 @@ zio_sources = \
 	$(srcdir)/zio_mod.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_time.c \
+	$(srcdir)/dev/dev_audio.c \
 	$(srcdir)/dev/dev_debug.c \
 	$(srcdir)/dev/dev_dht.c \
 	$(srcdir)/dev/dev_dummy_temp.c \
 	$(srcdir)/dev/dev_itemp.c \
 	$(srcdir)/dev/dev_itime.c \
-	$(srcdir)/dev/dev_lcd.c \
+	$(srcdir)/dev/dev_lcd_ssd1306.c \
+	$(srcdir)/dev/dev_lcd_twi1602.c \
+	$(srcdir)/dev/dev_led.c \
 	$(srcdir)/dev/dev_log.c \
 	$(srcdir)/dev/dev_motion.c \
 	$(srcdir)/dev/dev_rtc.c \
 	$(srcdir)/dev/dev_rtemp.c \
+	$(srcdir)/dev/dev_speaker.c \
 	$(srcdir)/dev/dev_time.c \
 	$(srcdir)/dev/dev_therm.c \
 	$(srcdir)/dev/dev_thermistor.c
@@ -34,16 +38,20 @@ zio_headers = \
 	$(srcdir)/zio_mod.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_time.h \
+	$(srcdir)/dev/dev_audio.h \
 	$(srcdir)/dev/dev_debug.h \
 	$(srcdir)/dev/dev_dht.h \
 	$(srcdir)/dev/dev_dummy_temp.h \
 	$(srcdir)/dev/dev_itemp.h \
 	$(srcdir)/dev/dev_itime.h \
-	$(srcdir)/dev/dev_lcd.h \
+	$(srcdir)/dev/dev_lcd_ssd1306.h \
+	$(srcdir)/dev/dev_lcd_twi1602.h \
+	$(srcdir)/dev/dev_led.h \
 	$(srcdir)/dev/dev_log.h \
 	$(srcdir)/dev/dev_motion.h \
 	$(srcdir)/dev/dev_rtc.h \
 	$(srcdir)/dev/dev_rtemp.h \
+	$(srcdir)/dev/dev_speaker.h \
 	$(srcdir)/dev/dev_time.h \
 	$(srcdir)/dev/dev_therm.h \
 	$(srcdir)/dev/dev_thermistor.h

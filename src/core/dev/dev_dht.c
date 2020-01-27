@@ -8,6 +8,7 @@ int zio_dht_open(zdev_t *dev)
 {
 	PIN_MODE(dev->def_pin, INPUT );
 	zio_dev_on(dev);
+	return (0);
 }
  
 int zio_dht_read(zdev_t *dev)
@@ -18,10 +19,10 @@ int zio_dht_read(zdev_t *dev)
 	uint8_t j			= 0, i;
 
 	data[0] = data[1] = data[2] = data[3] = data[4] = 0;
- 
+
 	/* prepare to read the pin */
 	PIN_MODE( dev->def_pin, INPUT );
- 
+
 	/* detect change and read data */
 	for ( i = 0; i < MAX_DHT_TIMINGS; i++ ) {
 		counter = 0;
@@ -81,15 +82,16 @@ int zio_dht_read(zdev_t *dev)
 
 int zio_dht_poll(zdev_t *dev)
 {
+	struct timeval tv;
 
 	if (!is_zio_dev_on(dev))
 		return (ZERR_INVAL);
 
-	if (512 == (dev->stat.freq_cycle % 1024)) {
+	if (511 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, OUTPUT );
 		DIGITAL_WRITE( dev->def_pin, LOW );
 		return (ZERR_AGAIN);
-	} else if (513 == (dev->stat.freq_cycle % 1024)) {
+	} else if (512 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, INPUT );
 		return (zio_dht_read(dev));
 	}
@@ -119,22 +121,24 @@ int zio_dht_close(zdev_t *dev)
 
 zdev_t zio_dht0_device =
 {
-        "dht0", PIN_DHT0, 4, /* contoller: internal temperature */
+        "dht0", PIN_DHT0, 5, /* contoller: internal temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
+        { /* freq_min */ 0.015, /* freq_max */ 0.018, /* 15ms - 18ms */
+	0.2 /* ma */, PIN_DHT0_PWR },
 };
 
 zdev_t zio_dht1_device =
 {
-        "dht1", PIN_DHT1, 4, /* contoller: extrrnal temperature */
+        "dht1", PIN_DHT1, 5, /* contoller: extrrnal temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_EXTERNAL,
         /* op */
         { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
         /* param */
-        { /* freq_min */ 0.055, /* freq_max */ 0.0625 } /* 18ms - 16ms */
+        { /* freq_min */ 0.015, /* freq_max */ 0.018, /* 15ms - 18ms */
+	0.2, PIN_NULL },
 };
 
 

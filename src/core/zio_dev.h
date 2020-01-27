@@ -15,11 +15,16 @@
 
 #define DEFAULT_DS3231_I2C_ADDRESS 0x68
 
-#define DEFAULT_LCD_I2C_ADDR 0x27
+/* 16x2 */
+/* #define DEFAULT_LCD_I2C_ADDR 0x27 */
+/* 128x64 */
+#define DEFAULT_LCD_I2C_ADDR 0x3c
 
 #define STRATUM_MIN 0
-#define STRATUM_MAX 255
+#define STRATUM_LOW 63
 #define STRATUM_MID 127
+#define STRATUM_HIGH 191
+#define STRATUM_MAX 255
 
 extern zdev_t *zio_device_table;
 
@@ -66,6 +71,8 @@ void zio_notify(zdev_t *dev);
 zdev_t *zio_dev_get_name(zdev_t *dev, const char *name);
 
 void zio_notify_text(zdev_t *dev, char *text);
+
+zdev_t *zio_mod_get(int module, int type);
 
 
 /** The time (in milliseconds) to wait before accessing a device. */

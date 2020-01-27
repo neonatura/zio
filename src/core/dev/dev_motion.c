@@ -77,6 +77,6 @@ zdev_t zio_motion1_device =
 	/* op */
 	{ zio_motion_open, zio_motion_read, NULL, zio_motion_print, zio_motion_close, zio_motion_poll },
 	/* param */
-	{ /* freq_min */ 0.2, /* freq_max */ 15 }
+	{ /* freq_min */ 0.2, /* freq_max */ 15, 0, PIN_NULL }
 };
 

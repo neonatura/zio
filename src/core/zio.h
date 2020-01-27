@@ -67,6 +67,7 @@
 #define DEVF_OUTPUT (1 << 3)
 #define DEVF_DUMMY (1 << 4)
 #define DEVF_MODULE (1 << 5)
+#define DEVF_SLEEP (1 << 6)
 
 #define ZIO_FMT_FAHRENHEIT 1000
 #define ZIO_FMT_KELVIN 1001
@@ -85,11 +86,11 @@ typedef struct zio_param_t
 
   double freq_max;
 
+	/* working milli-watt rate of power */
+	double rate_pwr;
+
 	/* An (optional) PIN which is capable of turning on a device. */
 	int pin_pwr;
-
-	/* working milli-watt rate of power */
-	uint32_t rate_pwr;
 
 	/* stratum (permanent degree of trust, lower=better) */
 	uint32_t stratum;
@@ -196,18 +197,21 @@ typedef struct zio_gyro_t
 #include "zio_i2c.h"
 #include "zio_mod.h"
 #include "zio_pin.h"
-#include "zio_speaker.h"
 #include "zio_time.h"
+#include "dev/dev_audio.h"
 #include "dev/dev_debug.h"
 #include "dev/dev_dht.h"
 #include "dev/dev_dummy_temp.h"
 #include "dev/dev_itemp.h"
 #include "dev/dev_itime.h"
-#include "dev/dev_lcd.h"
+#include "dev/dev_led.h"
+#include "dev/dev_lcd_ssd1306.h"
+#include "dev/dev_lcd_twi1602.h"
 #include "dev/dev_log.h"
 #include "dev/dev_motion.h"
 #include "dev/dev_rtc.h"
 #include "dev/dev_rtemp.h"
+#include "dev/dev_speaker.h"
 #include "dev/dev_time.h"
 #include "dev/dev_therm.h"
 #include "dev/dev_thermistor.h"

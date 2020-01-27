@@ -7,6 +7,8 @@ int main(int argc, char *argv[])
 	wiringPiSetup();
 
 	/* diagnostic feedback. */
+	REGISTER_LED_DEVICE();
+	REGISTER_LOG_DEVICE();
 	REGISTER_DEBUG_DEVICE();
 
 	/* system clock. */
@@ -17,6 +19,11 @@ int main(int argc, char *argv[])
 
 	/* ZIO time module. */
 	REGISTER_TIME_DEVICE();
+
+	/* analyze rtc temp */
+	REGISTER_ITEMP_DEVICE();
+	REGISTER_RTEMP_DEVICE();
+        REGISTER_THERM_DEVICE();
 
 	zio_cycle_loop();
 

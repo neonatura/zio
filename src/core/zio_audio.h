@@ -4,16 +4,6 @@
 #ifndef __ZIO_AUDIO_H__
 #define __ZIO_AUDIO_H__
 
-
-int zio_audio_init(zdev_t *dev);
-int zio_audio_write(zdev_t *dev, uint16_t *data, size_t data_len);
-int zio_audio_timer(zdev_t *dev);
-int zio_audio_term(zdev_t *dev);
-
-int zio_audio_beep(zdev_t *dev);
-int zio_audio_write_intro(zdev_t *dev);
-
-
 #define ZIO_AUDIO_FREQ 32
 
 #define NOTE_NONE 0
@@ -109,6 +99,16 @@ int zio_audio_write_intro(zdev_t *dev);
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
 
+int zio_audio_intro(void);
+
+int zio_beep(void);
+
+int zio_beep_negative(void);
+
+int zio_beep_positive(void);
+
+/* generate "digital speech" from a data segment. */
+int zio_audio_dtalk(uint8_t *data, size_t data_len);
 
 #endif /* ndef __ZIO_AUDIO_H__ */
 

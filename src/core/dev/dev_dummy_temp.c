@@ -60,6 +60,6 @@ zdev_t zio_dummy_temp_device =
 	/* op */
 	{ zio_dummy_temp_open, zio_dummy_temp_read, NULL, zio_dummy_temp_print, zio_dummy_temp_close, zio_dummy_temp_poll },
 	/* param */
-	{ /* freq_min */ 30, /* freq_max */ 105 }
+	{ /* freq_min */ 30, /* freq_max */ 105, 0, PIN_NULL }
 };
 
