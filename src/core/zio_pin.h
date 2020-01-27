@@ -125,11 +125,9 @@
 
 #define PIN_DHT0 PIN_NULL
 #define PIN_DHT1 PIN_NULL
+#define PIN_DHT0_PWR PIN_NULL
 
 #define PIN_SPEAKER PIN_NULL
-
-#define PIN_MOTION_0 PIN_NULL
-#define PIN_MOTION_1 PIN_NULL
 
 /* GC-SR501 Motion Sensor */
 #define PIN_SR501_0 PIN_NULL
@@ -138,6 +136,10 @@
 
 #define PIN_LED0 PIN_NULL
 #define PIN_LED1 PIN_NULL
+
+#define PIN_SR501_0 PIN_NULL
+#define PIN_SR501_1 PIN_NULL
+#define PIN_SR501_2 PIN_NULL
 
 #endif /* HAVE_LIBWIRINGPI */
 
@@ -149,7 +151,7 @@
 /* Digital pin output of the SR501 PIR motion sensor. */
 #define PIN_MOTION_0 PIN_SR501_0
 #define PIN_MOTION_1 PIN_SR501_1
-#define PIN_MOTION_2 PIN_SR502_2
+#define PIN_MOTION_2 PIN_SR501_2
 
 #define PIN_LED PIN_LED0
 #define PIN_LED_RX PIN_LED0

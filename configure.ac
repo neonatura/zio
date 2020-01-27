@@ -199,6 +199,8 @@ AC_HEADER_MAJOR
 AC_HEADER_STAT
 AC_HEADER_STDC
 
+# Check for the ESpeak library (speech synthesis).
+AC_CHECK_LIB([espeak], [espeak_Synth])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT8_T

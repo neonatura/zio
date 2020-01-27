@@ -18,6 +18,10 @@
 /* autoconf */
 #include "config.h"
 
+#ifdef HAVE_LIBESPEAK
+#include <espeak/speak_lib.h>
+#endif
+
 #ifdef HAVE_LIBWIRINGPI
 #include <wiringPi.h>
 #include <pcf8591.h>

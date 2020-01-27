@@ -119,13 +119,13 @@ zdev_t *zio_mod_get(int module, int type);
 #define DIGITAL_READ(_pin) 0
 #define DIGITAL_WRITE(_pin, _val)
 #define PIN_MODE(_pin, _mode)
-#define ZIO_I2C_INIT(_addr)
-#define ZIO_I2C_READ(_dev)
-#define ZIO_I2C_WRITE(_dev, _val)
-#define ZIO_I2C_REG_READ(_dev, _reg)
-#define ZIO_I2C_REG_WRITE(_dev, _reg, _val)
-#define ZIO_I2C_REG16_READ(_dev, _reg)
-#define ZIO_I2C_REG16_WRITE(_dev, _reg, _val)
+#define ZIO_I2C_INIT(_addr) 0
+#define ZIO_I2C_READ(_dev) 0
+#define ZIO_I2C_WRITE(_dev, _val) 0
+#define ZIO_I2C_REG_READ(_dev, _reg) 0
+#define ZIO_I2C_REG_WRITE(_dev, _reg, _val) 0
+#define ZIO_I2C_REG16_READ(_dev, _reg) 0
+#define ZIO_I2C_REG16_WRITE(_dev, _reg, _val) 0
 #define PCF8591_INIT(_addr) ZERR_INVAL
 
 #endif
