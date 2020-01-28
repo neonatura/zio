@@ -5,6 +5,13 @@
 
 #define SSD1306_128_64
 
+#define STATUS_HEADER_SIZE 1200
+#define MAX_STATUS_HEIGHT 10
+#define MAX_STATUS_WIDTH 120
+
+static unsigned char status_header[STATUS_HEADER_SIZE];
+extern uint64_t cycle_ops;
+
 #define true 1
 #define false 0
 
@@ -691,12 +698,86 @@ void zio_lcd_ssd1306_init(zdev_t *dev)
 	zio_ssd1306_command(dev, SSD1306_DISPLAYON);	// --turn on oled panel
 }
 
+
+
 /* two lines / 16 pixels height */
 void zio_ssd1306_header(zdev_t *dev)
 {
+	static uint64_t l_ticks, l_ops;
+	static int  l_ops_diff;
+uint64_t now;
+	unsigned int idx;
+	int color;
+	int x, y;
+	int i;
+int j;
 
-	zio_ssd1306_fillRect(0, 0, 128, 14, WHITE);
-	zio_ssd1306_fillRect(2, 2, 124, 10, BLACK);
+	zio_ssd1306_fillRect(0, 0, 128, 16, WHITE);
+	zio_ssd1306_fillRect(2, 2, 124, 12, BLACK);
+
+	now = zio_time();
+	idx = (now/500) % STATUS_HEADER_SIZE;
+	int ops_diff = (cycle_ops - l_ops);
+	l_ops = cycle_ops;
+
+	{ /* black = activity higher than last, white = low-activity */
+		if (ops_diff < l_ops_diff)
+			status_header[idx] = BLACK;
+		else
+			status_header[idx] = WHITE;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+	l_ops_diff = ops_diff;
+
+	/* fill-in for future indexes missed. */
+	for (i = 0; i < MAX_STATUS_HEIGHT; i++) { /* white padd */
+		status_header[idx] = WHITE;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+
+	/* left "idle" seperator */
+	for (i = 0; i < MAX_STATUS_HEIGHT; i++) { /* black padd */
+		status_header[idx] = BLACK;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+	j = (72 - ops_diff) / 2;
+	for (i = 0; i < j; i++) { /* idle */
+		status_header[idx] = BLACK;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+
+	for (i = 0; i < ops_diff; i++) { /* activity */
+		status_header[idx] = (0 == (idx % 3)) ? BLACK : WHITE;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+
+	/* right "idle" seperator */
+	for (i = 0; i < j; i++) { /* idle */
+		status_header[idx] = BLACK;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+	for (i = 0; i < MAX_STATUS_HEIGHT; i++) { /* black padd */
+		status_header[idx] = BLACK;
+		idx = ((idx+1) % STATUS_HEADER_SIZE);
+	}
+
+	for (i = 0; i < STATUS_HEADER_SIZE; i++) {
+		x = (i / MAX_STATUS_HEIGHT) % MAX_STATUS_WIDTH;
+		y = (i % MAX_STATUS_HEIGHT);
+		zio_ssd1306_drawPixel(x + 4, y + 3, status_header[i]);
+	}
+
+	/* draw time */
+	{
+		char tbuf[32];
+		memset(tbuf, 0, sizeof(tbuf));
+		strftime(tbuf, sizeof(tbuf)-1, "%H:%M", zio_localtime(now));
+		x = 6;
+		for (i = 0; i < strlen(tbuf); i++) {
+			zio_ssd1306_drawChar(x, 5, tbuf[i], BLACK, 1);
+			x += 6;
+		}
+	}
 
 }
  
@@ -711,6 +792,8 @@ int zio_lcd_ssd1306_open(zdev_t *dev)
 	fd = ZIO_I2C_INIT(dev->def_pin);
 	if (fd < 0)
 		return (ZERR_INVAL);
+
+memset(status_header, 1, STATUS_HEADER_SIZE);
 
 	dev->dev_fd = fd;
 	zio_lcd_ssd1306_init(dev);
@@ -811,6 +894,6 @@ zdev_t zio_lcd_ssd1306_device =
 	/* op */
 	{ zio_lcd_ssd1306_open, NULL, zio_lcd_ssd1306_write, NULL, zio_lcd_ssd1306_close, zio_lcd_ssd1306_poll },
 	/* param */
-	{ /* freq_min */ 1, /* freq_max */ 4, 0.02, PIN_NULL }
+	{ /* freq_min */ 0.5, /* freq_max */ 2, 0.02, PIN_NULL }
 };
 

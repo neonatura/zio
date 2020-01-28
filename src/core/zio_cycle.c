@@ -2,6 +2,9 @@
 
 #include "zio.h"
 
+uint64_t cycle_ticks;
+uint64_t cycle_ops;
+
 void zio_dev_cycle(zdev_t *dev)
 {
 	uint64_t now = zio_time();
@@ -20,6 +23,7 @@ void zio_dev_cycle(zdev_t *dev)
 				zio_notify(dev);
 			else
 				zio_debug(dev);
+			cycle_ops++;
 		} else if (err != ZERR_AGAIN) {
 			zio_error(dev, err, "timer");
 		}
@@ -31,6 +35,8 @@ void zio_dev_cycle(zdev_t *dev)
 void zio_cycle(void)
 {
 	zdev_t *dev;
+
+	cycle_ticks++;
 
 	for (dev = zio_device_table; dev; dev = dev->next) {
 		if (!is_zio_dev_on(dev))
