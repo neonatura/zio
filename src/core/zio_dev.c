@@ -248,6 +248,10 @@ double zio_dvalue_avg(zdev_t *dev, int max_cycles)
 	return (avg);
 }
 
+uint8_t zio_data(zdev_t *dev)
+{
+	return (dev->fifo.value);
+}
 
 int zio_dev_null(zdev_t *dev)
 {
@@ -428,6 +432,32 @@ int zio_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	return (0);
 }
 
+int zio_write_r(zdev_t *dev, uint8_t *data, size_t data_len, int rep_no)
+{
+	char tbuf[256];
+	time_t now;
+	size_t len;
+	int err;
+	int i;
+
+	if (!is_zio_dev_on(dev))
+		return (ZERR_AGAIN);
+
+
+        if (!dev->op.write)
+		return (ZERR_INVAL);
+
+	for (len = 0; len < data_len; len++) {
+		for (i = 0; i < rep_no; i++) {
+			err = (*dev->op.write)(dev, &data[len], 1);
+			if (err)
+				return (err);
+		}
+	}
+
+	return (0);
+}
+
 void zio_error(zdev_t *dev, int err, char *tag)
 {
 	zdev_t *debug;
@@ -448,5 +478,45 @@ uint64_t zio_fifo_span(zdev_t *dev)
 	if (!dev)
 		return (0);
 	return (zio_time() - dev->fifo.value_stamp);
+}
+
+int zio_digital_read(int pin)
+{
+	if (pin >= 80 && pin <= 95) {
+		zio_sc16is_pin_get(pin);
+		return;
+	}
+
+#ifdef HAVE_LIBWIRINGPI
+	return (digitalRead(pin));
+#endif
+
+	return (0);
+}
+
+void zio_digital_write(int pin, int val)
+{
+
+	if (pin >= 80 && pin <= 95) {
+		zio_sc16is_pin_set(pin, val);
+		return;
+	}
+
+#ifdef HAVE_LIBWIRINGPI
+	digitalWrite(pin, val);
+#endif
+}
+
+void zio_digital_mode(int pin, int mode)
+{
+
+	if (pin >= 80 && pin <= 95) {
+		zio_sc16is_pin_mode(pin, mode);
+		return;
+	}
+
+#ifdef HAVE_LIBWIRINGPI
+	pinMode(pin, mode);
+#endif
 }
 

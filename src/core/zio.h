@@ -57,6 +57,7 @@
 #define ZDEV_HUMIDITY 8 /* Humidity */
 #define ZDEV_MOTION 9 
 #define ZDEV_TIME 10
+#define ZDEV_EMOTE 11
 
 
 #define ZMOD_NULL 0
@@ -72,6 +73,7 @@
 #define DEVF_DUMMY (1 << 4)
 #define DEVF_MODULE (1 << 5)
 #define DEVF_SLEEP (1 << 6)
+#define DEVF_I2C (1 << 7)
 
 #define ZIO_FMT_FAHRENHEIT 1000
 #define ZIO_FMT_KELVIN 1001
@@ -211,10 +213,13 @@ typedef struct zio_gyro_t
 #include "dev/dev_led.h"
 #include "dev/dev_lcd_ssd1306.h"
 #include "dev/dev_lcd_twi1602.h"
+#include "dev/dev_ldr.h"
 #include "dev/dev_log.h"
+#include "dev/dev_lux.h"
 #include "dev/dev_motion.h"
 #include "dev/dev_rtc.h"
 #include "dev/dev_rtemp.h"
+#include "dev/dev_sc16is.h"
 #include "dev/dev_speaker.h"
 #include "dev/dev_time.h"
 #include "dev/dev_therm.h"

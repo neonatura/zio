@@ -7,11 +7,18 @@ extern zdev_t zio_thermistor0_device;
 extern zdev_t zio_thermistor1_device;
 extern zdev_t zio_thermistor2_device;
 extern zdev_t zio_thermistor3_device;
+extern zdev_t zio_thermistor4_device;
+extern zdev_t zio_thermistor5_device;
+extern zdev_t zio_thermistor6_device;
 
 #define REGISTER_THERMISTOR0_DEVICE() (zio_dev_register(&zio_thermistor0_device))
 #define REGISTER_THERMISTOR1_DEVICE() (zio_dev_register(&zio_thermistor1_device))
 #define REGISTER_THERMISTOR2_DEVICE() (zio_dev_register(&zio_thermistor2_device))
 #define REGISTER_THERMISTOR3_DEVICE() (zio_dev_register(&zio_thermistor3_device))
+
+#define REGISTER_THERMISTOR4_DEVICE() (zio_dev_register(&zio_thermistor4_device))
+#define REGISTER_THERMISTOR5_DEVICE() (zio_dev_register(&zio_thermistor5_device))
+#define REGISTER_THERMISTOR6_DEVICE() (zio_dev_register(&zio_thermistor6_device))
 
 #define REGISTER_THERMISTOR_DEVICE REGISTER_THERMISTOR0_DEVICE
 

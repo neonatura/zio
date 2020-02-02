@@ -4,7 +4,10 @@
 #ifndef __ZIO_AUDIO_H__
 #define __ZIO_AUDIO_H__
 
-#define ZIO_AUDIO_FREQ 32
+//#define ZIO_AUDIO_FREQ 32
+
+#define ZIO_AUDIO_32MS 160
+#define ZIO_AUDIO_64MS 320
 
 #define NOTE_NONE 0
 #define NOTE_TERM -1

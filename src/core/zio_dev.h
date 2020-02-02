@@ -74,6 +74,14 @@ void zio_notify_text(zdev_t *dev, char *text);
 
 zdev_t *zio_mod_get(int module, int type);
 
+int zio_write_r(zdev_t *dev, uint8_t *data, size_t data_len, int rep_no);
+
+void zio_digital_mode(int pin, int mode);
+
+void zio_digital_write(int pin, int val);
+
+int zio_digital_read(int pin);
+
 
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \
@@ -84,9 +92,6 @@ zdev_t *zio_mod_get(int module, int type);
 
 #define ANALOG_READ(_pin) analogRead(ANALOG_PIN_BASE+(_pin))
 #define ANALOG_WRITE(_pin, _val) analogWrite(ANALOG_PIN_BASE+(_pin), (_val))
-#define DIGITAL_READ(_pin) digitalRead(_pin)
-#define DIGITAL_WRITE(_pin, _val) digitalWrite((_pin), (_val))
-#define PIN_MODE(_pin, _mode) pinMode((_pin), (_mode))
 #define ZIO_I2C_INIT(_addr) wiringPiI2CSetup(_addr)
 #define ZIO_I2C_READ(_dev) wiringPiI2CRead((_dev)->dev_fd)
 #define ZIO_I2C_WRITE(_dev, _val) wiringPiI2CWrite((_dev)->dev_fd, (_val))
@@ -116,9 +121,6 @@ zdev_t *zio_mod_get(int module, int type);
 
 #define ANALOG_READ(_pin) 0
 #define ANALOG_WRITE(_pin, _val)
-#define DIGITAL_READ(_pin) 0
-#define DIGITAL_WRITE(_pin, _val)
-#define PIN_MODE(_pin, _mode)
 #define ZIO_I2C_INIT(_addr) 0
 #define ZIO_I2C_READ(_dev) 0
 #define ZIO_I2C_WRITE(_dev, _val) 0
@@ -130,9 +132,27 @@ zdev_t *zio_mod_get(int module, int type);
 
 #endif
 
+#define PIN_MODE(_pin, _mode) \
+	(zio_digital_mode((_pin), (_mode)))
+
+#define DIGITAL_WRITE(_pin, _val) \
+	 (zio_digital_write((_pin), (_val)))
+
+#define DIGITAL_READ(_pin) \
+	(zio_digital_read(_pin))
+
 #define REGISTER_PCF8591_DEVICE() \
 	PCF8591_INIT(DEFAULT_PCF8591_ADDRESS)
 
+#ifndef INT_EDGE_FALLING
+#define INT_EDGE_FALLING	1
+#endif
+#ifndef PWM_OUTPUT
+#define PWM_OUTPUT		 2
+#endif
+#ifndef PWM_MODE_MS
+#define PWM_MODE_MS		0
+#endif
 
 #endif /* ndef __ZIO_DEV_H__ */
 

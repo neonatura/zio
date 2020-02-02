@@ -2,15 +2,17 @@
  
 #define BCOEFFICIENT 3950
 #define NOMINAL_TEMPERATURE 25
-#define NOMINAL_RESISTANCE 22000
-#define SERIES_RESISTANCE 6700 
+#define NOMINAL_RESISTANCE 10000
+//#define NOMINAL_RESISTANCE 22000
+#define SERIES_RESISTANCE 10000
+//#define SERIES_RESISTANCE 6700 
 
 #include "zio.h"
 
 int zio_thermistor_open(zdev_t *dev)
 {
-	PIN_MODE(dev->def_pin, INPUT );
 	zio_dev_on(dev);
+	return (0);
 }
 
 static double _calc_temp(double Resistance)
@@ -84,41 +86,81 @@ int zio_thermistor_close(zdev_t *dev)
 
 zdev_t zio_thermistor0_device =
 {
-        "atemp0", PIN_A0, 1, /* contoller: analog temperature */
+        "atemp0", PIN_A1, 1, /* contoller: analog temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
 };
 
 zdev_t zio_thermistor1_device =
 {
-        "atemp1", PIN_A1, 1, /* contoller: analog temperature */
+        "atemp1", PIN_A2, 1, /* contoller: analog temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
 };
 
 zdev_t zio_thermistor2_device =
 {
-        "atemp2", PIN_A2, 1, /* contoller: analog temperature */
+        "atemp2", PIN_A3, 1, /* contoller: analog temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
 };
 
 zdev_t zio_thermistor3_device =
 {
-        "atemp3", PIN_A3, 1, /* contoller: analog temperature */
+        "atemp3", PIN_A4, 1, /* contoller: analog temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
         { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
         /* param */
-        { /* freq_min */ 1, /* freq_max */ 10, 0.02, PIN_NULL }
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
+};
+
+zdev_t zio_thermistor4_device =
+{
+        "atemp4", PIN_A5, 1, /* contoller: analog temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
+        /* op */
+        { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
+        /* param */
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
+};
+
+zdev_t zio_thermistor5_device =
+{
+        "atemp5", PIN_A6, 1, /* contoller: analog temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
+        /* op */
+        { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
+        /* param */
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
+};
+
+zdev_t zio_thermistor6_device =
+{
+        "atemp6", PIN_A7, 1, /* contoller: analog temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
+        /* op */
+        { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
+        /* param */
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
+};
+
+zdev_t zio_thermistor7_device =
+{
+        "atemp7", PIN_A8, 1, /* contoller: analog temperature */
+        ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
+        /* op */
+        { zio_thermistor_open, zio_thermistor_read, NULL, zio_thermistor_print, zio_thermistor_close, zio_thermistor_poll },
+        /* param */
+        { /* freq_min */ 1, /* freq_max */ 10, 0.002, PIN_NULL }
 };
 

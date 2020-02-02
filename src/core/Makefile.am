@@ -18,10 +18,14 @@ zio_sources = \
 	$(srcdir)/dev/dev_lcd_ssd1306.c \
 	$(srcdir)/dev/dev_lcd_twi1602.c \
 	$(srcdir)/dev/dev_led.c \
+	$(srcdir)/dev/dev_ldr.c \
 	$(srcdir)/dev/dev_log.c \
+	$(srcdir)/dev/dev_lux.c \
+	$(srcdir)/dev/dev_mood.c \
 	$(srcdir)/dev/dev_motion.c \
 	$(srcdir)/dev/dev_rtc.c \
 	$(srcdir)/dev/dev_rtemp.c \
+	$(srcdir)/dev/dev_sc16is.c \
 	$(srcdir)/dev/dev_speaker.c \
 	$(srcdir)/dev/dev_time.c \
 	$(srcdir)/dev/dev_therm.c \
@@ -47,10 +51,14 @@ zio_headers = \
 	$(srcdir)/dev/dev_lcd_ssd1306.h \
 	$(srcdir)/dev/dev_lcd_twi1602.h \
 	$(srcdir)/dev/dev_led.h \
+	$(srcdir)/dev/dev_ldr.h \
 	$(srcdir)/dev/dev_log.h \
+	$(srcdir)/dev/dev_lux.h \
+	$(srcdir)/dev/dev_mood.h \
 	$(srcdir)/dev/dev_motion.h \
 	$(srcdir)/dev/dev_rtc.h \
 	$(srcdir)/dev/dev_rtemp.h \
+	$(srcdir)/dev/dev_sc16is.h \
 	$(srcdir)/dev/dev_speaker.h \
 	$(srcdir)/dev/dev_time.h \
 	$(srcdir)/dev/dev_therm.h \

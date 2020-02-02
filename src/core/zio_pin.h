@@ -27,6 +27,32 @@
 #define PIN_26 26
 #define PIN_27 27
 
+/* 
+ * SC16IS750 UART I2C 0x4c (A0 HIGH, A1 LOW) 
+ *   8 digital I/O pins
+ */ 
+#define PIN_80 80
+#define PIN_81 81
+#define PIN_82 82
+#define PIN_83 83
+#define PIN_84 84
+#define PIN_85 85
+#define PIN_86 86
+#define PIN_87 87
+
+/* 
+ * SC16IS750 UART I2C 0x4d (A0/A1 LOW)
+ *   8 digital I/O pins
+ */
+#define PIN_88 88
+#define PIN_89 89
+#define PIN_90 90
+#define PIN_91 91
+#define PIN_92 92
+#define PIN_93 93
+#define PIN_94 94
+#define PIN_95 95
+
 /* analog pins */
 #define PIN_A0 100 /* RW */
 #define PIN_A1 101 /* R */
@@ -58,6 +84,7 @@
 
 /* pwm modulation */
 #define PIN_PWM0 PIN_1
+#define PIN_PWM1 PIN_23
 
 /* uart serial */
 #define PIN_TXD PIN_15
@@ -69,19 +96,13 @@
 #define PIN_SR501_2 PIN_3
 
 /* soft-pwm applied to a transistor. */
-#define PIN_SPWM0 PIN_4
-#define PIN_SPWM1 PIN_5
-#define PIN_SPWM2 PIN_6
+#define PIN_PWM2 PIN_4
+#define PIN_PWM3 PIN_5
+#define PIN_PWM4 PIN_6
 
 /* pulled up to trigger relay */
-#define PIN_RELAY0 PIN_4
-#define PIN_RELAY1 PIN_5
-#define PIN_RELAY2 PIN_6
-
-#define PIN_COOL_PWR PIN_SPWM0
-#define PIN_LIGHT_PWR PIN_RELAY1
-#define PIN_PUMP_PWR PIN_RELAY2
-//#define PIN_HEAT_PWR PIN_RELAY3
+#define PIN_RELAY0 PIN_21
+#define PIN_RELAY1 PIN_22
 
 /* [soft] pwm audio output */
 #define PIN_SPEAKER PIN_7
@@ -123,6 +144,9 @@
 
 #else
 
+#define PIN_PWM0 PIN_NULL
+#define PIN_PWM1 PIN_NULL
+
 #define PIN_DHT0 PIN_NULL
 #define PIN_DHT1 PIN_NULL
 #define PIN_DHT0_PWR PIN_NULL
@@ -156,6 +180,13 @@
 #define PIN_LED PIN_LED0
 #define PIN_LED_RX PIN_LED0
 #define PIN_LED_TX PIN_LED1
+
+#define PIN_COOL_PWR PIN_PWM2
+#define PIN_HEAT_PWR PIN_PWM3
+
+#define PIN_LIGHT_PWR PIN_RELAY0
+#define PIN_PUMP_PWR PIN_RELAY1
+
 
 void zio_pin_on(int pin);
 

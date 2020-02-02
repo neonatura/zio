@@ -7,4 +7,8 @@
 
 #define ZERR_INVAL -22
 
+#define ZERR_OVERFLOW -75
+
+#define ZERR_OPNOTSUPP -95
+
 #endif /* ndef __ZIO_ERROR_H__ */
