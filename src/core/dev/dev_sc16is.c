@@ -33,6 +33,11 @@
 #define SC16IS750_REG_EFCR (0X0F << 3)
 #define SC16IS750_REG_DLL (0x00 << 3)
 #define SC16IS750_REG_DLH (0X01 << 3)
+#define SC16IS750_REG_EFR (0X02 << 3)
+#define SC16IS750_REG_XON1 (0X04 << 3)
+#define SC16IS750_REG_XON2 (0X05 << 3)
+#define SC16IS750_REG_XOFF1  (0X06 << 3)
+#define SC16IS750_REG_XOFF2 (0X07 << 3)
 
 zdev_t *zio_sc16is_dev(int pin)
 {
@@ -167,16 +172,17 @@ int zio_sc16is_read(zdev_t *dev)
 	if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
 		return (ZERR_OVERFLOW);
 
-	if ((REG_GET(fd, SC16IS750_REG_LSR) & 0x1) == 0)
+	if ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) == 0)
 		return (ZERR_AGAIN); /* nothing to read */
 
 	do {
-		dev->fifo.value[dev->fifo.value_len] = REG_GET(fd, SC16IS750_REG_RHR);
+		dev->fifo.value[dev->fifo.value_len] = 
+			REG_GET(dev->dev_fd, SC16IS750_REG_RHR);
 		dev->fifo.value_len++;
 
 		if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
 			break;
-	} while (REG_GET(fd, SC16IS750_REG_LSR) & 0x1 != 0);
+	} while (REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1 != 0);
 
 	return (0);
 }
@@ -217,8 +223,8 @@ int zio_sc16is_ping(zdev_t *dev)
 	uint8_t reg;
 	int ok;
 
-	REG_SET(fd, SC16IS750_REG_SPR, 0x42);
-	ok = REG_GET(fd, SC16IS750_REG_SPR);
+	REG_SET(dev->dev_fd, SC16IS750_REG_SPR, 0x42);
+	ok = REG_GET(dev->dev_fd, SC16IS750_REG_SPR);
 	if (ok != 0x42)
 		return (FALSE);
 

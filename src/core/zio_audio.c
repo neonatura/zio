@@ -20,34 +20,37 @@ static const uint16_t _negative_beep_samples[NEGATIVE_BEEP_SAMPLES] = {
     NOTE_F2, NOTE_F2, 0, 0, NOTE_F2, NOTE_F2
 };
 
-#define POSITIVE_BEEP_SAMPLES 28
+//#define POSITIVE_BEEP_SAMPLES 28
+#define POSITIVE_BEEP_SAMPLES 17
 static const uint16_t _positive_beep_samples[POSITIVE_BEEP_SAMPLES] = {
+#if 0
         NOTE_E4, NOTE_E4, NOTE_E4,
         NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G3,
         0, 0,
+#endif
 
         NOTE_C4, NOTE_G3, NOTE_E3,
         NOTE_A3, NOTE_B3, NOTE_B3, NOTE_A3,
         NOTE_G3, NOTE_E4, NOTE_G4, NOTE_A4,
-        NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3,
-        0, 0
+        NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3
+//        0, 0
 };
 
-#define INTRO_SAMPLES 38
+//#define INTRO_SAMPLES 38
+#define INTRO_SAMPLES 9
 static const uint16_t _intro_samples[INTRO_SAMPLES] = {
-	NOTE_A4, NOTE_A4, NOTE_A4, NOTE_A4, NOTE_A4, NOTE_A4,
-	0, 0,
+	NOTE_A4, //NOTE_A4, NOTE_A4, NOTE_A4, NOTE_A4, NOTE_A4, 0, 0,
 
-	NOTE_AS4, NOTE_AS4, NOTE_AS4,
-	NOTE_A3, NOTE_A3, NOTE_A3, NOTE_A3, NOTE_A3, NOTE_A3,
-	0, 0,
+	NOTE_AS4, //NOTE_AS4, NOTE_AS4,
+	NOTE_A3, //NOTE_A3, NOTE_A3, 
+	NOTE_A3, //NOTE_A3, NOTE_A3, 0, 0,
 
-	NOTE_G3, NOTE_G3,NOTE_G3,
-	NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4, NOTE_G4,
-	0, 0,
+	NOTE_G3, //NOTE_G3,NOTE_G3,
+	NOTE_G4, //NOTE_G4, NOTE_G4,
+	NOTE_G4, //NOTE_G4, NOTE_G4, 0, 0,
 
-	NOTE_A5, NOTE_A5, NOTE_A5, NOTE_A5, NOTE_A5, NOTE_A5,
-	0, 0,
+	NOTE_A5, //NOTE_A5, NOTE_A5,
+	NOTE_A5 //NOTE_A5, NOTE_A5, 0, 0,
 };
 
 int zio_audio_intro(void)
@@ -57,7 +60,7 @@ int zio_audio_intro(void)
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 
 	return (zio_write16_r(mod,
-		(uint8_t *)_intro_samples, INTRO_SAMPLES*2, ZIO_AUDIO_32MS));
+		(uint8_t *)_intro_samples, INTRO_SAMPLES*2, ZIO_AUDIO_64MS));
 }
 
 int zio_beep(void)

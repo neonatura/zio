@@ -13,5 +13,7 @@ extern zdev_t zio_dht2_device;
 
 #define REGISTER_DHT_DEVICE REGISTER_DHT0_DEVICE
 
+double zio_dht_humidity(void);
+
 #endif /* ndef __DEV_DHT_H__ */
 

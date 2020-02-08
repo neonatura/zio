@@ -9,6 +9,8 @@
 
 #define ZERR_OVERFLOW -75
 
+#define ZERR_ILSEQ -84
+
 #define ZERR_OPNOTSUPP -95
 
 #endif /* ndef __ZIO_ERROR_H__ */

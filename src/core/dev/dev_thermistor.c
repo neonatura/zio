@@ -40,7 +40,7 @@ int zio_thermistor_read(zdev_t *dev)
 	if (val == 0.0 || val == 255.0)
 		return (ZERR_AGAIN);
 
-	volt = 3.3 / 255 * val;
+//	volt = 3.3 / 255 * val;
 
 	r = (255.0 / (255 - val)) - 1 + 0.001;
 	r = SERIES_RESISTANCE / r;

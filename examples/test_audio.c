@@ -21,17 +21,20 @@ int main(int argc, char *argv[])
 	REGISTER_SPEAKER_DEVICE();
 	REGISTER_AUDIO_DEVICE();
 
-	zio_audio_intro();
+//	zio_audio_intro();
 
-#if 0
-	zio_beep();
+
+//	zio_audio_dtalk("hello world", strlen("hello world"));
+
+
+int i;
+	for (i = 0; i < 20000; i++) {
+		usleep(1000);
+		zio_cycle();
+	}
+//	zio_beep_negative();
+//	zio_beep();
 	zio_beep_positive();
-#endif
-
-	zio_audio_dtalk("hello world", strlen("hello world"));
-
-	zio_beep_negative();
-
 	zio_cycle_loop();
 
 	return (0);

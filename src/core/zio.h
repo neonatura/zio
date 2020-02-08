@@ -41,10 +41,10 @@
 #define MIN(a,b) ((a<b) ? a : b)
 #endif
 
-#define MAX_VALUE_BUFFER_SIZE 4096
-#define MAX_VALUE_DOUBLE_SIZE 512
-#define MAX_VALUE_I32_SIZE 1024
-#define MAX_VALUE_I64_SIZE 512
+#define MAX_VALUE_BUFFER_SIZE 16384
+#define MAX_VALUE_DOUBLE_SIZE 2048
+#define MAX_VALUE_I32_SIZE 4096
+#define MAX_VALUE_I64_SIZE 2048
 
 #define ZDEV_NULL 0
 #define ZDEV_LOG 1
@@ -58,6 +58,7 @@
 #define ZDEV_MOTION 9 
 #define ZDEV_TIME 10
 #define ZDEV_EMOTE 11
+#define ZDEV_AIR 12
 
 
 #define ZMOD_NULL 0
@@ -195,6 +196,7 @@ typedef struct zio_gyro_t
 
 
 #include "zio_audio.h"
+#include "zio_ctl.h"
 #include "zio_cycle.h"
 #include "zio_dev.h"
 #include "zio_error.h"
@@ -204,6 +206,7 @@ typedef struct zio_gyro_t
 #include "zio_mod.h"
 #include "zio_pin.h"
 #include "zio_time.h"
+#include "dev/dev_air.h"
 #include "dev/dev_audio.h"
 #include "dev/dev_debug.h"
 #include "dev/dev_dht.h"
@@ -220,6 +223,7 @@ typedef struct zio_gyro_t
 #include "dev/dev_rtc.h"
 #include "dev/dev_rtemp.h"
 #include "dev/dev_sc16is.h"
+#include "dev/dev_sgp30.h"
 #include "dev/dev_speaker.h"
 #include "dev/dev_time.h"
 #include "dev/dev_therm.h"

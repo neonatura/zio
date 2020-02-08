@@ -82,6 +82,8 @@ void zio_digital_write(int pin, int val);
 
 int zio_digital_read(int pin);
 
+int zio_write16_r(zdev_t *dev, uint8_t *data, size_t data_len, size_t rep_len);
+
 
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \

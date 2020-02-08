@@ -95,7 +95,7 @@ zdev_t zio_led0_device =
 	/* op */
 	{ zio_led_open, NULL, zio_led_write, NULL, zio_led_close, zio_led_poll },
 	/* param */
-	{ /* freq_min */ 0.06, /* freq_max */ 0.12, 0.002, PIN_NULL }
+	{ /* freq_min */ 0.1, /* freq_max */ 0.5, 0.002, PIN_NULL }
 };
 
 zdev_t zio_led1_device =
@@ -105,6 +105,6 @@ zdev_t zio_led1_device =
 	/* op */
 	{ zio_led_open, NULL, zio_led_write, NULL, zio_led_close, zio_led_poll },
 	/* param */
-	{ /* freq_min */ 0.06, /* freq_max */ 0.12, 0.002, PIN_NULL }
+	{ /* freq_min */ 0.1, /* freq_max */ 0.5, 0.002, PIN_NULL }
 };
 

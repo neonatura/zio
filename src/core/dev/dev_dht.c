@@ -3,6 +3,8 @@
 #include "zio.h"
 
 #define MAX_DHT_TIMINGS 85
+
+static double _dht_humidity;
  
 int zio_dht_open(zdev_t *dev)
 {
@@ -72,6 +74,9 @@ int zio_dht_read(zdev_t *dev)
 			c = -c;
 		}
 
+		/* retain humidity level */
+		_dht_humidity = h;
+
 		/* store last obtained value. */
 		zio_dvalue_set(dev, c);
 		return (0);
@@ -117,6 +122,11 @@ int zio_dht_print(zdev_t *dev, int mode, void *retbuf)
 int zio_dht_close(zdev_t *dev)
 {
 	zio_dev_off(dev);
+}
+
+double zio_dht_humidity(void)
+{
+	return (_dht_humidity);
 }
 
 zdev_t zio_dht0_device =

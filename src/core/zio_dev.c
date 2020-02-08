@@ -248,7 +248,7 @@ double zio_dvalue_avg(zdev_t *dev, int max_cycles)
 	return (avg);
 }
 
-uint8_t zio_data(zdev_t *dev)
+uint8_t *zio_data(zdev_t *dev)
 {
 	return (dev->fifo.value);
 }
@@ -299,8 +299,10 @@ int zio_dev_register(zdev_t *dev)
 	dev->stat.freq = MAX(HERTZ, dev->stat.freq);
 
 	err = zio_dev_init(dev);
-	if (err)
+	if (err) {
+		zio_error(dev, err, "init");
 		return (err);
+	}
 
 	zio_notify_text(dev, "init");
 	return (0);
@@ -428,6 +430,32 @@ int zio_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	err = (*dev->op.write)(dev, data, data_len);
 	if (err)
 		return (err);
+
+	return (0);
+}
+
+int zio_write16_r(zdev_t *dev, uint8_t *data, size_t data_len, size_t rep_len)
+{
+	uint16_t *raw = (uint16_t *)data;
+	size_t of;
+	int err;
+	int i;
+
+	if (!is_zio_dev_on(dev))
+		return (ZERR_AGAIN);
+
+fprintf(stderr, "DEBUG: zio_write16_r: <%d bytes>\n", rep_len * data_len);
+
+        if (!dev->op.write)
+		return (ZERR_INVAL);
+
+	for (of = 0; of < data_len; of += 2) {
+		for (i = 0; i < rep_len; i++) {
+			err = (*dev->op.write)(dev, &data[of], 2);
+			if (err)
+				return (err);
+		}
+	}
 
 	return (0);
 }
