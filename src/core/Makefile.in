@@ -131,11 +131,12 @@ libzio_a_LIBADD =
 am__objects_1 = libzio_a-zio_audio.$(OBJEXT) \
 	libzio_a-zio_ctl.$(OBJEXT) libzio_a-zio_cycle.$(OBJEXT) \
 	libzio_a-zio_error.$(OBJEXT) libzio_a-zio_dev.$(OBJEXT) \
-	libzio_a-zio_gps.$(OBJEXT) libzio_a-zio_mod.$(OBJEXT) \
-	libzio_a-zio_pin.$(OBJEXT) libzio_a-zio_time.$(OBJEXT) \
-	libzio_a-dev_air.$(OBJEXT) libzio_a-dev_audio.$(OBJEXT) \
-	libzio_a-dev_debug.$(OBJEXT) libzio_a-dev_dht.$(OBJEXT) \
-	libzio_a-dev_dummy_temp.$(OBJEXT) libzio_a-dev_itemp.$(OBJEXT) \
+	libzio_a-zio_mod.$(OBJEXT) libzio_a-zio_pin.$(OBJEXT) \
+	libzio_a-zio_time.$(OBJEXT) libzio_a-dev_air.$(OBJEXT) \
+	libzio_a-dev_audio.$(OBJEXT) libzio_a-dev_debug.$(OBJEXT) \
+	libzio_a-dev_dht.$(OBJEXT) libzio_a-dev_dummy_temp.$(OBJEXT) \
+	libzio_a-dev_geo.$(OBJEXT) libzio_a-dev_gps.$(OBJEXT) \
+	libzio_a-dev_itemp.$(OBJEXT) libzio_a-dev_gtime.$(OBJEXT) \
 	libzio_a-dev_itime.$(OBJEXT) \
 	libzio_a-dev_lcd_ssd1306.$(OBJEXT) \
 	libzio_a-dev_lcd_twi1602.$(OBJEXT) libzio_a-dev_led.$(OBJEXT) \
@@ -338,7 +339,6 @@ zio_sources = \
 	$(srcdir)/zio_cycle.c \
 	$(srcdir)/zio_error.c \
 	$(srcdir)/zio_dev.c \
-	$(srcdir)/zio_gps.c \
 	$(srcdir)/zio_mod.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_time.c \
@@ -347,7 +347,10 @@ zio_sources = \
 	$(srcdir)/dev/dev_debug.c \
 	$(srcdir)/dev/dev_dht.c \
 	$(srcdir)/dev/dev_dummy_temp.c \
+	$(srcdir)/dev/dev_geo.c \
+	$(srcdir)/dev/dev_gps.c \
 	$(srcdir)/dev/dev_itemp.c \
+	$(srcdir)/dev/dev_gtime.c \
 	$(srcdir)/dev/dev_itime.c \
 	$(srcdir)/dev/dev_lcd_ssd1306.c \
 	$(srcdir)/dev/dev_lcd_twi1602.c \
@@ -374,7 +377,6 @@ zio_headers = \
 	$(srcdir)/zio_dev.h \
 	$(srcdir)/zio_dummy_temp.h \
 	$(srcdir)/zio_error.h \
-	$(srcdir)/zio_gps.h \
 	$(srcdir)/zio_mod.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_time.h \
@@ -383,7 +385,10 @@ zio_headers = \
 	$(srcdir)/dev/dev_debug.h \
 	$(srcdir)/dev/dev_dht.h \
 	$(srcdir)/dev/dev_dummy_temp.h \
+	$(srcdir)/dev/dev_geo.h \
+	$(srcdir)/dev/dev_gps.h \
 	$(srcdir)/dev/dev_itemp.h \
+	$(srcdir)/dev/dev_gtime.h \
 	$(srcdir)/dev/dev_itime.h \
 	$(srcdir)/dev/dev_lcd_ssd1306.h \
 	$(srcdir)/dev/dev_lcd_twi1602.h \
@@ -489,6 +494,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_dht.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_dummy_temp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_geo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_gps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_gtime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_itemp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_itime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-dev_lcd_ssd1306.Po@am__quote@
@@ -512,7 +520,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_cycle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_dev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_error.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_gps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_mod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_pin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzio_a-zio_time.Po@am__quote@
@@ -607,20 +614,6 @@ libzio_a-zio_dev.obj: $(srcdir)/zio_dev.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_dev.c' object='libzio_a-zio_dev.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_dev.obj `if test -f '$(srcdir)/zio_dev.c'; then $(CYGPATH_W) '$(srcdir)/zio_dev.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_dev.c'; fi`
-
-libzio_a-zio_gps.o: $(srcdir)/zio_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_gps.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_gps.Tpo -c -o libzio_a-zio_gps.o `test -f '$(srcdir)/zio_gps.c' || echo '$(srcdir)/'`$(srcdir)/zio_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_gps.Tpo $(DEPDIR)/libzio_a-zio_gps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_gps.c' object='libzio_a-zio_gps.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_gps.o `test -f '$(srcdir)/zio_gps.c' || echo '$(srcdir)/'`$(srcdir)/zio_gps.c
-
-libzio_a-zio_gps.obj: $(srcdir)/zio_gps.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_gps.obj -MD -MP -MF $(DEPDIR)/libzio_a-zio_gps.Tpo -c -o libzio_a-zio_gps.obj `if test -f '$(srcdir)/zio_gps.c'; then $(CYGPATH_W) '$(srcdir)/zio_gps.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_gps.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-zio_gps.Tpo $(DEPDIR)/libzio_a-zio_gps.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zio_gps.c' object='libzio_a-zio_gps.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-zio_gps.obj `if test -f '$(srcdir)/zio_gps.c'; then $(CYGPATH_W) '$(srcdir)/zio_gps.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zio_gps.c'; fi`
 
 libzio_a-zio_mod.o: $(srcdir)/zio_mod.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-zio_mod.o -MD -MP -MF $(DEPDIR)/libzio_a-zio_mod.Tpo -c -o libzio_a-zio_mod.o `test -f '$(srcdir)/zio_mod.c' || echo '$(srcdir)/'`$(srcdir)/zio_mod.c
@@ -734,6 +727,34 @@ libzio_a-dev_dummy_temp.obj: $(srcdir)/dev/dev_dummy_temp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_dummy_temp.obj `if test -f '$(srcdir)/dev/dev_dummy_temp.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_dummy_temp.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_dummy_temp.c'; fi`
 
+libzio_a-dev_geo.o: $(srcdir)/dev/dev_geo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_geo.o -MD -MP -MF $(DEPDIR)/libzio_a-dev_geo.Tpo -c -o libzio_a-dev_geo.o `test -f '$(srcdir)/dev/dev_geo.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_geo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_geo.Tpo $(DEPDIR)/libzio_a-dev_geo.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_geo.c' object='libzio_a-dev_geo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_geo.o `test -f '$(srcdir)/dev/dev_geo.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_geo.c
+
+libzio_a-dev_geo.obj: $(srcdir)/dev/dev_geo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_geo.obj -MD -MP -MF $(DEPDIR)/libzio_a-dev_geo.Tpo -c -o libzio_a-dev_geo.obj `if test -f '$(srcdir)/dev/dev_geo.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_geo.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_geo.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_geo.Tpo $(DEPDIR)/libzio_a-dev_geo.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_geo.c' object='libzio_a-dev_geo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_geo.obj `if test -f '$(srcdir)/dev/dev_geo.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_geo.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_geo.c'; fi`
+
+libzio_a-dev_gps.o: $(srcdir)/dev/dev_gps.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_gps.o -MD -MP -MF $(DEPDIR)/libzio_a-dev_gps.Tpo -c -o libzio_a-dev_gps.o `test -f '$(srcdir)/dev/dev_gps.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_gps.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_gps.Tpo $(DEPDIR)/libzio_a-dev_gps.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_gps.c' object='libzio_a-dev_gps.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_gps.o `test -f '$(srcdir)/dev/dev_gps.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_gps.c
+
+libzio_a-dev_gps.obj: $(srcdir)/dev/dev_gps.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_gps.obj -MD -MP -MF $(DEPDIR)/libzio_a-dev_gps.Tpo -c -o libzio_a-dev_gps.obj `if test -f '$(srcdir)/dev/dev_gps.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_gps.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_gps.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_gps.Tpo $(DEPDIR)/libzio_a-dev_gps.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_gps.c' object='libzio_a-dev_gps.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_gps.obj `if test -f '$(srcdir)/dev/dev_gps.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_gps.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_gps.c'; fi`
+
 libzio_a-dev_itemp.o: $(srcdir)/dev/dev_itemp.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_itemp.o -MD -MP -MF $(DEPDIR)/libzio_a-dev_itemp.Tpo -c -o libzio_a-dev_itemp.o `test -f '$(srcdir)/dev/dev_itemp.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_itemp.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_itemp.Tpo $(DEPDIR)/libzio_a-dev_itemp.Po
@@ -747,6 +768,20 @@ libzio_a-dev_itemp.obj: $(srcdir)/dev/dev_itemp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_itemp.c' object='libzio_a-dev_itemp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_itemp.obj `if test -f '$(srcdir)/dev/dev_itemp.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_itemp.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_itemp.c'; fi`
+
+libzio_a-dev_gtime.o: $(srcdir)/dev/dev_gtime.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_gtime.o -MD -MP -MF $(DEPDIR)/libzio_a-dev_gtime.Tpo -c -o libzio_a-dev_gtime.o `test -f '$(srcdir)/dev/dev_gtime.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_gtime.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_gtime.Tpo $(DEPDIR)/libzio_a-dev_gtime.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_gtime.c' object='libzio_a-dev_gtime.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_gtime.o `test -f '$(srcdir)/dev/dev_gtime.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_gtime.c
+
+libzio_a-dev_gtime.obj: $(srcdir)/dev/dev_gtime.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_gtime.obj -MD -MP -MF $(DEPDIR)/libzio_a-dev_gtime.Tpo -c -o libzio_a-dev_gtime.obj `if test -f '$(srcdir)/dev/dev_gtime.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_gtime.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_gtime.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzio_a-dev_gtime.Tpo $(DEPDIR)/libzio_a-dev_gtime.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/dev/dev_gtime.c' object='libzio_a-dev_gtime.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -c -o libzio_a-dev_gtime.obj `if test -f '$(srcdir)/dev/dev_gtime.c'; then $(CYGPATH_W) '$(srcdir)/dev/dev_gtime.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/dev/dev_gtime.c'; fi`
 
 libzio_a-dev_itime.o: $(srcdir)/dev/dev_itime.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzio_a_CFLAGS) $(CFLAGS) -MT libzio_a-dev_itime.o -MD -MP -MF $(DEPDIR)/libzio_a-dev_itime.Tpo -c -o libzio_a-dev_itime.o `test -f '$(srcdir)/dev/dev_itime.c' || echo '$(srcdir)/'`$(srcdir)/dev/dev_itime.c

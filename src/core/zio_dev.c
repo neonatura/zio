@@ -115,6 +115,7 @@ int zio_dev_on(zdev_t *dev)
 	}
 
 	dev->flags |= DEVF_POWER;
+	return (0);
 }
 
 int zio_dev_off(zdev_t *dev)
@@ -253,6 +254,51 @@ uint8_t *zio_data(zdev_t *dev)
 	return (dev->fifo.value);
 }
 
+static int stridx(const char *str, char ch)
+{
+  int i, len;
+  if (!str)
+    return (-1);
+  len =strlen(str);
+  for (i = 0; i < len; i++)
+    if (str[i] == ch)
+      return (i);
+  return (-1);
+}
+
+int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len)
+{
+	int idx;
+
+	memset(data, 0, data_len);
+
+	idx = stridx(dev->fifo.value, '\n');
+	if (idx == -1)
+		return (ZERR_AGAIN);
+
+	if (idx >= data_len)
+		return (ZERR_OVERFLOW);
+
+	/* extract to return buffer */
+	memcpy(data, dev->fifo.value, idx);
+
+	/* remove from device buffer */
+	idx++;
+	memmove(dev->fifo.value, dev->fifo.value + idx, dev->fifo.value_len - idx);
+	dev->fifo.value_len -= idx;
+
+	return (0);
+}
+
+void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len)
+{
+
+	data_len = MIN(data_len, MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len);
+	memcpy(dev->fifo.value + dev->fifo.value_len, data, data_len); 
+	dev->fifo.value_len += data_len;
+
+}
+
 int zio_dev_null(zdev_t *dev)
 {
 	return (0);
@@ -350,11 +396,14 @@ zdev_t *zio_mod_get(int module, int type)
 	return (zio_dev_get(module, type, DEVF_MODULE));
 }
 
-void zio_print(zdev_t *dev, int format, char *ret_buf)
+int zio_print(zdev_t *dev, int format, char *ret_buf)
 {
+	int err;
+
 	if (!dev->op.print)
-		return;
-	(*dev->op.print)(dev, 0, ret_buf);
+		return (0);
+
+	return ( (*dev->op.print)(dev, 0, ret_buf) );
 }
 
 void zio_debug(zdev_t *dev)
@@ -362,6 +411,7 @@ void zio_debug(zdev_t *dev)
 	zdev_t *debug;
 	char buf[256];
 	char buf2[256];
+	int err;
 
 	if (!dev->op.print)
 		return; /* n/a */
@@ -373,9 +423,12 @@ void zio_debug(zdev_t *dev)
 	memset(buf, 0, sizeof(buf));
 	memset(buf2, 0, sizeof(buf2));
 	if (dev->type == ZDEV_THERM)
-		zio_print(dev, fmt_therm, buf2); 
+		err = zio_print(dev, fmt_therm, buf2); 
 	else
-		zio_print(dev, 0, buf2); 
+		err = zio_print(dev, 0, buf2); 
+	if (err)
+		return;
+
 	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
 	zio_write(debug, buf, strlen(buf));
 }
@@ -385,6 +438,7 @@ void zio_notify(zdev_t *dev)
 	zdev_t *debug;
 	char buf[256];
 	char buf2[256];
+	int err;
 
 	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_LOG);
 	if (!debug)
@@ -392,10 +446,14 @@ void zio_notify(zdev_t *dev)
 
 	memset(buf, 0, sizeof(buf));
 	memset(buf2, 0, sizeof(buf2));
+
 	if (dev->type == ZDEV_THERM)
-		zio_print(dev, fmt_therm, buf2); 
+		err = zio_print(dev, fmt_therm, buf2); 
 	else
-		zio_print(dev, 0, buf2); 
+		err = zio_print(dev, 0, buf2); 
+	if (err)
+		return;
+
 	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
 	zio_write(debug, buf, strlen(buf));
 }
@@ -443,8 +501,6 @@ int zio_write16_r(zdev_t *dev, uint8_t *data, size_t data_len, size_t rep_len)
 
 	if (!is_zio_dev_on(dev))
 		return (ZERR_AGAIN);
-
-fprintf(stderr, "DEBUG: zio_write16_r: <%d bytes>\n", rep_len * data_len);
 
         if (!dev->op.write)
 		return (ZERR_INVAL);
@@ -546,5 +602,78 @@ void zio_digital_mode(int pin, int mode)
 #ifdef HAVE_LIBWIRINGPI
 	pinMode(pin, mode);
 #endif
+}
+
+int zio_uart_init(zdev_t *dev, int chan, int baud)
+{
+
+	if (chan == 0) {
+		return (serialOpen("/dev/ttyAMA0", baud));
+	}
+
+	/* SC16IS */
+	dev->flags |= DEVF_UART;
+#if 0
+	/* previously uart channel, and now i2c address. */
+	dev->def_pin = 80 + ((chan-1) * 8);
+	return (0);
+#endif
+	return (80 + ((chan-1) * 8));
+}
+
+int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
+{
+	zdev_t *uart_dev;
+	size_t data_len;
+	int of;
+
+	if (!(dev->flags & DEVF_UART)) {
+		int ch;
+		int of;
+
+		if (dev->dev_fd == 0)
+			return (ZERR_INVAL);
+
+		of = 0;
+		while (of < retdata_len) {
+			ch = serialGetchar(dev->dev_fd);
+			if (ch == -1)
+				break;
+
+			retdata[of] = (uint8_t)ch;
+			of++;	
+		}
+
+		return (of);
+	}
+
+	uart_dev = zio_sc16is_dev(dev->dev_fd);
+	if (!uart_dev)
+		return (ZERR_INVAL);
+
+	data_len = uart_dev->fifo.value_len;
+	for (of = 0; of < retdata_len && of < data_len; of++) {
+		retdata[of] = uart_dev->fifo.value[of];
+	}
+	if (of != 0) {
+		memmove(uart_dev->fifo.value, uart_dev->fifo.value + of,
+			uart_dev->fifo.value_len - of);
+		uart_dev->fifo.value_len -= of;
+	}
+
+	return (of);
+}
+
+zgeo_t *zio_geo_value(zdev_t *dev)
+{
+	zgeo_t *geo;
+
+        if (dev->fifo.value_len < sizeof(zgeo_t))
+                return (NULL);
+
+        geo = (zgeo_t *)(dev->fifo.value +
+		(dev->fifo.value_len - sizeof(zgeo_t)));
+
+	return (geo);
 }
 

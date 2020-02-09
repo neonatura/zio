@@ -6,7 +6,6 @@ zio_sources = \
 	$(srcdir)/zio_cycle.c \
 	$(srcdir)/zio_error.c \
 	$(srcdir)/zio_dev.c \
-	$(srcdir)/zio_gps.c \
 	$(srcdir)/zio_mod.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_time.c \
@@ -15,7 +14,10 @@ zio_sources = \
 	$(srcdir)/dev/dev_debug.c \
 	$(srcdir)/dev/dev_dht.c \
 	$(srcdir)/dev/dev_dummy_temp.c \
+	$(srcdir)/dev/dev_geo.c \
+	$(srcdir)/dev/dev_gps.c \
 	$(srcdir)/dev/dev_itemp.c \
+	$(srcdir)/dev/dev_gtime.c \
 	$(srcdir)/dev/dev_itime.c \
 	$(srcdir)/dev/dev_lcd_ssd1306.c \
 	$(srcdir)/dev/dev_lcd_twi1602.c \
@@ -42,7 +44,6 @@ zio_headers = \
 	$(srcdir)/zio_dev.h \
 	$(srcdir)/zio_dummy_temp.h \
 	$(srcdir)/zio_error.h \
-	$(srcdir)/zio_gps.h \
 	$(srcdir)/zio_mod.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_time.h \
@@ -51,7 +52,10 @@ zio_headers = \
 	$(srcdir)/dev/dev_debug.h \
 	$(srcdir)/dev/dev_dht.h \
 	$(srcdir)/dev/dev_dummy_temp.h \
+	$(srcdir)/dev/dev_geo.h \
+	$(srcdir)/dev/dev_gps.h \
 	$(srcdir)/dev/dev_itemp.h \
+	$(srcdir)/dev/dev_gtime.h \
 	$(srcdir)/dev/dev_itime.h \
 	$(srcdir)/dev/dev_lcd_ssd1306.h \
 	$(srcdir)/dev/dev_lcd_twi1602.h \

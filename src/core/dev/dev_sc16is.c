@@ -46,7 +46,7 @@ zdev_t *zio_sc16is_dev(int pin)
 
 	if (pin >= 80 && pin < 88) {
 		i2c_addr = 0x4c;
-	} else if (pin >= 80 && pin < 88) {
+	} else if (pin >= 88 && pin < 96) {
 		i2c_addr = 0x4d;
 	} else {
 		return (NULL);
@@ -133,11 +133,13 @@ int zio_sc16is_open(zdev_t *dev)
 		return (0);
 
 	fd = ZIO_I2C_INIT(dev->def_pin);
+	if (fd == -1)
+		return (ZERR_INVAL);
 
 	/* set baud */
 	REG_SET(fd, SC16IS750_REG_LCR, 0x80);
 	/* 9600 */
-	REG_SET(fd, SC16IS750_REG_DLL, 0x18);
+	REG_SET(fd, SC16IS750_REG_DLL, 96); /* 1.4 / 16 / 9600 */
 	REG_SET(fd, SC16IS750_REG_DLH, 0x0);
 	usleep(1);
 
@@ -182,7 +184,8 @@ int zio_sc16is_read(zdev_t *dev)
 
 		if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
 			break;
-	} while (REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1 != 0);
+	} while ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) != 0);
+
 
 	return (0);
 }
@@ -233,21 +236,21 @@ int zio_sc16is_ping(zdev_t *dev)
 
 zdev_t zio_sc16is_4c_device =
 {
-        "sc16is0", 0x4C, 0, /* sc16isXX driver */
-        ZDEV_AUDIO, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
+        "uart1", 0x4C, 0, /* sc16isXX driver */
+        ZDEV_UART, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
         /* op */
         { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll },
         /* param */
-        { /* freq_min */ 0.25, /* freq_max */ 0.75, 0, PIN_NULL }
+        { /* freq_min */ 0.05, /* freq_max */ 0.15, 0.001, PIN_NULL }
 };
 
 zdev_t zio_sc16is_4d_device =
 {
-        "sc16is1", 0x4D, 0, /* sc16isXX driver */
-        ZDEV_AUDIO, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
+        "uart2", 0x4D, 0, /* sc16isXX driver */
+        ZDEV_UART, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
         /* op */
         { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll },
         /* param */
-        { /* freq_min */ 0.25, /* freq_max */ 0.75, 0, PIN_NULL }
+        { /* freq_min */ 0.05, /* freq_max */ 0.15, 0.001, PIN_NULL }
 };
 

@@ -59,6 +59,7 @@
 #define ZDEV_TIME 10
 #define ZDEV_EMOTE 11
 #define ZDEV_AIR 12
+#define ZDEV_UART 13
 
 
 #define ZMOD_NULL 0
@@ -75,6 +76,7 @@
 #define DEVF_MODULE (1 << 5)
 #define DEVF_SLEEP (1 << 6)
 #define DEVF_I2C (1 << 7)
+#define DEVF_UART (1 << 8)
 
 #define ZIO_FMT_FAHRENHEIT 1000
 #define ZIO_FMT_KELVIN 1001
@@ -194,14 +196,19 @@ typedef struct zio_gyro_t
 	double accel_x, accel_y, accel_z;
 } zio_gyro_t;
 
+typedef struct zgeo_t
+{
+	double lat;
+	double lon;
+	double alt;
+	uint64_t stamp;
+} zgeo_t;
 
 #include "zio_audio.h"
 #include "zio_ctl.h"
 #include "zio_cycle.h"
 #include "zio_dev.h"
 #include "zio_error.h"
-#include "zio_geo.h"
-#include "zio_gps.h"
 #include "zio_i2c.h"
 #include "zio_mod.h"
 #include "zio_pin.h"
@@ -211,7 +218,10 @@ typedef struct zio_gyro_t
 #include "dev/dev_debug.h"
 #include "dev/dev_dht.h"
 #include "dev/dev_dummy_temp.h"
+#include "dev/dev_geo.h"
+#include "dev/dev_gps.h"
 #include "dev/dev_itemp.h"
+#include "dev/dev_gtime.h"
 #include "dev/dev_itime.h"
 #include "dev/dev_led.h"
 #include "dev/dev_lcd_ssd1306.h"

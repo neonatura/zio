@@ -89,5 +89,42 @@ void zio_mod_write(zdev_t *mod, uint8_t *data, size_t data_len)
 
 }
 
+/* todo: stratum */
+zgeo_t *zio_mod_geo_avg(zdev_t *mod)
+{
+	static zgeo_t ret_geo;
+	zdev_t *g_dev;
+	zgeo_t *geo;
+	double lat, lon;
+	double alt;
+	int tot;
+
+	tot = 0;
+	alt = 0;
+	lat = lon = 0;
+	for (g_dev = zio_device_table; g_dev; g_dev = g_dev->next) {
+		if (g_dev->flags & DEVF_MODULE)
+			continue;
+		if (g_dev->type != mod->type) // ZDEV_GEO
+			continue;
+
+		geo = zio_geo_value(g_dev);
+		if (!geo)
+			continue;
+
+		lat += geo->lat;
+		lon += geo->lon;
+		alt += geo->alt;
+		tot++;
+	}
+	if (tot == 0)
+		return (NULL);
+
+	memset(&ret_geo, 0, sizeof(ret_geo));
+	ret_geo.lat = lat / (double)tot;
+	ret_geo.lon = lon / (double)tot;
+	ret_geo.alt = alt / (double)tot;
+	return (&ret_geo);
+}
 
 
