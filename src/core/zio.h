@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <math.h>
 
 /* autoconf */
 #include "config.h"
@@ -81,6 +82,19 @@
 #define ZIO_FMT_FAHRENHEIT 1000
 #define ZIO_FMT_KELVIN 1001
 #define ZIO_FMT_CELCIUS 1002
+
+#define GRID_CELL_DIM(_grid) \
+	  (_grid)->cell_dim
+
+#define GRID_CELL_MAX(_grid) \
+	  (_grid)->cell_max
+
+#define GRID_OBJ(_grid, _x, _y) \
+	  (_grid)->plot[_x][_y].obj
+
+#define GRID_GEO(_grid, _x, _y) \
+	  &(_grid)->plot[_x][_y].geo
+
 
 struct zdev_t;
 
@@ -155,6 +169,46 @@ typedef struct zio_op_t
 	zio_reg_f intr; /* an interrupt event. */
 } zio_op_t;
 
+typedef struct zgeo_t
+{
+	double lat;
+	double lon;
+	double alt;
+	uint64_t stamp;
+} zgeo_t;
+
+typedef struct zobj_t
+{
+	uint64_t stamp;
+	uint64_t hashid; /* for remote identification. */
+	int id; /* unique obj number */
+	int res; /* resonance */
+	int rad; /* radius in meters */
+
+	struct zobj_t *next;
+} zobj_t;
+
+typedef struct zplot_t
+{
+	zgeo_t geo;
+	zobj_t *obj;
+} zplot_t;
+
+typedef struct zgrid_t
+{
+	zplot_t **plot;
+
+	/* offset of latitude and longitude for entire grid. */
+	double lat_off;
+	double lon_off;
+
+	/* geodetic dimensional length of a single X/Y cell. */
+	double cell_dim;
+
+	/* cell x/y size of grid */
+	uint32_t cell_max;
+} zgrid_t;
+
 typedef struct zdev_t
 {
 	/* A abreviated name of the device. */
@@ -187,6 +241,9 @@ typedef struct zdev_t
 	/* A posix file descriptor. */
 	uint32_t dev_fd;
 
+	/* cell grid 2d area object tracking. */
+	zgrid_t *grid;
+
 	struct zdev_t *next;
 } zdev_t;
 
@@ -196,21 +253,17 @@ typedef struct zio_gyro_t
 	double accel_x, accel_y, accel_z;
 } zio_gyro_t;
 
-typedef struct zgeo_t
-{
-	double lat;
-	double lon;
-	double alt;
-	uint64_t stamp;
-} zgeo_t;
+
 
 #include "zio_audio.h"
 #include "zio_ctl.h"
 #include "zio_cycle.h"
 #include "zio_dev.h"
 #include "zio_error.h"
+#include "zio_geo.h"
 #include "zio_i2c.h"
 #include "zio_mod.h"
+#include "zio_obj.h"
 #include "zio_pin.h"
 #include "zio_time.h"
 #include "dev/dev_air.h"

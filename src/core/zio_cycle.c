@@ -19,13 +19,20 @@ void zio_dev_cycle(zdev_t *dev)
 	if (dev->op.timer) {
 		err = (*dev->op.timer)(dev);
 		if (!err) {
-			if (dev->flags & DEVF_MODULE)
+			if (dev->flags & DEVF_MODULE) {
 				zio_notify(dev);
-			else
+			} else {
 				zio_debug(dev);
+				if ((dev->type != ZDEV_EMOTE) &&
+						!(dev->flags & DEVF_MODULE))
+					zio_mood_incr(dev);
+			}
 			cycle_ops++;
 		} else if (err != ZERR_AGAIN) {
 			zio_error(dev, err, "timer");
+			if ((dev->type != ZDEV_EMOTE) &&
+					!(dev->flags & DEVF_MODULE))
+				zio_mood_decr(dev);
 		}
 	}
 

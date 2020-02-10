@@ -5,6 +5,7 @@
 int zio_geo_open(zdev_t *dev)
 {
 
+
 	zio_dev_on(dev);
 	return (0);
 }
@@ -14,23 +15,35 @@ int zio_geo_read(zdev_t *dev)
 	zgeo_t *geo;
 
 	geo = zio_mod_geo_avg(dev);
-	if (geo)
+	if (geo) {
+		/* retain recent location as device's data payload. */
 		zio_data_append(dev, (uint8_t *)geo, sizeof(zgeo_t));
+
+		if (!dev->grid) {
+			/* initialize a grid to track the area. */
+			dev->grid = zio_grid_init(geo->lat, geo->lon);
+		}
+		if (dev->grid) {
+			/* plot self on grid */
+			zio_grid_plot(dev->grid, zio_obj_self(), geo->lat, geo->lon);
+		}
+	}
 
 	return (0);
 }
 
 int zio_geo_poll(zdev_t *dev)
 {
-        int err;
+	int err;
 
-        if (is_zio_dev_on(dev)) {
-                err = zio_geo_read(dev);
-                if (err)
-                        return (err);
-        }
+	if (!is_zio_dev_on(dev))
+		return (ZERR_INVAL);
 
-        return (0);
+	err = zio_geo_read(dev);
+	if (err)
+		return (err);
+
+	return (0);
 }
 
 int zio_geo_close(zdev_t *dev)

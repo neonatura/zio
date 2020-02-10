@@ -94,6 +94,10 @@ void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len);
 
 zgeo_t *zio_geo_value(zdev_t *dev);
 
+void zio_mood_incr(zdev_t *dev);
+
+void zio_mood_decr(zdev_t *dev);
+
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \
 	((_dev)->param.freq_max * 2)

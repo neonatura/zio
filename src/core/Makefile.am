@@ -5,8 +5,10 @@ zio_sources = \
 	$(srcdir)/zio_ctl.c \
 	$(srcdir)/zio_cycle.c \
 	$(srcdir)/zio_error.c \
+	$(srcdir)/zio_geo.c \
 	$(srcdir)/zio_dev.c \
 	$(srcdir)/zio_mod.c \
+	$(srcdir)/zio_obj.c \
 	$(srcdir)/zio_pin.c \
 	$(srcdir)/zio_time.c \
 	$(srcdir)/dev/dev_air.c \
@@ -44,7 +46,9 @@ zio_headers = \
 	$(srcdir)/zio_dev.h \
 	$(srcdir)/zio_dummy_temp.h \
 	$(srcdir)/zio_error.h \
+	$(srcdir)/zio_geo.h \
 	$(srcdir)/zio_mod.h \
+	$(srcdir)/zio_obj.h \
 	$(srcdir)/zio_pin.h \
 	$(srcdir)/zio_time.h \
 	$(srcdir)/dev/dev_air.h \

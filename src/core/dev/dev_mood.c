@@ -1,11 +1,15 @@
 /* Copyright 2018 Neo Natura */
 
 #include "zio.h"
+
+#define DEFAULT_MOOD_PERCENT 50.0
  
 int zio_mood_open(zdev_t *dev)
 {
 
 	zio_dev_on(dev);
+
+	zio_dvalue_set(dev, DEFAULT_MOOD_PERCENT);
 
 	return (0);
 }
@@ -57,7 +61,7 @@ zdev_t zio_mood_device =
 	/* op */
 	{ zio_mood_open, zio_mood_read, NULL, zio_mood_print, zio_mood_close, zio_mood_poll },
 	/* param */
-	{ /* freq_min */ 60, /* freq_max */ 120, 0, PIN_NULL }
+	{ /* freq_min */ 150, /* freq_max */ 300, 0, PIN_NULL }
 };
 
 

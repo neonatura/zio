@@ -2,9 +2,6 @@
 
 #include "zio.h"
 
-static double _zio_geo_latitude;
-static double _zio_geo_longitude;
-
 static char **nmea_split_var(char *text, int *idx_p)
 {
   static char *split_buf[16];
@@ -207,26 +204,6 @@ zgeo_t *zio_geo_parse_RMC(zdev_t *dev, char *text)
 
 	zio_geo_set(&ret_geo, lat, lon);
 	return (&ret_geo);
-}
-
-void zio_geo_latitude_set(double lat)
-{
-	_zio_geo_latitude = lat;
-}
-
-void zio_geo_longitude_set(double lon)
-{
-	_zio_geo_longitude = lon;
-}
-
-double zio_geo_latitude(void)
-{
-	return (_zio_geo_latitude);
-}
-
-double zio_geo_longitude(void)
-{
-	return (_zio_geo_longitude);
 }
 
 int zio_gps_parse(zdev_t *dev, char *text)

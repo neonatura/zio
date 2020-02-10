@@ -378,9 +378,11 @@ zdev_t *zio_dev_get_name(zdev_t *in_dev, const char *name)
 	zdev_t *dev;
 
 	for (dev = zio_device_table; dev; dev = dev->next) {
-		if (in_dev->module != ZMOD_NULL && 
-				dev->module != in_dev->module)
-			continue;
+		if (in_dev) {
+			if (in_dev->module != ZMOD_NULL && 
+					dev->module != in_dev->module)
+				continue;
+		}
 
 		if (0 == strcasecmp(dev->label, name)) {
 			/* matched criteria specified. */
@@ -668,12 +670,44 @@ zgeo_t *zio_geo_value(zdev_t *dev)
 {
 	zgeo_t *geo;
 
-        if (dev->fifo.value_len < sizeof(zgeo_t))
-                return (NULL);
+	if (dev->fifo.value_len < sizeof(zgeo_t))
+		return (NULL);
 
-        geo = (zgeo_t *)(dev->fifo.value +
-		(dev->fifo.value_len - sizeof(zgeo_t)));
+	geo = (zgeo_t *)(dev->fifo.value +
+			(dev->fifo.value_len - sizeof(zgeo_t)));
 
 	return (geo);
+}
+
+/* positively influence emotional mood. */
+void zio_mood_incr(zdev_t *dev)
+{
+	zdev_t *mod;
+	double per;
+
+	mod = zio_dev_get_name(dev, "mood");
+	if (!mod)
+		return;
+
+	per = zio_dvalue_get(mod);
+	per = MIN(99.9, per + 0.1);
+
+	zio_dvalue_set(mod, per);
+}
+
+/* negatively influence emotional mood. */
+void zio_mood_decr(zdev_t *dev)
+{
+	zdev_t *mod;
+	double per;
+
+	mod = zio_dev_get_name(dev, "mood");
+	if (!mod)
+		return;
+
+	per = zio_dvalue_get(mod);
+	per = MAX(0.1, per - 0.1);
+
+	zio_dvalue_set(mod, per);
 }
 

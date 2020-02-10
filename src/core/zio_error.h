@@ -5,6 +5,8 @@
 
 #define ZERR_AGAIN -11
 
+#define ZERR_NOMEM -12
+
 #define ZERR_INVAL -22
 
 #define ZERR_OVERFLOW -75
