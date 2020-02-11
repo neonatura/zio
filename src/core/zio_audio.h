@@ -113,5 +113,7 @@ int zio_beep_positive(void);
 /* generate "digital speech" from a data segment. */
 int zio_audio_dtalk(uint8_t *data, size_t data_len);
 
+int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len);
+
 #endif /* ndef __ZIO_AUDIO_H__ */
 

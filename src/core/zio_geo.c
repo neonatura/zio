@@ -186,7 +186,6 @@ zgrid_t *zio_grid_init(double lat, double lon)
 		return (NULL);
 
 	zio_grid_alloc(grid, lat, lon, MIN_GRID_SIZE);
-fprintf(stderr, "DEBUG: zio_grid_init: lat(%f) lon(%f)\n", lat, lon);
 
 	return (0);
 }

@@ -25,6 +25,7 @@ void zio_speaker_intr(int _unused)
 
 int zio_speaker_open(zdev_t *dev)
 {
+	int err;
 
 	if (is_zio_dev_on(dev))
 		return (0);
@@ -32,6 +33,10 @@ int zio_speaker_open(zdev_t *dev)
 	ZIO_TONE_INIT(dev->def_pin);
 	ZIO_TONE(dev->def_pin, 0);
 	_zio_speaker_pin = dev->def_pin;
+
+	err = zio_speaker_sleep(dev);
+	if (err)
+		return (err);
 
 	zio_dev_on(dev);
 
@@ -72,6 +77,7 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 	unsigned char *raw;
 	size_t len;
+	int err;
 
 	raw = (unsigned char *)dev->fifo.value + dev->fifo.value_len;
 	data_len = MIN(data_len, 
@@ -85,7 +91,6 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	memcpy(raw, data, data_len);
 	dev->fifo.value_len += data_len;
-
 
 	return (0);
 }
@@ -118,8 +123,6 @@ int zio_speaker_poll(zdev_t *dev)
 		return (ZERR_AGAIN);
 	}
 
-fprintf(stderr, "DEBUG: zio_speaker_poll: <%d bytes>\n", len);
-
 	/* copy new second of audio content into buffer. */
 	if (dev->fifo.value_len > len)
 		memmove(dev->fifo.value, dev->fifo.value + len, dev->fifo.value_len - len);
@@ -143,7 +146,7 @@ int zio_speaker_close(zdev_t *dev)
 
 zdev_t zio_speaker_device =
 {
-	"speaker", PIN_SPEAKER, 0, /* contoller: local speaker */
+	"speaker", PIN_SPEAKER, 1, /* contoller: local speaker */
 	ZDEV_AUDIO, DEVF_START, ZMOD_INTERNAL,
 	/* op */
 	{ zio_speaker_open, NULL, zio_speaker_write, NULL, zio_speaker_close, zio_speaker_poll },

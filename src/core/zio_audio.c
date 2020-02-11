@@ -6,34 +6,27 @@
 #include <espeak/speak_lib.h>
 #endif
 
-#define BEEP_SAMPLES 14
+#define BEEP_SAMPLES 21
 static const uint16_t _beep_samples[BEEP_SAMPLES] = {
-	NOTE_B4, NOTE_B4, 0, 0, NOTE_B4, NOTE_B4,
-	NOTE_A4, NOTE_A4, 0, 0, NOTE_A4, NOTE_A4,
-	NOTE_D5, NOTE_D5
-};
-
-#define NEGATIVE_BEEP_SAMPLES 14
-static const uint16_t _negative_beep_samples[NEGATIVE_BEEP_SAMPLES] = {
-    NOTE_D5, NOTE_D5,
-    NOTE_D4, NOTE_D3, 0, 0, NOTE_D3, NOTE_D3,
-    NOTE_F2, NOTE_F2, 0, 0, NOTE_F2, NOTE_F2
-};
-
-//#define POSITIVE_BEEP_SAMPLES 28
-#define POSITIVE_BEEP_SAMPLES 17
-static const uint16_t _positive_beep_samples[POSITIVE_BEEP_SAMPLES] = {
-#if 0
-        NOTE_E4, NOTE_E4, NOTE_E4,
         NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G3,
-        0, 0,
-#endif
-
         NOTE_C4, NOTE_G3, NOTE_E3,
         NOTE_A3, NOTE_B3, NOTE_B3, NOTE_A3,
         NOTE_G3, NOTE_E4, NOTE_G4, NOTE_A4,
         NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3
-//        0, 0
+};
+
+#define NEGATIVE_BEEP_SAMPLES 6
+static const uint16_t _negative_beep_samples[NEGATIVE_BEEP_SAMPLES] = {
+    NOTE_D5, NOTE_D5,
+    NOTE_D4, NOTE_D3, 
+		NOTE_D3, NOTE_F2
+};
+
+#define POSITIVE_BEEP_SAMPLES 14
+static const uint16_t _positive_beep_samples[POSITIVE_BEEP_SAMPLES] = {
+	NOTE_B4, NOTE_B4, 0, 0, NOTE_B4, NOTE_B4,
+	NOTE_A4, NOTE_A4, 0, 0, NOTE_A4, NOTE_A4,
+	NOTE_D5, NOTE_D5
 };
 
 //#define INTRO_SAMPLES 38
@@ -84,7 +77,7 @@ int zio_beep_negative(void)
 		return (ZERR_INVAL);
 
 	return (zio_write16_r(mod,
-		(uint8_t *)_negative_beep_samples, NEGATIVE_BEEP_SAMPLES*2, ZIO_AUDIO_32MS));
+		(uint8_t *)_negative_beep_samples, NEGATIVE_BEEP_SAMPLES*2, ZIO_AUDIO_64MS));
 }
 
 int zio_beep_positive(void)
@@ -96,7 +89,7 @@ int zio_beep_positive(void)
 		return (ZERR_INVAL);
 
 	return (zio_write16_r(mod,
-		(uint8_t *)_positive_beep_samples, POSITIVE_BEEP_SAMPLES*2, ZIO_AUDIO_32MS));
+		(uint8_t *)_positive_beep_samples, POSITIVE_BEEP_SAMPLES*2, ZIO_AUDIO_64MS));
 }
 
 int zio_audio_dtalk(uint8_t *data, size_t data_len)
@@ -121,33 +114,40 @@ int zio_audio_dtalk(uint8_t *data, size_t data_len)
 
 #ifdef HAVE_LIBESPEAK 
 static double espeak_buffer_srate;
-static uint32_t total_samples;
+static unsigned short _notes[4096];
 
 static int zio_espeak_synth(unsigned short *data, int samples, espeak_EVENT *event)
 {
 	zdev_t *dev = (zdev_t *)event->user_data;
-	unsigned short notes[1024];
-  double rate;
-  unsigned short note;
-  unsigned short l_note;
-	int err;
+	double of;
 	int idx;
-  int i;
+	int err;
 
+	memset(_notes, 0, sizeof(_notes));
+
+	i = 0;
+	of = 0;
 	idx = 0;
-	l_note = 0;
-  for (i = 0; i < samples; i++) {
-    rate = ((double)total_samples/espeak_buffer_srate);
-    if (floor(rate) == rate) {
-			notes[idx++] = l_note;
-      l_note = 0;
-    }
-    if (l_note == 0) l_note = data[i];
-    total_samples++;
-  }
+	while (of < samples) {
+#if 0
+		int j = (int)of;
+		for (; i <= j; i++) {
+			if (_notes[idx] == 0)
+				_notes[idx] = data[i];
+		}
+		i = j;
+#endif
+		_notes[idx] = data[(int)of];
+
+		idx++;
+		if (idx >= 4096)
+			break;
+
+		of += espeak_buffer_srate;
+	}
 
 	if (idx > 0) {
-		err = zio_write(dev, (uint8_t *)samples, idx * sizeof(unsigned short));
+		err = zio_write(dev, (uint8_t *)_notes, idx * sizeof(unsigned short));
 		if (err)
 			return (err);
 	}

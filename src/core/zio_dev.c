@@ -494,9 +494,11 @@ int zio_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	if (!is_zio_dev_on(dev))
 		return (ZERR_AGAIN);
 
-
-        if (!dev->op.write)
+	if (!dev->op.write)
 		return (ZERR_INVAL);
+
+	if (!data || data_len == 0)
+		return (0);
 
 	err = (*dev->op.write)(dev, data, data_len);
 	if (err)

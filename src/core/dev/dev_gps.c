@@ -123,9 +123,11 @@ void zio_geo_set(zgeo_t *geo, double lat, double lon)
 	rlat += ((lat_sec * 100) / 3600);
 	rlon += ((lon_sec * 100) / 3600);
 
+#if 0
 	/* global reference */
 	zio_geo_latitude_set(rlat);
 	zio_geo_longitude_set(rlon);
+#endif
 
 	geo->lat = rlat;	
 	geo->lon = rlon;

@@ -24,17 +24,23 @@ int main(int argc, char *argv[])
 //	zio_audio_intro();
 
 
-//	zio_audio_dtalk("hello world", strlen("hello world"));
 
 
 int i;
-	for (i = 0; i < 20000; i++) {
+	for (i = 0; i < 5000; i++) {
 		usleep(1000);
 		zio_cycle();
 	}
-//	zio_beep_negative();
+
 //	zio_beep();
-	zio_beep_positive();
+//	zio_beep_negative();
+//	zio_beep_positive();
+
+//	zio_audio_dtalk("Darb Sri Gun Chai Battle Sword", strlen("Darb Sri Gun Chai Battle Sword"));
+//	zio_audio_dtalk("hello world", strlen("hello world"));
+
+	zio_audio_etalk(NULL, "brian", strlen("brian"));
+
 	zio_cycle_loop();
 
 	return (0);

@@ -388,18 +388,5 @@
 #define MPU6050_DMP_MEMORY_BANK_SIZE    256
 #define MPU6050_DMP_MEMORY_CHUNK_SIZE   16
 
-
-
-/* DEBUG: */
-        uint8_t devAddr;
-        uint8_t buffer[14];
-
-
-
-
-
-
 #endif /* ndef __ZIO_GYRO_H__ */
-
-
 
