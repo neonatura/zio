@@ -336,6 +336,9 @@ int zio_dev_init(zdev_t *dev)
 
 int zio_dev_register(zdev_t *dev)
 {
+	char buf[256];
+	uint32_t ver;
+	uint32_t ser;
 	int err;
 
 	dev->next = zio_device_table;
@@ -350,7 +353,15 @@ int zio_dev_register(zdev_t *dev)
 		return (err);
 	}
 
-	zio_notify_text(dev, "init");
+	ver = zio_ctl(dev, ZCTL_VERSION, NULL);
+	ser = zio_ctl(dev, ZCTL_SERIAL, NULL);
+	strcpy(buf, "init");
+	if (ver != 0)
+		sprintf(buf + strlen(buf), " v%u", ver);
+	if (ser != 0)
+		sprintf(buf + strlen(buf), " #%u", ser);
+	zio_notify_text(dev, buf);
+
 	return (0);
 }
 
@@ -711,3 +722,12 @@ void zio_mood_decr(zdev_t *dev)
 	zio_dvalue_set(mod, per);
 }
 
+int zio_ctl(zdev_t *dev, int reg, void *data)
+{
+
+	if (dev->op.ctl) {
+		return ( (*dev->op.ctl)(dev, reg, data) );
+	}
+
+	return (ZERR_OPNOTSUPP);
+}

@@ -98,6 +98,8 @@ void zio_mood_incr(zdev_t *dev);
 
 void zio_mood_decr(zdev_t *dev);
 
+int zio_ctl(zdev_t *dev, int reg, void *data);
+
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \
 	((_dev)->param.freq_max * 2)

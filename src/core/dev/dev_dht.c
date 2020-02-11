@@ -4,6 +4,7 @@
 
 #define MAX_DHT_TIMINGS 85
 
+static double _dht_temp;
 static double _dht_humidity;
  
 int zio_dht_open(zdev_t *dev)
@@ -74,7 +75,8 @@ int zio_dht_read(zdev_t *dev)
 			c = -c;
 		}
 
-		/* retain humidity level */
+		/* retain for control registers. */
+		_dht_temp = c;
 		_dht_humidity = h;
 
 		/* store last obtained value. */
@@ -129,12 +131,26 @@ double zio_dht_humidity(void)
 	return (_dht_humidity);
 }
 
+int zio_dht_ctl(zdev_t *dev, int reg, void *data)
+{
+	switch (reg) {
+		case ZCTL_VERSION:
+			return (11); /* "DHT11" */
+
+		case ZCTL_TEMP:
+			return (_dht_temp);
+
+		case ZCTL_HUMIDITY:
+			return (_dht_humidity);
+	}
+}
+
 zdev_t zio_dht0_device =
 {
         "dht0", PIN_DHT0, 5, /* contoller: internal temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
         /* op */
-        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
+        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll, zio_dht_ctl },
         /* param */
         { /* freq_min */ 0.015, /* freq_max */ 0.018, /* 15ms - 18ms */
 	0.2 /* ma */, PIN_DHT0_PWR },
@@ -145,7 +161,7 @@ zdev_t zio_dht1_device =
         "dht1", PIN_DHT1, 5, /* contoller: extrrnal temperature */
         ZDEV_THERM, DEVF_START | DEVF_INPUT, ZMOD_EXTERNAL,
         /* op */
-        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll },
+        { zio_dht_open, zio_dht_read, NULL, zio_dht_print, zio_dht_close, zio_dht_poll, zio_dht_ctl },
         /* param */
         { /* freq_min */ 0.015, /* freq_max */ 0.018, /* 15ms - 18ms */
 	0.2, PIN_NULL },

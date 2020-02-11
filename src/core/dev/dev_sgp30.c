@@ -26,11 +26,13 @@ static const uint8_t _get_serial_id[2] = {0x36, 0x82};
 #define SGP30_VOC_AQ(_ppb) \
 	(double)(100.0 / 275.0 * (275.0 - MAX(0, (double)(_ppb) - 50)))
 
-static int _sgp30_humidity;
+static double _sgp30_humidity;
 static int _sgp_co2_ppm;
 static int _sgp_voc_ppb;
 static int _sgp30_baseline_co2 = 35221;
 static int _sgp30_baseline_voc = 40352; 
+static uint64_t _zio_sgp30_serial;
+static uint64_t _zio_sgp30_version;
 
 /*
  * Minimum: 400 ppm CO2(eq) / 0 ppb TVOC
@@ -107,7 +109,7 @@ int zio_sgp30_serial(zdev_t *dev, uint64_t *ser_p)
 }
 
 /* absolute_humidity:   u32 absolute humidity in mg/m^3 */
-int zio_sgp30_abs_humidity(int fd, uint16_t hum)
+int zio_sgp30_abs_humidity(zdev_t *dev, uint16_t hum)
 {
 	char buf[6];
 	int err;
@@ -116,14 +118,14 @@ int zio_sgp30_abs_humidity(int fd, uint16_t hum)
 	memcpy(buf + 2, &hum, 2);
 	buf[4] = gencrc8(buf + 2, 2);
 
-	err = write(fd, buf, 5);
+	err = write(dev->dev_fd, buf, 5);
 	if (err != 5)
 		return (ZERR_INVAL);
 
 	return (0);
 }
 
-int zio_sgp30_humidity_set(int fd, double per)
+int zio_sgp30_humidity_set(zdev_t *dev, double per)
 {
 	uint16_t hum;
 
@@ -137,7 +139,7 @@ int zio_sgp30_humidity_set(int fd, double per)
 
 	/* convert from relative to absolute humidity */
 	hum = (uint32_t)(184 * per);
-	return (zio_sgp30_abs_humidity(fd, hum));
+	return (zio_sgp30_abs_humidity(dev, hum));
 }
 
 int zio_sgp30_baseline(zdev_t *dev, int *b_co2_p, int *b_voc_p)
@@ -196,16 +198,15 @@ int zio_sgp30_open(zdev_t *dev)
 	err = zio_sgp30_version(dev, &ver);
 	if (err)
 		return (err);
-	sprintf(buf, "ver %llu", (unsigned long long)ver);
-        zio_notify_text(dev, buf);
 
 	err = zio_sgp30_serial(dev, &ser);
 	if (err)
 		return (err);
-	sprintf(buf, "ser %llu", (unsigned long long)ser);
-        zio_notify_text(dev, buf);
 
+	_zio_sgp30_version = ver;
+	_zio_sgp30_serial = ser;
 	zio_dev_on(dev);
+
 	return (0);
 }
 
@@ -263,6 +264,15 @@ int zio_sgp30_poll(zdev_t *dev)
 
 int zio_sgp30_close(zdev_t *dev)
 {
+
+	if (!is_zio_dev_on(dev))
+		return (0);
+
+	if (dev->dev_fd != 0) {
+		close(dev->dev_fd);
+		dev->dev_fd = 0;
+	}
+
 	zio_dev_off(dev);
 	return (0);
 }
@@ -305,25 +315,61 @@ int zio_sgp30_wake(zdev_t *dev)
 	return (0);
 }
 
-int zio_sgp30_ioctl(zdev_t *dev, uint8_t *raw, size_t raw_len)
+int zio_sgp30_ctl(zdev_t *dev, int reg, void *raw)
 {
-	zioctl_t *ctl = (zioctl_t *)raw;
-	uint8_t *data_raw = (raw + sizeof(zioctl_t));
-	size_t data_len = raw_len - sizeof(zioctl_t);
+	uint8_t *data_raw = (uint8_t *)raw;
+	int err;
 
-	switch (ctl->reg) {
-		case ZCTL_WAKE:
-			if (!ctl->set)
-				return (!(dev->flags & DEVF_SLEEP));
-			return (zio_sgp30_wake(dev));
+	switch (reg) {
+		case ZCTL_PING:
+			{
+				uint64_t ser = 0;
+
+				err = zio_sgp30_serial(dev, &ser);
+				if (err != 0 || ser == 0)
+					return (ZERR_INVAL);
+			}
+			return (0);
+
+		case ZCTL_SERIAL:
+			return (_zio_sgp30_serial);
+
+		case ZCTL_VERSION:
+			return (_zio_sgp30_version);
+
+		case ZCTL_RESET:
+			err = zio_sgp30_close(dev);
+			if (err)
+				return (err);
+			usleep(10);
+			err = zio_sgp30_open(dev);
+			if (err)
+				return (err);
+			break;
+
 		case ZCTL_SLEEP:
-			if (!ctl->set)
-				return (dev->flags & DEVF_SLEEP);
-			return (zio_sgp30_sleep(dev));
-		case ZCTL_FREQ:
-			break;
+			if (data_raw) {
+				uint32_t val = *((uint32_t *)raw);
+				if (val == 0)
+					zio_sgp30_wake(dev);
+				else
+					zio_sgp30_sleep(dev);
+			}
+			return (!(dev->flags & DEVF_SLEEP));
+
 		case ZCTL_HUMIDITY:
-			break;
+			if (data_raw) {
+				uint32_t val = *((uint32_t *)raw);
+				zio_sgp30_humidity_set(dev, (double)val);
+			}
+			return ((int)_sgp30_humidity);
+
+		case ZCTL_BASELINE:
+			if (data_raw) {
+				uint32_t val = *((uint32_t *)raw);
+				zio_sgp30_baseline_init(dev, (val & 0xFFFF), (val >> 16));
+			}
+			return ((int)(_sgp30_baseline_co2 + (_sgp30_baseline_voc << 16)));
 	}
 
 	return (0);
@@ -334,7 +380,7 @@ zdev_t zio_sgp30_device =
 	"sgp", SGP30_I2C_ADDRESS, 1, /* air quality sensor */
 	ZDEV_AIR, DEVF_START | DEVF_INPUT, ZMOD_INTERNAL,
 	/* op */
-	{ zio_sgp30_open, zio_sgp30_read, NULL, zio_sgp30_print, zio_sgp30_close, zio_sgp30_poll },
+	{ zio_sgp30_open, zio_sgp30_read, NULL, zio_sgp30_print, zio_sgp30_close, zio_sgp30_poll, zio_sgp30_ctl },
 	/* param */
 	{ /* freq_min */ 0.01, /* freq_max */ 0.012, 0, PIN_NULL }
 };

@@ -33,22 +33,37 @@ int zio_speaker_open(zdev_t *dev)
 	ZIO_TONE(dev->def_pin, 0);
 	_zio_speaker_pin = dev->def_pin;
 
-#if 0
-	/* setup PWM1 at 5kHZ */
-	pinMode(PIN_PWM1, PWM_OUTPUT);
-	pwmSetMode(PWM_MODE_MS);
-	pwmSetClock(240);
-	pwmSetRange(16);
-	pwmWrite(PIN_PWM1, 1); 
-
-	wiringPiISR(PIN_PWM1, INT_EDGE_FALLING, zio_speaker_intr); 
-#endif
-
-	signal(SIGALRM, zio_speaker_intr);
-	ualarm(200, 200); /* 5kHZ */
-
 	zio_dev_on(dev);
 
+	return (0);
+}
+
+int zio_speaker_wake(zdev_t *dev)
+{
+
+	if (!(dev->flags & DEVF_SLEEP))
+		return (0);
+
+	/* set repeating alarm at 5kHZ. */
+	signal(SIGALRM, zio_speaker_intr);
+	ualarm(200, 200);
+
+	dev->flags &= ~DEVF_SLEEP;
+
+	return (0);
+}
+
+int zio_speaker_sleep(zdev_t *dev)
+{
+
+	if (dev->flags & DEVF_SLEEP)
+		return (0);
+
+	/* unset alarm signal */
+	ualarm(0, 0);
+	signal(SIGALRM, SIG_IGN);
+
+	dev->flags |= DEVF_SLEEP;
 
 	return (0);
 }
@@ -64,8 +79,13 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	if (data_len == 0)
 		return (ZERR_OVERFLOW);
 
+	err = zio_speaker_wake(dev);
+	if (err)
+		return (err);
+
 	memcpy(raw, data, data_len);
 	dev->fifo.value_len += data_len;
+
 
 	return (0);
 }
@@ -82,7 +102,10 @@ int zio_speaker_poll(zdev_t *dev)
 	int of;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ZERR_INVAL); /* incorrect state */
+
+	if (dev->flags & DEVF_SLEEP)
+		return (0); /* all done */
 
 	of = _zio_speaker_buffer_index;
 	data_len = MIN(dev->fifo.value_len, MAX_ZIO_BUFFER_SIZE);
@@ -90,8 +113,10 @@ int zio_speaker_poll(zdev_t *dev)
 		memcpy(&_zio_speaker_buffer[of % MAX_ZIO_BUFFER_SIZE], dev->fifo.value + len, 2);
 		of++;
 	}
-	if (len == 0)
+	if (len == 0) {
+		(void)zio_speaker_sleep(dev);
 		return (ZERR_AGAIN);
+	}
 
 fprintf(stderr, "DEBUG: zio_speaker_poll: <%d bytes>\n", len);
 
@@ -106,14 +131,12 @@ fprintf(stderr, "DEBUG: zio_speaker_poll: <%d bytes>\n", len);
 int zio_speaker_close(zdev_t *dev)
 {
 
+	(void)zio_speaker_sleep(dev);
+
 	/* turn off speaker */
 	ZIO_TONE_TERM(dev->def_pin);
 	pinMode(dev->def_pin, OUTPUT);
 	DIGITAL_WRITE(dev->def_pin, LOW);	
-
-	/* turn off pwm1 */
-	pinMode(PIN_PWM1, OUTPUT);
-	DIGITAL_WRITE(PIN_PWM1, LOW);	
 
 	zio_dev_off(dev);
 }

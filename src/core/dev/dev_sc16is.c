@@ -234,12 +234,24 @@ int zio_sc16is_ping(zdev_t *dev)
 	return (TRUE);
 }
 
+int zio_sc16is_ctl(zdev_t *dev, int reg, void *data)
+{
+
+	switch (reg) {
+		case ZCTL_PING:
+			return (zio_sc16is_ping(dev) ? 0 : ZERR_INVAL);
+		case ZCTL_VERSION:
+			return (750);
+	}
+	return (ZERR_OPNOTSUPP);
+}
+
 zdev_t zio_sc16is_4c_device =
 {
         "uart1", 0x4C, 0, /* sc16isXX driver */
         ZDEV_UART, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
         /* op */
-        { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll },
+        { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll, zio_sc16is_ctl },
         /* param */
         { /* freq_min */ 0.05, /* freq_max */ 0.15, 0.001, PIN_NULL }
 };
@@ -249,7 +261,7 @@ zdev_t zio_sc16is_4d_device =
         "uart2", 0x4D, 0, /* sc16isXX driver */
         ZDEV_UART, DEVF_START | DEVF_I2C, ZMOD_INTERNAL,
         /* op */
-        { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll },
+        { zio_sc16is_open, zio_sc16is_read, zio_sc16is_write, NULL, zio_sc16is_close, zio_sc16is_poll, zio_sc16is_ctl },
         /* param */
         { /* freq_min */ 0.05, /* freq_max */ 0.15, 0.001, PIN_NULL }
 };

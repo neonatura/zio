@@ -166,7 +166,7 @@ typedef struct zio_op_t
 	zio_reg_f print;
 	zio_f term; /* shutdown the device. */
 	zio_f timer; /* a continous timer event. */
-	zio_reg_f intr; /* an interrupt event. */
+	zio_reg_f ctl; /* device parameter control */
 } zio_op_t;
 
 typedef struct zgeo_t
