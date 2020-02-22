@@ -54,11 +54,17 @@ void zio_cycle(void)
 
 }
 
+void zio_cycle_step(void)
+{
+	zio_msleep(1);
+	zio_cycle();
+}
+
 void zio_cycle_loop(void)
 {
 	while (1) {
-		zio_msleep(1);
-		zio_cycle();
+		zio_cycle_step();
 	}
 }
+
 

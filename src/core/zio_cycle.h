@@ -7,5 +7,7 @@ void zio_cycle_loop(void);
 
 void zio_cycle(void);
 
+void zio_cycle_step(void);
+
 #endif /* ndef __ZIO_CYCLE_H__ */
 

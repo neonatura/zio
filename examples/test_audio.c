@@ -6,11 +6,11 @@
 
 int main(int argc, char *argv[])
 {
+	int i;
 
 	wiringPiSetup();
 
 	/* internal */
-	REGISTER_LED_DEVICE();
 	REGISTER_LOG_DEVICE();
 	REGISTER_DEBUG_DEVICE();
 
@@ -21,25 +21,16 @@ int main(int argc, char *argv[])
 	REGISTER_SPEAKER_DEVICE();
 	REGISTER_AUDIO_DEVICE();
 
-//	zio_audio_intro();
-
-
-
-
-int i;
+	/* wait for intro to play (5s) */
 	for (i = 0; i < 5000; i++) {
-		usleep(1000);
-		zio_cycle();
+		zio_cycle_step(); 
 	}
 
 //	zio_beep();
 //	zio_beep_negative();
 //	zio_beep_positive();
 
-//	zio_audio_dtalk("Darb Sri Gun Chai Battle Sword", strlen("Darb Sri Gun Chai Battle Sword"));
-//	zio_audio_dtalk("hello world", strlen("hello world"));
-
-	zio_audio_etalk(NULL, "brian", strlen("brian"));
+	zio_audio_dtalk("Darb Sri Gun Chai Battle Sword", strlen("Darb Sri Gun Chai Battle Sword"));
 
 	zio_cycle_loop();
 

@@ -116,7 +116,7 @@ int zio_audio_dtalk(uint8_t *data, size_t data_len)
 static double espeak_buffer_srate;
 static unsigned short _notes[4096];
 
-static int zio_espeak_synth(unsigned short *data, int samples, espeak_EVENT *event)
+static int zio_espeak_synth(short *data, int samples, espeak_EVENT *event)
 {
 	zdev_t *dev = (zdev_t *)event->user_data;
 	double of;
@@ -125,19 +125,10 @@ static int zio_espeak_synth(unsigned short *data, int samples, espeak_EVENT *eve
 
 	memset(_notes, 0, sizeof(_notes));
 
-	i = 0;
 	of = 0;
 	idx = 0;
 	while (of < samples) {
-#if 0
-		int j = (int)of;
-		for (; i <= j; i++) {
-			if (_notes[idx] == 0)
-				_notes[idx] = data[i];
-		}
-		i = j;
-#endif
-		_notes[idx] = data[(int)of];
+		_notes[idx] = (uint16_t)data[(int)of];
 
 		idx++;
 		if (idx >= 4096)
@@ -151,6 +142,7 @@ static int zio_espeak_synth(unsigned short *data, int samples, espeak_EVENT *eve
 		if (err)
 			return (err);
 	}
+//zio_write(dev, (uint8_t *)data, samples*2);
 
   return (0);
 }
@@ -158,6 +150,7 @@ static int zio_espeak_synth(unsigned short *data, int samples, espeak_EVENT *eve
 static void zio_audio_etalk_init(void)
 {
 	double srate;
+
 
 	srate = espeak_Initialize(AUDIO_OUTPUT_RETRIEVAL, 0, NULL, 0);
 	espeak_buffer_srate = srate/5000; /* 4.41 */
@@ -202,7 +195,7 @@ int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len)
 	return (0);
 }
 #else
-int zio_audio_etalk(uint8_t *data, size_t data_len)
+int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 	return (ZERR_OPNOTSUPP);
 }

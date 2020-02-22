@@ -5,7 +5,7 @@
 
 #define MAX_ZIO_BUFFER_SIZE 1000
 static uint16_t _zio_speaker_buffer[MAX_ZIO_BUFFER_SIZE];
-static unsigned int _zio_speaker_buffer_index;
+static uint32_t _zio_speaker_buffer_index;
 static int _zio_speaker_pin;
 
 void zio_speaker_intr(int _unused)
@@ -17,6 +17,7 @@ void zio_speaker_intr(int _unused)
 
 	if (l_note != _zio_speaker_buffer[note_idx]) {
 		ZIO_TONE(_zio_speaker_pin, _zio_speaker_buffer[note_idx]);
+fprintf(stdout, "%u ", (unsigned int)_zio_speaker_buffer[note_idx]);
 		l_note = _zio_speaker_buffer[note_idx];
 	}
 
@@ -123,9 +124,8 @@ int zio_speaker_poll(zdev_t *dev)
 		return (ZERR_AGAIN);
 	}
 
-	/* copy new second of audio content into buffer. */
-	if (dev->fifo.value_len > len)
-		memmove(dev->fifo.value, dev->fifo.value + len, dev->fifo.value_len - len);
+	/* copy new 200ms segment of audio content into buffer. */
+	memmove(dev->fifo.value, dev->fifo.value + len, dev->fifo.value_len - len);
 	dev->fifo.value_len -= len;
 
 	return (0);
