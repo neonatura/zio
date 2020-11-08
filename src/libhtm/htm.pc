@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=${prefix}/include
+
+Name: Htm
+Description: Library for encoding, decoding and manipulating temporal hierarchial memory.
+Version: @VERSION@
+Libs: -L${libdir} -lhtm
+Cflags: -I${includedir}

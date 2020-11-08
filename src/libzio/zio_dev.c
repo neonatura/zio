@@ -623,17 +623,29 @@ int zio_uart_init(zdev_t *dev, int chan, int baud)
 {
 
 	if (chan == 0) {
-		return (serialOpen("/dev/ttyAMA0", baud));
+		int fd;
+
+#ifdef HAVE_LIBWIRINGPI
+		fd = serialOpen("/dev/ttyAMA0", baud);
+#else
+		fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_SYNC);
+		/*
+		 * set_interface_attribs (fd, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+set_blocking (fd, 0);                // set no blocking
+*/
+#endif
+		return (fd);
 	}
 
-	/* SC16IS */
+#ifdef HAVE_LIBWIRINGPI /* SC16IS */
 	dev->flags |= DEVF_UART;
-#if 0
-	/* previously uart channel, and now i2c address. */
+	/* previously uart channel, and now i2c address. 
 	dev->def_pin = 80 + ((chan-1) * 8);
-	return (0);
-#endif
+	return (0); */
 	return (80 + ((chan-1) * 8));
+#else
+	return (-1);
+#endif
 }
 
 int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
@@ -651,7 +663,19 @@ int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
 
 		of = 0;
 		while (of < retdata_len) {
+#ifdef HAVE_LIBWIRINGPI
 			ch = serialGetchar(dev->dev_fd);
+#else
+			{
+				static char buf[4];
+				int err;
+
+				ch = -1;
+				err = read(dev->dev_fd, buf, 1);
+				if (err == 1)
+					ch = buf[0];
+			}
+#endif
 			if (ch == -1)
 				break;
 

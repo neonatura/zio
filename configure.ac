@@ -227,8 +227,10 @@ AC_CHECK_LIB([wiringPi], [pinMode])
 #  AC_MSG_ERROR("libshare (runtime library) is required")
 #)
 
+# libhtm
+AC_CONFIG_SUBDIRS([src/libhtm])
+LIBHTM="src/libhtm/src/libhtm.a"
+AC_SUBST(LIBHTM)
 
-
-
-AC_OUTPUT(Makefile src/core/Makefile)
+AC_OUTPUT(Makefile src/libzio/Makefile src/core/Makefile)
 
