@@ -19,9 +19,10 @@ htm_headers = \
 	$(srcdir)/htm_neo.h \
 	$(srcdir)/htm_path.h \
 	$(srcdir)/htm_position.h \
-	$(srcdir)/htm_time.h \
 	$(srcdir)/htm_tree.h \
 	$(srcdir)/htm_zpu.h \
+	$(srcdir)/util/htm_buff.h \
+	$(srcdir)/util/htm_time.h \
 	$(srcdir)/lang/lang_char.h \
 	$(srcdir)/op/htm_op.h \
 	$(srcdir)/quat/quat.h
@@ -41,6 +42,7 @@ htm_op_sources = \
 
 htm_quat_sources = \
 	$(srcdir)/quat/quat.c \
+	$(srcdir)/quat/quat_alloc.c \
 	$(srcdir)/quat/quat_decode.c \
 	$(srcdir)/quat/quat_encode.c \
 	$(srcdir)/quat/quat_get.c \
@@ -71,9 +73,10 @@ htm_sources = \
 	$(srcdir)/htm_neo.c \
 	$(srcdir)/htm_path.c \
 	$(srcdir)/htm_position.c \
-	$(srcdir)/htm_time.c \
 	$(srcdir)/htm_tree.c \
 	$(srcdir)/htm_zpu.c \
+	$(srcdir)/util/htm_buff.c \
+	$(srcdir)/util/htm_time.c \
 	$(htm_lang_sources) \
 	$(htm_op_sources) \
 	$(htm_quat_sources)
@@ -83,4 +86,7 @@ libhtm_a_SOURCES = $(htm_sources) $(htm_headers)
 
 libhtm_a_CFLAGS = \
 	-DHAVE_CONFIG_H -I$(top_builddir)
-
+#if CLOCK_GETTIME
+#libhtm_a_LIBADD = \
+#	-lrt
+#endif

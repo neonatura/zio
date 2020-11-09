@@ -127,7 +127,7 @@ void htm_control_hash(entity_t *ent, chord_t *ret_hash)
   life_span = (double)(now - ent->control.birth_stamp) / 100;
 
   /* a persistent unique identifier for the entity. */
-	seed = (double)ent->control.id / (double)UINT_MAX;
+	seed = (double)ent->id / (double)UINT64_MAX;
 
 	/* the rate of activation [in htime]. */ 
 	rate = (double)ent->control.rate / (double)100;
@@ -182,7 +182,7 @@ chord_t *htm_state_hash(entity_t *ent)
 void htm_control_brane_init(entity_t *ent, brane_t *br)
 {
 
-	ent->control.id = (uint32_t)(crc64(0, ent->name, strlen(ent->name)) & 0xFFFFFFFF);
+//	ent->control.id = (uint32_t)(crc64(0, ent->name, strlen(ent->name)) & 0xFFFFFFFF);
 	ent->control.birth_stamp = htime_now();
 
 }
@@ -199,7 +199,7 @@ void *htm_control_brane_run(entity_t *ent)
 		if (htm_control_state_spike(ent))
 			htm_control_notify(ent);
 
-		htm_yield();
+//		htm_yield();
 		htm_msleep(ent->control.rate);
 	}
 

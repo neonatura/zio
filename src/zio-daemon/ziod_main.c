@@ -1,6 +1,6 @@
 /* Copyright 2020 Neo Natura */
 
-#include "core.h"
+#include "ziod.h"
 
 int run_state;
 
@@ -21,9 +21,12 @@ int zio_core_main(int argc, char *argv[], char *env[])
 
   err = htm_entity_init(&entity, name);
 	if (err) {
-		zio_core_error(err, "htm_entity_init", name);
+		zio_error(err, "htm_entity_init", name);
 		return (1);
 	}
+
+	/* load configuration options */
+	opt_init();
 
 #ifdef HAVE_LIBWIRINGPI
 	wiringPiSetup();
@@ -80,7 +83,10 @@ int zio_core_main(int argc, char *argv[], char *env[])
 #endif
 	REGISTER_AUDIO_DEVICE();
 
-	run_state = RUN_NONE; 
+	/* diag */
+	opt_print();
+
+	run_state = RUN_IDLE;
 	while (run_state) {
 		switch (run_state) {
 			case RUN_IDLE:

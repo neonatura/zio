@@ -165,7 +165,7 @@ typedef struct chord_t
 //	htime stamp;
 } chord_t;
 
-typedef chord_t hkey_t;
+typedef uint64_t hkey_t;
 
 typedef struct hmap_entry_t
 {
@@ -262,27 +262,29 @@ struct entity_t;
 typedef struct brane_t
 {
 
+	uint32_t cell_len;
+	uint32_t cell_max;
+
+	uint32_t path_len;
+	uint32_t path_max;
+
 	uint32_t type;
-	char name[MAX_BRANE_NAME_LENGTH];
+	uint32_t __reserved_0__;
+
+	/* mmap of cells & paths */
+	uint32_t map_fd;
+	uint32_t map_size;
+
+	uint64_t id;
 
 	/* mapping table for cell ids */
 	hmap_t *cell_map;
 
-	/* hierarchy hashmap of cells. */
-	tree_t cell_cache;
-
 	/* cell (neuron columns) */
 	cell_t *cell;
-	uint32_t cell_len;
-	uint32_t cell_max;
-
 	path_t *path;
-	uint32_t path_len;
-	uint32_t path_max;
 
-	/* mmap of cells & paths */
-	int map_fd;
-	int map_size;
+	char name[MAX_BRANE_NAME_LENGTH];
 
 	/* brane defintion */
 	struct brane_def_t *def;
@@ -290,6 +292,8 @@ typedef struct brane_t
 	/* entity */
 	struct entity_t *ent;
 
+	/* hierarchy hashmap of cells. */
+	tree_t cell_cache;
 } brane_t;
 
 typedef struct event_t
@@ -316,11 +320,10 @@ typedef struct zpu_t {
 
 typedef struct entity_t 
 {
-	char name[MAX_ENTITY_NAME_LENGTH];
-	brane_t *brane[MAX_ENTITY_BRANES];
 
-	/* a "primary" cell for brane. */
-	cell_t *brane_cell[MAX_ENTITY_BRANES];
+	/* identity */
+	uint64_t id;
+	char name[MAX_ENTITY_NAME_LENGTH];
 
 	/* current attention session */
 	uint64_t sess_id;
@@ -329,6 +332,11 @@ typedef struct entity_t
 	double sess_freq; /* -1.0 - 1.0 ~ 20ms */
 
 	hmap_t *path_map;
+
+	brane_t *brane[MAX_ENTITY_BRANES];
+
+	/* a "primary" cell for brane. */
+	cell_t *brane_cell[MAX_ENTITY_BRANES];
 
 	zpu_t zpu;
 
@@ -341,7 +349,7 @@ typedef struct entity_t
 		double pref_rate;
 		double wave;
 		uint32_t state;
-		uint32_t id;
+		uint32_t __reserved0__;
 		/* default posture stance */
 		double x_axis, y_axis, z_axis;
 		/* degree of focus on a particular set of features (0.0 <-> 1.0)

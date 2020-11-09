@@ -22,15 +22,16 @@
 #ifndef __HTM_H__
 #define __HTM_H__
 
-#ifdef HAVE_CONFIG_H
+/* autoconf */
 #include "config.h"
-#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdarg.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -82,7 +83,6 @@ extern int pthread_yield(void);
 #include "htm_layer.h"
 #include "htm_chord.h"
 #include "htm_map.h"
-#include "htm_time.h"
 #include "htm_mem.h"
 #include "htm_exec.h"
 #include "htm_exec_work.h"
@@ -96,6 +96,8 @@ extern int pthread_yield(void);
 #include "htm_celerity.h"
 #include "htm_position.h"
 #include "htm_zpu.h"
+#include "util/htm_buff.h"
+#include "util/htm_time.h"
 #include "lang/lang_char.h"
 #include "op/htm_op.h"
 

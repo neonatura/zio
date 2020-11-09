@@ -592,7 +592,7 @@ PACKAGE_STRING='zio 4.2'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
-ac_unique_file="src/core"
+ac_unique_file="src"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -636,6 +636,10 @@ LTLIBOBJS
 LIBOBJS
 LIBHTM
 subdirs
+LIBPTHREAD_FALSE
+LIBPTHREAD_TRUE
+CLOCK_GETTIME_FALSE
+CLOCK_GETTIME_TRUE
 FREEBSD_FALSE
 FREEBSD_TRUE
 SVR4_FALSE
@@ -14119,7 +14123,6 @@ _ACEOF
 
 
 
-
 for ac_func in clock_gettime
 do :
   ac_fn_c_check_func "$LINENO" "clock_gettime" "ac_cv_func_clock_gettime"
@@ -14130,6 +14133,68 @@ _ACEOF
 
 fi
 done
+
+ if test "x$ac_cv_func_clock_gettime" = xyes; then
+  CLOCK_GETTIME_TRUE=
+  CLOCK_GETTIME_FALSE='#'
+else
+  CLOCK_GETTIME_TRUE='#'
+  CLOCK_GETTIME_FALSE=
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pthread_self in -lpthread" >&5
+$as_echo_n "checking for pthread_self in -lpthread... " >&6; }
+if ${ac_cv_lib_pthread_pthread_self+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpthread  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pthread_self ();
+int
+main ()
+{
+return pthread_self ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_pthread_pthread_self=yes
+else
+  ac_cv_lib_pthread_pthread_self=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pthread_pthread_self" >&5
+$as_echo "$ac_cv_lib_pthread_pthread_self" >&6; }
+if test "x$ac_cv_lib_pthread_pthread_self" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPTHREAD 1
+_ACEOF
+
+  LIBS="-lpthread $LIBS"
+
+fi
+
+ if test -n "$HAVE_LIBPTHREAD"; then
+  LIBPTHREAD_TRUE=
+  LIBPTHREAD_FALSE='#'
+else
+  LIBPTHREAD_TRUE='#'
+  LIBPTHREAD_FALSE=
+fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pinMode in -lwiringPi" >&5
@@ -14178,10 +14243,6 @@ _ACEOF
 fi
 
 
-#AC_CHECK_LIB([share], [get_libshare_version], ,
-#  AC_MSG_ERROR("libshare (runtime library) is required")
-#)
-
 # libhtm
 
 
@@ -14190,7 +14251,7 @@ subdirs="$subdirs src/libhtm"
 LIBHTM="src/libhtm/src/libhtm.a"
 
 
-ac_config_files="$ac_config_files Makefile src/libzio/Makefile src/core/Makefile"
+ac_config_files="$ac_config_files Makefile src/libzio/Makefile src/zio-daemon/Makefile src/zio-console/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -14355,6 +14416,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${CLOCK_GETTIME_TRUE}" && test -z "${CLOCK_GETTIME_FALSE}"; then
+  as_fn_error $? "conditional \"CLOCK_GETTIME\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LIBPTHREAD_TRUE}" && test -z "${LIBPTHREAD_FALSE}"; then
+  as_fn_error $? "conditional \"LIBPTHREAD\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -15237,7 +15306,8 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/libzio/Makefile") CONFIG_FILES="$CONFIG_FILES src/libzio/Makefile" ;;
-    "src/core/Makefile") CONFIG_FILES="$CONFIG_FILES src/core/Makefile" ;;
+    "src/zio-daemon/Makefile") CONFIG_FILES="$CONFIG_FILES src/zio-daemon/Makefile" ;;
+    "src/zio-console/Makefile") CONFIG_FILES="$CONFIG_FILES src/zio-console/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -16652,5 +16722,4 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
 

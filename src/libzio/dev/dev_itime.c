@@ -12,12 +12,13 @@ int zio_itime_open(zdev_t *dev)
  
 int zio_itime_read(zdev_t *dev)
 {
-	uint64_t stamp;
+	ztime_t stamp;
 
 	/* sample system internal time. */
 	stamp = zio_time();
 	if (stamp <= 1000)
 		return (ZERR_AGAIN);
+fprintf(stderr, "DEBUG: zio_itime_read: stamp = %llu\n", (unsigned long long)stamp);
 
 	/* store last obtained value. */
 	zio_value_set(dev, stamp);
@@ -58,10 +59,11 @@ int zio_itime_close(zdev_t *dev)
 int zio_itime_print(zdev_t *dev, int mode, void *retbuf)
 {
 	char buf[256];
-	time_t stamp;
+	ztime_t stamp; 
 
-	stamp = zio_timeu(zio_value_get(dev));
-	strftime(buf, sizeof(buf)-1, "%X %x", localtime(&stamp));
+	stamp = zio_value_get(dev);
+fprintf(stderr, "DEBUG: zio_itime_print: stamp = %llu\n", (unsigned long long)stamp);
+	strftime(buf, sizeof(buf)-1, "%X %x", zio_localtime(stamp));
 
 	strcpy((char *)retbuf, buf);
 	return (0);
@@ -74,6 +76,7 @@ zdev_t zio_itime_device =
 	/* op */
 	{ zio_itime_open, zio_itime_read, zio_itime_write, zio_itime_print, zio_itime_close, zio_itime_poll },
 	/* param */
-	{ /* freq_min */ 15, /* freq_max */ 45, 0, PIN_NULL }
+	{ /* freq_min */ 5, /* freq_max */ 15, 0, PIN_NULL }
+	//{ /* freq_min */ 15, /* freq_max */ 45, 0, PIN_NULL }
 };
 

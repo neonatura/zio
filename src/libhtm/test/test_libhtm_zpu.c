@@ -7,7 +7,7 @@ _TEST(quat)
   qnum tnum2;
   qvar tnum3;
   qvar tnum4;
-  double tval1 = -111.1111;
+  double tval1 = -111.111;
   double tval2 = 2220;
   double tval3;
   double tval4;
@@ -17,7 +17,10 @@ _TEST(quat)
 
 	quat_op_init();
 
+	memset(tnum1, 0, sizeof(tnum1));
   quat_set(tval1, Q_NUM, tnum1);
+
+	memset(tnum2, 0, sizeof(tnum2));
   quat_set(tval2, Q_NUM, tnum2);
 
   tnum3 = quat_op(QOP_MATH_SUM, tnum1, tnum2);
@@ -30,8 +33,8 @@ _TEST(quat)
 
 _TEST(zpu)
 {
-  double tval1 = -111.1111;
-  double tval2 = 2220;
+  double tval1 = -111.111;
+	double tval2 = 2220;
   qnum tnum1;
   qnum tnum2;
 	zvar tvar;
@@ -39,10 +42,14 @@ _TEST(zpu)
 
 	z = (zpu_t *)&test_entity->zpu;
 
+	memset(tnum1, 0, sizeof(qnum));
+	memset(tnum2, 0, sizeof(qnum));
+	quat_set(tval1, Q_NUM, (qvar)tnum1);
+	quat_set(tval2, Q_NUM, (qvar)tnum2);
+
 	/* additive math operation */
-	quat_set(tval1, Q_NUM, tnum1);
+
 	zpu_push(z, ZPU_VAR, tnum1);
-	quat_set(tval2, Q_NUM, tnum2);
 	zpu_push(z, ZPU_VAR, tnum2);
 	zpu_push(z, ZPU_MATH_SUM, NULL);
 	zpu_exec(z);
@@ -50,9 +57,7 @@ _TEST(zpu)
 	_TRUE(quat_getf(tvar) == (tval2 + tval1)); 
 
 	/* subtractive math operation */
-	quat_set(tval1, Q_NUM, tnum1);
 	zpu_push(z, ZPU_VAR, tnum1);
-	quat_set(tval2, Q_NUM, tnum2);
 	zpu_push(z, ZPU_VAR, tnum2);
 	zpu_push(z, ZPU_MATH_SUB, NULL);
 	zpu_exec(z);

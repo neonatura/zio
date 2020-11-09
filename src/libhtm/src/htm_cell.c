@@ -486,7 +486,7 @@ fprintf(stderr, "DEBUG: EXPERIENCE HASH: %s\n", htm_chord_hex(&exp_l->hash));
 	}
 
 	/* remember */
-	e = htm_mem_set(ent, cell);
+	htm_mem_notify(ent, cell);
 
 	/*
 	htm_layer_inhibit(fe_l);

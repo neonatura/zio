@@ -21,6 +21,9 @@
 /* Define for the FreeBSD operating system. */
 #undef FREEBSD
 
+/* Define to 1 if you have the `clock_gettime' function. */
+#undef HAVE_CLOCK_GETTIME
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H

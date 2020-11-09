@@ -6,7 +6,7 @@ size_t quat_var_length(qvar var)
 {
   int flag = quat_var_flag(var);
 
-  if (flag & Q_STR) {
+  if (flag & Q_STREAM) {
     return ((size_t)quat_geti(var));
   } 
 
@@ -18,7 +18,7 @@ size_t quat_var_size(qvar var)
   int flag = quat_var_flag(var);
   size_t ret_len;
 
-  if (flag & Q_STR) {
+  if (flag & Q_STREAM) {
     size_t str_len = quat_get(var);
 
     /* variable length string ( <qnum> + (X * <qchar>) */

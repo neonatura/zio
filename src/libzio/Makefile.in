@@ -136,7 +136,7 @@ am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libzio_a_AR = $(AR) $(ARFLAGS)
-libzio_a_LIBADD =
+libzio_a_DEPENDENCIES = $(top_builddir)/$(LIBHTM)
 am__objects_1 = libzio_a-zio_audio.$(OBJEXT) \
 	libzio_a-zio_ctl.$(OBJEXT) libzio_a-zio_cycle.$(OBJEXT) \
 	libzio_a-zio_error.$(OBJEXT) libzio_a-zio_geo.$(OBJEXT) \
@@ -465,7 +465,11 @@ zio_headers = \
 lib_LIBRARIES = libzio.a
 libzio_a_SOURCES = $(zio_sources) $(zio_headers)
 libzio_a_CFLAGS = \
-	-DHAVE_CONFIG_H -DZIO=1 -DPI 
+	-DHAVE_CONFIG_H -DZIO=1 -DPI \
+	-I$(top_srcdir)/src/libhtm/src/
+
+libzio_a_LIBADD = \
+	$(top_builddir)/$(LIBHTM)
 
 all: all-am
 

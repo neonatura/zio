@@ -43,9 +43,12 @@ int htm_entity_init(entity_t **ent_p, const char *name)
 	if (!ent)
 		return (-ENOMEM);
 
+	strncpy(ent->name, name, sizeof(ent->name)-1);
+	ent->id = crc64(0, ent->name, strlen(ent->name));
+
 	/* initialize neocortical branes */
 	for (i = 0; i < MAX_ENTITY_BRANES; i++) {
-		ent->brane[i] = htm_brane_init(
+		ent->brane[i] = htm_brane_init(ent->id,
 				brane_def_table[i].label, brane_def_table[i].size); 
 		if (ent->brane[i]) ent->brane[i]->type = i;
 		if (ent->brane[i]) ent->brane[i]->def = &brane_def_table[i];

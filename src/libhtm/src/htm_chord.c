@@ -231,26 +231,31 @@ uint64_t htm_chord_compact(chord_t *hash)
 	csum_raw = (uint8_t *)&ret_csum;
 
 	idx = 0;
-	for (i = (CHORD_SIZE-1); i >= 0; i--) {
-		if (hash->vec[i] == 0 || /* unset */
-				hash->vec[i] == 0xFF) /* uncertain */
-			continue;
-		
-		bit = (i * 8);
-		int t_bit = -1;
-		for (j = 7; j >= 0; j--) {
-			if (hash->vec[i] & (1 << j)) {
-				bit += j; 
-				break;
-			}
-		}
-		if (j == -1)
-			continue;
+	if (hash) {
+		for (i = (CHORD_SIZE-1); i >= 0; i--) {
+			if (hash->vec[i] == 0 || /* unset */
+					hash->vec[i] == 0xFF) /* uncertain */
+				continue;
 
-		csum_raw[idx] = bit;
-		idx++;
-		if (idx == 8)
-			break;
+
+
+			
+			bit = (i * 8);
+			int t_bit = -1;
+			for (j = 7; j >= 0; j--) {
+				if (hash->vec[i] & (1 << j)) {
+					bit += j; 
+					break;
+				}
+			}
+			if (j == -1)
+				continue;
+
+			csum_raw[idx] = bit;
+			idx++;
+			if (idx == 8)
+				break;
+		}
 	}
 
 	return (ret_csum);

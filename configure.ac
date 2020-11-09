@@ -5,7 +5,7 @@ AC_PREREQ([2.63])
 AC_INIT([zio], [4.2])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/core])
+AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -218,19 +218,17 @@ AC_CHECK_SIZEOF(short)
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 
-
 AC_CHECK_FUNCS([clock_gettime])
+AM_CONDITIONAL([CLOCK_GETTIME], [test "x$ac_cv_func_clock_gettime" = xyes])
+
+AC_CHECK_LIB([pthread], [pthread_self])
+AM_CONDITIONAL(LIBPTHREAD, [test -n "$HAVE_LIBPTHREAD"])
 
 AC_CHECK_LIB([wiringPi], [pinMode])
-
-#AC_CHECK_LIB([share], [get_libshare_version], , 
-#  AC_MSG_ERROR("libshare (runtime library) is required")
-#)
 
 # libhtm
 AC_CONFIG_SUBDIRS([src/libhtm])
 LIBHTM="src/libhtm/src/libhtm.a"
 AC_SUBST(LIBHTM)
 
-AC_OUTPUT(Makefile src/libzio/Makefile src/core/Makefile)
-
+AC_OUTPUT(Makefile src/libzio/Makefile src/zio-daemon/Makefile src/zio-console/Makefile)

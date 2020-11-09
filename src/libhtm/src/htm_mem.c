@@ -243,33 +243,33 @@ void htm_mem_notify(entity_t *ent, cell_t *cell)
 		uint64_t key;
 		int tot;
 		int i;
-fprintf(stderr, "DEBUG: MEM NOTIFY: feature %s\n", htm_chord_hex(&event->h_feat)); 
 
 		tot = 0;
 		for (i = 0; i < MAX_HTM_MEM_CACHE; i++) {
 			if (!mem_cache_table[i].stamp)
 				continue; /* not set */
 
-fprintf(stderr, "DEBUG: MEM NOTIFY: feature compare %s\n", htm_chord_hex(&mem_cache_table[i].h_feat));
 			if (!htm_chord_match(&event->h_feat, &mem_cache_table[i].h_feat))
 				continue; /* not similar */
 
 			/* similar feature */
-			key = htm_chord_compact(&event->h_feat);
-			zpu_push(&ent->zpu, ZPU_VAR, zpu_num64(key));
+			key = htm_chord_compact(&mem_cache_table[i].h_feat);
+			zpu_push(&ent->zpu, ZPU_VAR, zpu_num(key));
 			tot++;
 			if (tot >= MAX_HTM_MEM_MATCH)
 				break;
 		}
-fprintf(stderr, "DEBUG: MEM NOTIFY: feature total x%d\n", tot);
 
 		if (tot < MAX_HTM_MEM_MATCH)
-			zpu_push(&ent->zpu, ZPU_BIT_OR, zpu_num32(tot)); /* chunk together */
+			zpu_push(&ent->zpu, ZPU_BIT_OR, zpu_num(tot)); /* chunk together */
 		else
-			zpu_push(&ent->zpu, ZPU_BIT_XOR, zpu_num32(tot)); /* separate patterns */
-		zpu_push(&ent->zpu, ZPU_DB_RECALL, NULL);
+			zpu_push(&ent->zpu, ZPU_BIT_XOR, zpu_num(tot)); /* separate patterns */
+		zpu_push(&ent->zpu, ZPU_DB_GET, NULL);
+		zpu_push(&ent->zpu, ZPU_ENT_RECALL, NULL);
+//		zpu_exec(&ent->zpu);
 	}
 
+#if 0
 	/* generate operation to recall experience associated with features (episodic). */
 	{
 		uint64_t key;
@@ -278,12 +278,14 @@ fprintf(stderr, "DEBUG: MEM NOTIFY: feature total x%d\n", tot);
 
 		tot = 0;
 		for (i = 0; i < MAX_HTM_MEM_CACHE; i++) {
+			if (mem_cache_table[i].stamp == 0)
+				continue; /* not set */
 			if (!htm_chord_match(&mem_cache_table[i].h_exp, &event->h_feat))
 				continue;
 
 			/* similar feature */
 			key = htm_chord_compact(&event->h_exp);
-			zpu_push(&ent->zpu, ZPU_VAR, zpu_num64(key));
+			zpu_push(&ent->zpu, ZPU_VAR, zpu_num(key));
 			tot++;
 			if (tot >= MAX_HTM_MEM_MATCH)
 				break;
@@ -291,56 +293,51 @@ fprintf(stderr, "DEBUG: MEM NOTIFY: feature total x%d\n", tot);
 
 		/* only recall an experience when feature is unique. */
 		if (tot < MAX_HTM_MEM_MATCH) {
-			zpu_push(&ent->zpu, ZPU_BIT_OR, zpu_num32(tot)); /* chunk together */
-			zpu_push(&ent->zpu, ZPU_DB_RECALL, NULL);
+			zpu_push(&ent->zpu, ZPU_BIT_OR, zpu_num(tot)); /* chunk together */
+			zpu_push(&ent->zpu, ZPU_DB_GET, NULL);
+			zpu_push(&ent->zpu, ZPU_ENT_RECALL, NULL);
+
+			/* if clause to match output */ 
+//			key = htm_chord_compact(&event->h_feat);
+//			zpu_push(&ent->zpi, ZPU_VAR, zpu_num64(key));
+//			zpu_push(&ent->zpu, ZPU_MATCH, NULL);
 		}
 	}
+#endif
 
 }
 
 /** 
  * Read from pesistent storage.
- * @see ZPU_DB_RECALL
+ * @see ZPU_ENT_RECALL
  */
-void htm_mem_recall(zpu_t *z, uint64_t key)
+chord_t *htm_mem_recall(zpu_t *z, uint64_t key)
 {
 	chord_t *obj;
 	zvar nobj;
 
-fprintf(stderr, "DEBUG: htm_mem_recall: key = %llu\n", (unsigned long long)key);
-
 	/* match any similar keys in long-term episodic memory. */
-	obj = htm_mem_restore(z, key); /* matches using layer cache logic; partial match */
-	if (!obj)
-		return;
-
-	zpu_push(z, ZPU_VAR, zpu_num64(htm_chord_compact(obj)));
-	zpu_push(z, ZPU_VAR, zpu_num64(key));
-	zpu_push(z, ZPU_DB_STORE, NULL);
+	return (htm_mem_restore(z, key)); /* matches using layer cache logic; partial match */
 }
 
 /**
  * Write to persistent storage 
  * @note When an event is recalled the original recorded events comprising it are re-notified.
- * @see ZPU_DB_STORE
+ * @see ZPU_ENT_REMEMBER
  */
-void htm_mem_remember(zpu_t *z, uint64_t key, uint64_t data)
+chord_t *htm_mem_remember(zpu_t *z, uint64_t data)
 {
-	chord_t nobj;
+	static chord_t nobj;
 	chord_t obj;
 	int i;
-
-/*
- * In the hippocampus, the EC level will send to both the dentate gyrus and the C1 section. When the C1 section receives input from the CA3 section (from dentate) that matches what it received from EC, it will send it back to the neocortex.
- *
- * This is emulated by utilizing the primary executive brane cell; which also naturally reflects focused items.
- */
 
 	memset(&obj, 0, sizeof(obj));
 	htm_chord_expand(&obj, data);
 
 	memset(&nobj, 0, sizeof(chord_t));
 	for (i = 0; i < MAX_HTM_MEM_CACHE; i++) {
+		if (mem_cache_table[i].stamp == 0)
+			continue; /* not set */
 		if (!htm_chord_match(&mem_cache_table[i].h_obj, &obj))
 			continue;
 
@@ -349,11 +346,22 @@ void htm_mem_remember(zpu_t *z, uint64_t key, uint64_t data)
 		/* append experience related to object. */
 		htm_chord_merge(&nobj, &mem_cache_table[i].h_exp);
 	}
+
+#if 0
 	/* persitently store reference to object and experience. */
 	htm_mem_store(z, key, &nobj);
+#endif
+
+/*
+ * In the hippocampus, the EC level will send to both the dentate gyrus and the C1 section. When the C1 section receives input from the CA3 section (from dentate) that matches what it received from EC, it will send it back to the neocortex.
+ *
+ * This is emulated by utilizing the primary executive brane cell; which also naturally reflects focused items.
+ */
 
 	/* broadcast feedback to relevant branes as input */
 	htm_mem_relay(z, &nobj); 
+
+	return (&nobj);
 }
 
 /*
@@ -368,6 +376,12 @@ void htm_mem_remember(zpu_t *z, uint64_t key, uint64_t data)
 
 chord_t *htm_mem_restore(zpu_t *z, uint64_t key)
 {
+	void *data;
+
+	if (key == 0)
+		return (NULL);
+
+
 	/* .. */
 	return (NULL);
 }
@@ -377,7 +391,7 @@ void htm_mem_relay(zpu_t *z, chord_t *hash)
 	/* .. */
 }
 
-void htm_mem_store(zpu_t *z, uint64_t key, chord_t *hash)
+void htm_mem_store(zpu_t *z, uint64_t key, chord_t *chord)
 {
 	/* .. */
 }

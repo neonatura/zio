@@ -88,8 +88,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = zion$(EXEEXT)
-subdir = src/core
+bin_PROGRAMS = ziod$(EXEEXT)
+@LIBPTHREAD_TRUE@am__append_1 = -lpthread
+@CLOCK_GETTIME_TRUE@am__append_2 = -lrt
+subdir = src/zio-daemon
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -104,19 +106,21 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_1 = zion-core_sexe.$(OBJEXT) zion-core_main.$(OBJEXT) \
-	zion-core_error.$(OBJEXT)
+am__objects_1 = ziod-ziod_main.$(OBJEXT) ziod-ziod_error.$(OBJEXT) \
+	ziod-ziod_log.$(OBJEXT) ziod-ziod_opt.$(OBJEXT)
 am__objects_2 =
-am_zion_OBJECTS = $(am__objects_1) $(am__objects_2)
-zion_OBJECTS = $(am_zion_OBJECTS)
-zion_DEPENDENCIES = $(top_builddir)/$(LIBHTM) \
-	$(top_builddir)/src/libzio/libzio.a
+am_ziod_OBJECTS = $(am__objects_1) $(am__objects_2)
+ziod_OBJECTS = $(am_ziod_OBJECTS)
+am__DEPENDENCIES_1 =
+ziod_DEPENDENCIES = $(top_builddir)/$(LIBHTM) \
+	$(top_builddir)/src/libzio/libzio.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-zion_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(zion_CFLAGS) $(CFLAGS) \
+ziod_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ziod_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -133,8 +137,9 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/zion-core_error.Po \
-	./$(DEPDIR)/zion-core_main.Po ./$(DEPDIR)/zion-core_sexe.Po
+am__depfiles_remade = ./$(DEPDIR)/ziod-ziod_error.Po \
+	./$(DEPDIR)/ziod-ziod_log.Po ./$(DEPDIR)/ziod-ziod_main.Po \
+	./$(DEPDIR)/ziod-ziod_opt.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -154,8 +159,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(zion_SOURCES)
-DIST_SOURCES = $(zion_SOURCES)
+SOURCES = $(ziod_SOURCES)
+DIST_SOURCES = $(ziod_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -304,26 +309,26 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 version_info = @version_info@
 version_patch = @version_patch@
-core_sources = \
-	$(srcdir)/core_sexe.c \
-	$(srcdir)/core_main.c \
-	$(srcdir)/core_error.c
+ziod_sources = \
+	$(srcdir)/ziod_main.c \
+	$(srcdir)/ziod_error.c \
+	$(srcdir)/ziod_log.c \
+	$(srcdir)/ziod_opt.c
 
-core_headers = \
-	$(srcdir)/core_sexe.h \
-	$(srcdir)/core_main.h \
-	$(srcdir)/core_error.h \
-	$(srcdir)/core.h
+ziod_headers = \
+	$(srcdir)/ziod_main.h \
+	$(srcdir)/ziod_error.h \
+	$(srcdir)/ziod_log.h \
+	$(srcdir)/ziod_opt.h \
+	$(srcdir)/ziod.h
 
-zion_SOURCES = $(core_sources) $(core_headers)
-zion_CFLAGS = \
+ziod_SOURCES = $(ziod_sources) $(ziod_headers)
+ziod_CFLAGS = \
 	-DHAVE_CONFIG_H -I$(top_srcdir)/src/libhtm/src -I$(top_srcdir)/src/libzio
 
-zion_LDADD = \
-	$(top_builddir)/$(LIBHTM) \
-	$(top_builddir)/src/libzio/libzio.a \
-	-lshare_sexe -lm
-
+ziod_LDADD = $(top_builddir)/$(LIBHTM) \
+	$(top_builddir)/src/libzio/libzio.a -lm $(am__append_1) \
+	$(am__append_2)
 all: all-am
 
 .SUFFIXES:
@@ -337,9 +342,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/core/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/zio-daemon/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/core/Makefile
+	  $(AUTOMAKE) --gnu src/zio-daemon/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -407,9 +412,9 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-zion$(EXEEXT): $(zion_OBJECTS) $(zion_DEPENDENCIES) $(EXTRA_zion_DEPENDENCIES) 
-	@rm -f zion$(EXEEXT)
-	$(AM_V_CCLD)$(zion_LINK) $(zion_OBJECTS) $(zion_LDADD) $(LIBS)
+ziod$(EXEEXT): $(ziod_OBJECTS) $(ziod_DEPENDENCIES) $(EXTRA_ziod_DEPENDENCIES) 
+	@rm -f ziod$(EXEEXT)
+	$(AM_V_CCLD)$(ziod_LINK) $(ziod_OBJECTS) $(ziod_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -417,9 +422,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zion-core_error.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zion-core_main.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zion-core_sexe.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ziod-ziod_error.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ziod-ziod_log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ziod-ziod_main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ziod-ziod_opt.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -448,47 +454,61 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-zion-core_sexe.o: $(srcdir)/core_sexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_sexe.o -MD -MP -MF $(DEPDIR)/zion-core_sexe.Tpo -c -o zion-core_sexe.o `test -f '$(srcdir)/core_sexe.c' || echo '$(srcdir)/'`$(srcdir)/core_sexe.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_sexe.Tpo $(DEPDIR)/zion-core_sexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_sexe.c' object='zion-core_sexe.o' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_main.o: $(srcdir)/ziod_main.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_main.o -MD -MP -MF $(DEPDIR)/ziod-ziod_main.Tpo -c -o ziod-ziod_main.o `test -f '$(srcdir)/ziod_main.c' || echo '$(srcdir)/'`$(srcdir)/ziod_main.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_main.Tpo $(DEPDIR)/ziod-ziod_main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_main.c' object='ziod-ziod_main.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_sexe.o `test -f '$(srcdir)/core_sexe.c' || echo '$(srcdir)/'`$(srcdir)/core_sexe.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_main.o `test -f '$(srcdir)/ziod_main.c' || echo '$(srcdir)/'`$(srcdir)/ziod_main.c
 
-zion-core_sexe.obj: $(srcdir)/core_sexe.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_sexe.obj -MD -MP -MF $(DEPDIR)/zion-core_sexe.Tpo -c -o zion-core_sexe.obj `if test -f '$(srcdir)/core_sexe.c'; then $(CYGPATH_W) '$(srcdir)/core_sexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_sexe.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_sexe.Tpo $(DEPDIR)/zion-core_sexe.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_sexe.c' object='zion-core_sexe.obj' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_main.obj: $(srcdir)/ziod_main.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_main.obj -MD -MP -MF $(DEPDIR)/ziod-ziod_main.Tpo -c -o ziod-ziod_main.obj `if test -f '$(srcdir)/ziod_main.c'; then $(CYGPATH_W) '$(srcdir)/ziod_main.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_main.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_main.Tpo $(DEPDIR)/ziod-ziod_main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_main.c' object='ziod-ziod_main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_sexe.obj `if test -f '$(srcdir)/core_sexe.c'; then $(CYGPATH_W) '$(srcdir)/core_sexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_sexe.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_main.obj `if test -f '$(srcdir)/ziod_main.c'; then $(CYGPATH_W) '$(srcdir)/ziod_main.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_main.c'; fi`
 
-zion-core_main.o: $(srcdir)/core_main.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_main.o -MD -MP -MF $(DEPDIR)/zion-core_main.Tpo -c -o zion-core_main.o `test -f '$(srcdir)/core_main.c' || echo '$(srcdir)/'`$(srcdir)/core_main.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_main.Tpo $(DEPDIR)/zion-core_main.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_main.c' object='zion-core_main.o' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_error.o: $(srcdir)/ziod_error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_error.o -MD -MP -MF $(DEPDIR)/ziod-ziod_error.Tpo -c -o ziod-ziod_error.o `test -f '$(srcdir)/ziod_error.c' || echo '$(srcdir)/'`$(srcdir)/ziod_error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_error.Tpo $(DEPDIR)/ziod-ziod_error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_error.c' object='ziod-ziod_error.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_main.o `test -f '$(srcdir)/core_main.c' || echo '$(srcdir)/'`$(srcdir)/core_main.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_error.o `test -f '$(srcdir)/ziod_error.c' || echo '$(srcdir)/'`$(srcdir)/ziod_error.c
 
-zion-core_main.obj: $(srcdir)/core_main.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_main.obj -MD -MP -MF $(DEPDIR)/zion-core_main.Tpo -c -o zion-core_main.obj `if test -f '$(srcdir)/core_main.c'; then $(CYGPATH_W) '$(srcdir)/core_main.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_main.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_main.Tpo $(DEPDIR)/zion-core_main.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_main.c' object='zion-core_main.obj' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_error.obj: $(srcdir)/ziod_error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_error.obj -MD -MP -MF $(DEPDIR)/ziod-ziod_error.Tpo -c -o ziod-ziod_error.obj `if test -f '$(srcdir)/ziod_error.c'; then $(CYGPATH_W) '$(srcdir)/ziod_error.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_error.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_error.Tpo $(DEPDIR)/ziod-ziod_error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_error.c' object='ziod-ziod_error.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_main.obj `if test -f '$(srcdir)/core_main.c'; then $(CYGPATH_W) '$(srcdir)/core_main.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_main.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_error.obj `if test -f '$(srcdir)/ziod_error.c'; then $(CYGPATH_W) '$(srcdir)/ziod_error.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_error.c'; fi`
 
-zion-core_error.o: $(srcdir)/core_error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_error.o -MD -MP -MF $(DEPDIR)/zion-core_error.Tpo -c -o zion-core_error.o `test -f '$(srcdir)/core_error.c' || echo '$(srcdir)/'`$(srcdir)/core_error.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_error.Tpo $(DEPDIR)/zion-core_error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_error.c' object='zion-core_error.o' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_log.o: $(srcdir)/ziod_log.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_log.o -MD -MP -MF $(DEPDIR)/ziod-ziod_log.Tpo -c -o ziod-ziod_log.o `test -f '$(srcdir)/ziod_log.c' || echo '$(srcdir)/'`$(srcdir)/ziod_log.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_log.Tpo $(DEPDIR)/ziod-ziod_log.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_log.c' object='ziod-ziod_log.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_error.o `test -f '$(srcdir)/core_error.c' || echo '$(srcdir)/'`$(srcdir)/core_error.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_log.o `test -f '$(srcdir)/ziod_log.c' || echo '$(srcdir)/'`$(srcdir)/ziod_log.c
 
-zion-core_error.obj: $(srcdir)/core_error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -MT zion-core_error.obj -MD -MP -MF $(DEPDIR)/zion-core_error.Tpo -c -o zion-core_error.obj `if test -f '$(srcdir)/core_error.c'; then $(CYGPATH_W) '$(srcdir)/core_error.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_error.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/zion-core_error.Tpo $(DEPDIR)/zion-core_error.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/core_error.c' object='zion-core_error.obj' libtool=no @AMDEPBACKSLASH@
+ziod-ziod_log.obj: $(srcdir)/ziod_log.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_log.obj -MD -MP -MF $(DEPDIR)/ziod-ziod_log.Tpo -c -o ziod-ziod_log.obj `if test -f '$(srcdir)/ziod_log.c'; then $(CYGPATH_W) '$(srcdir)/ziod_log.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_log.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_log.Tpo $(DEPDIR)/ziod-ziod_log.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_log.c' object='ziod-ziod_log.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(zion_CFLAGS) $(CFLAGS) -c -o zion-core_error.obj `if test -f '$(srcdir)/core_error.c'; then $(CYGPATH_W) '$(srcdir)/core_error.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/core_error.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_log.obj `if test -f '$(srcdir)/ziod_log.c'; then $(CYGPATH_W) '$(srcdir)/ziod_log.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_log.c'; fi`
+
+ziod-ziod_opt.o: $(srcdir)/ziod_opt.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_opt.o -MD -MP -MF $(DEPDIR)/ziod-ziod_opt.Tpo -c -o ziod-ziod_opt.o `test -f '$(srcdir)/ziod_opt.c' || echo '$(srcdir)/'`$(srcdir)/ziod_opt.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_opt.Tpo $(DEPDIR)/ziod-ziod_opt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_opt.c' object='ziod-ziod_opt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_opt.o `test -f '$(srcdir)/ziod_opt.c' || echo '$(srcdir)/'`$(srcdir)/ziod_opt.c
+
+ziod-ziod_opt.obj: $(srcdir)/ziod_opt.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -MT ziod-ziod_opt.obj -MD -MP -MF $(DEPDIR)/ziod-ziod_opt.Tpo -c -o ziod-ziod_opt.obj `if test -f '$(srcdir)/ziod_opt.c'; then $(CYGPATH_W) '$(srcdir)/ziod_opt.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_opt.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ziod-ziod_opt.Tpo $(DEPDIR)/ziod-ziod_opt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/ziod_opt.c' object='ziod-ziod_opt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ziod_CFLAGS) $(CFLAGS) -c -o ziod-ziod_opt.obj `if test -f '$(srcdir)/ziod_opt.c'; then $(CYGPATH_W) '$(srcdir)/ziod_opt.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/ziod_opt.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -623,9 +643,10 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/zion-core_error.Po
-	-rm -f ./$(DEPDIR)/zion-core_main.Po
-	-rm -f ./$(DEPDIR)/zion-core_sexe.Po
+		-rm -f ./$(DEPDIR)/ziod-ziod_error.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_log.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_main.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_opt.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -671,9 +692,10 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/zion-core_error.Po
-	-rm -f ./$(DEPDIR)/zion-core_main.Po
-	-rm -f ./$(DEPDIR)/zion-core_sexe.Po
+		-rm -f ./$(DEPDIR)/ziod-ziod_error.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_log.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_main.Po
+	-rm -f ./$(DEPDIR)/ziod-ziod_opt.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

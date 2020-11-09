@@ -30,10 +30,9 @@
 #define Q_NEG (1 << 4)
 #define Q_CHAR (1 << 5)
 #define Q_NUM (1 << 6)
-//#define Q_OBJ (1 << 7)
-#define Q_STREAM (1 << 7)
+#define Q_ALLOC (1 << 7)
 
-#define Q_STR (Q_CHAR | Q_NUM)
+#define Q_STREAM (Q_CHAR | Q_NUM)
 
 
 /* generic C number reference. */
@@ -111,6 +110,8 @@ size_t quat_sprintf(qstr str, const char *fmt, ...);
 size_t quat_print(qstr str);
 size_t quat_strlen(qstr str);
 
+/* ** quat_alloc ** */
+qvar quat_alloc(int flag, void *data, size_t data_len);
 
 
 #endif /* ndef __QUAT_H__ */

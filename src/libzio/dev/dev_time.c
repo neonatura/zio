@@ -43,10 +43,11 @@ int zio_time_close(zdev_t *dev)
 int zio_time_print(zdev_t *dev, int mode, void *retbuf)
 {
 	char buf[256];
-	time_t stamp;
+	ztime_t stamp;
 
-	stamp = zio_timeu(zio_value_get(dev));
-	strftime(buf, sizeof(buf)-1, "%X %x", localtime(&stamp));
+	stamp = zio_value_get(dev);
+fprintf(stderr, "DEBUG: zio_time_print: stamp = %llu\n", (unsigned long long)stamp);
+	strftime(buf, sizeof(buf)-1, "%X %x", zio_localtime(stamp));
 
 	strcpy((char *)retbuf, buf);
 	return (0);

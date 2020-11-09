@@ -192,6 +192,9 @@ AC_HEADER_MAJOR
 AC_HEADER_STAT
 AC_HEADER_STDC
 
+AC_CHECK_FUNCS([clock_gettime])
+AM_CONDITIONAL([CLOCK_GETTIME], [test "x$ac_cv_func_clock_gettime" = xyes])
+
 AC_CHECK_LIB([pthread], [pthread_self])
 AC_CHECK_LIB([m], [abs])
 
@@ -212,4 +215,3 @@ AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 
 AC_OUTPUT(Makefile src/Makefile test/Makefile)
-

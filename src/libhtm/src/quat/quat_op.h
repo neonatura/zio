@@ -8,6 +8,8 @@
 #define QOP_BIT_DECODE 11
 #define QOP_BIT_OR 12 /* merge */
 #define QOP_BIT_XOR 13 /* separate */
+#define QOP_BIT_AND 14 
+#define QOP_BIT_HASH 15
 /* math operations */
 #define QOP_MATH_SUM 20
 #define QOP_MATH_SUB 21
@@ -18,6 +20,7 @@
 #define QOP_MEM_CONCAT 30
 #define QOP_MEM_TAIL 31
 #define QOP_MEM_HEAD 32
+#define QOP_MEM_SOUNDEX 33
 
 #define MAX_QOP 64
 

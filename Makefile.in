@@ -334,7 +334,7 @@ version_info = @version_info@
 version_patch = @version_patch@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src/libhtm src/libzio src/core
+SUBDIRS = src/libhtm src/libzio src/zio-daemon src/zio-console
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

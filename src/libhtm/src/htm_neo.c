@@ -56,7 +56,7 @@ void htm_neo_seq_set(brane_t *br, uint8_t *data, size_t data_len)
 	
 	memset(&hash, 0, sizeof(hash));
 	htm_chord_digest(&hash, &seed, data, data_len);
-	hmap_set(_sequence_table, &hash, cell); 
+	hmap_set_chord(_sequence_table, &hash, cell); 
 }
 
 cell_t *htm_neo_seq(brane_t *br, uint8_t *data, size_t data_len)
@@ -67,11 +67,35 @@ cell_t *htm_neo_seq(brane_t *br, uint8_t *data, size_t data_len)
 
 	memset(&hash, 0, sizeof(hash));
 	htm_chord_digest(&hash, &seed, data, data_len);
-	cell = (cell_t *)hmap_get(_sequence_table, &hash);
+	cell = (cell_t *)hmap_get_chord(_sequence_table, &hash);
 	if (!cell)
 		return (NULL);
 
 	return (cell);
 }
 
+#if 0
+/* neo brane channels provides a method of communication between branes */
+cell_t *htm_neo_chan_out(entity_t *ent, uint64_t chan_id, cell_t *cell)
+{
+	brane_t *br = htm_brane_get(ent, BR_NEO);
+
+	cell = (cell_t *)hmap_get(_channel_table, chan_id);
+	if (!cell) {
+		cell = htm_cell_init(br);
+		if (!cell)
+			return (NULL);
+		hmap_get(_channel_table, chan_id, cell);
+	}
+
+	return (NULL);
+}
+
+cell_t *htm_neo_chan_in(entity_t *ent, uint64_t id)
+{
+	brane_t *br = htm_brane_get(ent, BR_NEO);
+	return (NULL);
+}
+
+#endif
 

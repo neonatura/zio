@@ -24,15 +24,18 @@
 
 #define INITIAL_MAX 15 /* tunable == 2^n - 1 */
 
-typedef chord_t hkey_t;
-
 hmap_t *hmap_init(void);
 
 void hmap_free(hmap_t **meta_p);
 
-int hmap_set(hmap_t *ht, hkey_t *key, void *val);
+int hmap_set(hmap_t *ht, hkey_t key, void *val);
 
-void *hmap_get(hmap_t *ht, hkey_t *key);
+int hmap_set_chord(hmap_t *ht, chord_t *key, void *val);
+
+void *hmap_get(hmap_t *ht, hkey_t key);
+
+void *hmap_get_chord(hmap_t *ht, chord_t *key);
+
 
 #endif /* ndef __HTM_MAP_H__ */
 

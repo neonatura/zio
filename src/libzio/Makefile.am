@@ -82,4 +82,9 @@ lib_LIBRARIES = libzio.a
 libzio_a_SOURCES = $(zio_sources) $(zio_headers)
 
 libzio_a_CFLAGS = \
-	-DHAVE_CONFIG_H -DZIO=1 -DPI 
+	-DHAVE_CONFIG_H -DZIO=1 -DPI \
+	-I$(top_srcdir)/src/libhtm/src/
+
+libzio_a_LIBADD = \
+	$(top_builddir)/$(LIBHTM)
+

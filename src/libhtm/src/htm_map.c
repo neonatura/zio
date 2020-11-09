@@ -137,21 +137,26 @@ static hmap_entry_t **find_entry(hmap_t *ht, hkey_t *key, const void *val)
 	return (hep);
 }
 
-void *hmap_get(hmap_t *ht, hkey_t *key)
+void *hmap_get(hmap_t *ht, hkey_t key)
 {
 	hmap_entry_t *he;
 
 	if (!ht)
 		return (NULL);
 
-	he = *find_entry(ht, key, NULL);
+	he = *find_entry(ht, &key, NULL);
 	if (he)
 		return (he->val);
 
 	return (NULL);
 }
 
-int hmap_set(hmap_t *ht, hkey_t *key, void *val)
+void *hmap_get_chord(hmap_t *ht, chord_t *hash)
+{
+	return (hmap_get(ht, htm_chord_compact(hash)));
+}
+
+int hmap_set(hmap_t *ht, hkey_t key, void *val)
 {
   const unsigned char *data = (unsigned char *)val;
   hmap_entry_t **hep;
@@ -159,7 +164,7 @@ int hmap_set(hmap_t *ht, hkey_t *key, void *val)
   if (!ht || !key)
     return (-EINVAL);
 
-  hep = find_entry(ht, key, data);
+  hep = find_entry(ht, &key, data);
   if (!hep)
     return (-EINVAL);
 
@@ -190,6 +195,11 @@ int hmap_set(hmap_t *ht, hkey_t *key, void *val)
 
   /* else key not present and val==NULL */
   return (0);
+}
+
+int hmap_set_chord(hmap_t *ht, chord_t *hash, void *val)
+{
+	return (hmap_set(ht, htm_chord_compact(hash), val));
 }
 
 hmap_t *hmap_init(void)

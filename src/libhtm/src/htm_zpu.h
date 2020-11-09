@@ -33,21 +33,32 @@
  */
 
 /* internal */
-#define ZPU_NULL 0
-#define ZPU_VAR 70
-#define ZPU_REF 71
+#define ZPU_NULL 70
+#define ZPU_TRUE 71
+#define ZPU_FALSE 72
+#define ZPU_VAR 73
+#define ZPU_REF 74
+#define ZPU_RETURN 75
+#define ZPU_DUP 76
+#define ZPU_LET 77
 /* comparator operatives */
-#define ZPU_RETURN 80 
 #define ZPU_EQUAL 81
-#define ZPU_SOUNDEX 82
+#define ZPU_EQUAL_SUB 82
+#define ZPU_EQUAL_SIM 83
+#define ZPU_EQUAL_NOT 84
 /* db operations */
-#define ZPU_DB_RECALL 90
-#define ZPU_DB_STORE 91
+#define ZPU_DB_GET 90
+#define ZPU_DB_SET 91
+/* entity operations. */
+#define ZPU_ENT_RECALL 100
+#define ZPU_ENT_REMEMBER 101
 /* bit operations */
 #define ZPU_BIT_ENCODE QOP_BIT_ENCODE
 #define ZPU_BIT_DECODE QOP_BIT_DECODE
 #define ZPU_BIT_OR QOP_BIT_OR
 #define ZPU_BIT_XOR QOP_BIT_XOR
+#define ZPU_BIT_AND QOP_BIT_AND
+#define ZPU_BIT_HASH QOP_BIT_HASH
 /* math operations */
 #define ZPU_MATH_SUM QOP_MATH_SUM
 #define ZPU_MATH_SUB QOP_MATH_SUB
@@ -58,11 +69,7 @@
 #define ZPU_MEM_CONCAT QOP_MEM_CONCAT
 #define ZPU_MEM_TAIL QOP_MEM_TAIL
 #define ZPU_MEM_HEAD QOP_MEM_HEAD
-
-#define ZNUM(_a) quat_getf(_a)
-#define ZNUM32(_a) quat_get32(_b)
-#define SET_ZNUM(_a, _b) quat_set(_b, Q_NUM, _a)
-#define SET_ZNUM32(_a, _b) quat_set(_b, Q_NUM32, _a)
+#define ZPU_MEM_SOUNDEX QOP_MEM_SOUNDEX
 
 /** Add an instruction to the ZPU stack. */
 uint32_t zpu_push(zpu_t *z, uint32_t inst, zvar param);
@@ -77,11 +84,9 @@ zinst_t *zpu_pull(zpu_t *z, int stack_index);
 
 void zpu_exec(zpu_t *z);
 
-zvar zpu_num32(uint32_t val);
+zvar zpu_num(uint64_t val);
 
-zvar zpu_num64(uint64_t val);
-
-zvar zpu_stream(void *data, size_t data_len);
+const char *zpu_code_label(int code);
 
 #endif /* ndef __HTM_ZPU_H__ */
 

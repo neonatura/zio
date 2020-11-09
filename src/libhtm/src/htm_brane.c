@@ -48,7 +48,7 @@ const char *htm_brane_fname(const char *name)
 	return (ret_path);
 }
 
-brane_t *htm_brane_init(const char *tag, int size)
+brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size)
 {
 	struct stat st;
 	brane_t *br;
@@ -86,6 +86,9 @@ brane_t *htm_brane_init(const char *tag, int size)
 		close(fd);
 		return (NULL);
 	}
+
+	br->id = crc64(ent_id, tag, strlen(tag)); 
+fprintf(stderr, "DEBUG: ent_id(%llu) br_id(%llu) tag(%s)\n", (unsigned long long)ent_id, (unsigned long long)br->id, tag);
 
 #ifdef WINDOWS
   fsync(map->fd); /* quash cache */
@@ -144,6 +147,11 @@ void htm_brane_free(brane_t **br_p)
 
 chord_t *htm_brane_map_set(brane_t *br, cell_t *cell)
 {
+	hmap_set(br->cell_map, cell->id, cell);
+}
+#if 0
+chord_t *htm_brane_map_set(brane_t *br, cell_t *cell)
+{
 	static chord_t hash;
 
 	memset(&hash, 0, sizeof(hash));
@@ -152,10 +160,11 @@ chord_t *htm_brane_map_set(brane_t *br, cell_t *cell)
 
 	return (&hash);
 }
+#endif
 
 cell_t *htm_brane_map_get(brane_t *br, chord_t *hash)
 {
-	return ((cell_t *)hmap_get(br->cell_map, hash));
+	return ((cell_t *)hmap_get(br->cell_map, htm_chord_compact(hash)));
 }
 
 tree_t *htm_brane_cache(brane_t *br)

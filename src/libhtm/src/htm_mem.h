@@ -22,7 +22,7 @@
 #ifndef __HTM_MEM_H__
 #define __HTM_MEM_H__
 
-#define MAX_HTM_MEM_CACHE 65536
+#define MAX_HTM_MEM_CACHE 256
 #define MAX_HTM_MEM_MATCH 32
 
 event_t *htm_mem_set(entity_t *ent, cell_t *cell);
@@ -31,13 +31,13 @@ void htm_mem_notify(entity_t *ent, cell_t *cell);
 
 chord_t *htm_mem_restore(zpu_t *z, uint64_t key);
 
-void htm_mem_store(zpu_t *z, uint64_t key, chord_t *hash);
-
-void htm_mem_recall(zpu_t *z, uint64_t key);
-
 void htm_mem_relay(zpu_t *z, chord_t *hash);
 
-void htm_mem_remember(zpu_t *z, uint64_t key, uint64_t data);
+chord_t *htm_mem_remember(zpu_t *z, uint64_t data);
+
+void htm_mem_store(zpu_t *z, uint64_t key, chord_t *hash);
+
+chord_t *htm_mem_recall(zpu_t *z, uint64_t key);
 
 #endif /* ndef __HTM_MEM_H__ */
 

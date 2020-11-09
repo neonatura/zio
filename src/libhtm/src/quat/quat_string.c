@@ -244,7 +244,7 @@ qvar var = (qvar)str;
   putcp(&var,0);
 
   len = quat_printf_length(in_buf); /* blind seek */
-  quat_set(len, Q_STR, (qvar)in_buf);
+  quat_set(len, Q_STREAM, (qvar)in_buf);
 
   return (len);
 }
