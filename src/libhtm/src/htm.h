@@ -74,7 +74,6 @@ extern int pthread_yield(void);
 /* "quat" module */
 #include "quat/quat.h"
 
-#include "htm_adler64.h"
 #include "htm_struct.h"
 #include "htm_entity.h"
 #include "htm_brane.h"
@@ -82,7 +81,6 @@ extern int pthread_yield(void);
 #include "htm_path.h"
 #include "htm_layer.h"
 #include "htm_chord.h"
-#include "htm_map.h"
 #include "htm_mem.h"
 #include "htm_exec.h"
 #include "htm_exec_work.h"
@@ -92,12 +90,14 @@ extern int pthread_yield(void);
 #include "htm_cache.h"
 #include "htm_control.h"
 #include "htm_motor.h"
-#include "htm_laplace.h"
 #include "htm_celerity.h"
 #include "htm_position.h"
 #include "htm_zpu.h"
-#include "util/htm_buff.h"
-#include "util/htm_time.h"
+#include "sys/htm_adler64.h"
+#include "sys/htm_buff.h"
+#include "sys/htm_laplace.h"
+#include "sys/htm_map.h"
+#include "sys/htm_time.h"
 #include "lang/lang_char.h"
 #include "op/htm_op.h"
 

@@ -149,20 +149,22 @@ am__objects_3 = libhtm_a-quat.$(OBJEXT) libhtm_a-quat_alloc.$(OBJEXT) \
 	libhtm_a-quat_prec.$(OBJEXT) libhtm_a-quat_set.$(OBJEXT) \
 	libhtm_a-quat_string.$(OBJEXT)
 am__objects_4 = libhtm_a-htm_adler64.$(OBJEXT) \
-	libhtm_a-htm_brane.$(OBJEXT) libhtm_a-htm_cache.$(OBJEXT) \
-	libhtm_a-htm_celerity.$(OBJEXT) libhtm_a-htm_cell.$(OBJEXT) \
-	libhtm_a-htm_chord.$(OBJEXT) libhtm_a-htm_control.$(OBJEXT) \
-	libhtm_a-htm_entity.$(OBJEXT) libhtm_a-htm_exec.$(OBJEXT) \
-	libhtm_a-htm_exec_work.$(OBJEXT) libhtm_a-htm_emo.$(OBJEXT) \
-	htm_laplace.$(OBJEXT) libhtm_a-htm_layer.$(OBJEXT) \
-	libhtm_a-htm_map.$(OBJEXT) libhtm_a-htm_mem.$(OBJEXT) \
-	libhtm_a-htm_motor.$(OBJEXT) libhtm_a-htm_neo.$(OBJEXT) \
-	libhtm_a-htm_path.$(OBJEXT) libhtm_a-htm_position.$(OBJEXT) \
-	libhtm_a-htm_tree.$(OBJEXT) libhtm_a-htm_zpu.$(OBJEXT) \
-	libhtm_a-htm_buff.$(OBJEXT) libhtm_a-htm_time.$(OBJEXT) \
-	$(am__objects_1) $(am__objects_2) $(am__objects_3)
-am__objects_5 =
-am_libhtm_a_OBJECTS = $(am__objects_4) $(am__objects_5)
+	libhtm_a-htm_buff.$(OBJEXT) htm_laplace.$(OBJEXT) \
+	libhtm_a-htm_map.$(OBJEXT) libhtm_a-htm_time.$(OBJEXT)
+am__objects_5 = libhtm_a-htm_brane.$(OBJEXT) \
+	libhtm_a-htm_cache.$(OBJEXT) libhtm_a-htm_celerity.$(OBJEXT) \
+	libhtm_a-htm_cell.$(OBJEXT) libhtm_a-htm_chord.$(OBJEXT) \
+	libhtm_a-htm_control.$(OBJEXT) libhtm_a-htm_entity.$(OBJEXT) \
+	libhtm_a-htm_exec.$(OBJEXT) libhtm_a-htm_exec_work.$(OBJEXT) \
+	libhtm_a-htm_emo.$(OBJEXT) libhtm_a-htm_layer.$(OBJEXT) \
+	libhtm_a-htm_mem.$(OBJEXT) libhtm_a-htm_motor.$(OBJEXT) \
+	libhtm_a-htm_neo.$(OBJEXT) libhtm_a-htm_path.$(OBJEXT) \
+	libhtm_a-htm_position.$(OBJEXT) libhtm_a-htm_tree.$(OBJEXT) \
+	libhtm_a-htm_zpu.$(OBJEXT) $(am__objects_1) $(am__objects_2) \
+	$(am__objects_3) $(am__objects_4)
+am__objects_6 =
+am__objects_7 = $(am__objects_6)
+am_libhtm_a_OBJECTS = $(am__objects_5) $(am__objects_7)
 libhtm_a_OBJECTS = $(am_libhtm_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -414,8 +416,14 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 version_info = @version_info@
 version_patch = @version_patch@
+htm_sys_headers = \
+	$(srcdir)/sys/htm_adler64.h \
+	$(srcdir)/sys/htm_buff.h \
+	$(srcdir)/sys/htm_laplace.h \
+	$(srcdir)/sys/htm_map.h \
+	$(srcdir)/sys/htm_time.h
+
 htm_headers = \
-	$(srcdir)/htm_adler64.h \
 	$(srcdir)/htm_brane.h \
 	$(srcdir)/htm.h \
 	$(srcdir)/htm_cache.h \
@@ -436,11 +444,17 @@ htm_headers = \
 	$(srcdir)/htm_position.h \
 	$(srcdir)/htm_tree.h \
 	$(srcdir)/htm_zpu.h \
-	$(srcdir)/util/htm_buff.h \
-	$(srcdir)/util/htm_time.h \
 	$(srcdir)/lang/lang_char.h \
 	$(srcdir)/op/htm_op.h \
-	$(srcdir)/quat/quat.h
+	$(srcdir)/quat/quat.h \
+	$(htm_sys_headers)
+
+htm_sys_sources = \
+	$(srcdir)/sys/htm_adler64.c \
+	$(srcdir)/sys/htm_buff.c \
+	$(srcdir)/sys/htm_laplace.cpp \
+	$(srcdir)/sys/htm_map.c \
+	$(srcdir)/sys/htm_time.c
 
 htm_lang_sources = \
 	$(srcdir)/lang/lang_char.c \
@@ -468,7 +482,6 @@ htm_quat_sources = \
 	$(srcdir)/quat/quat_string.c
 
 htm_sources = \
-	$(srcdir)/htm_adler64.c \
 	$(srcdir)/htm_brane.c \
 	$(srcdir)/htm_cache.c \
 	$(srcdir)/htm_celerity.c \
@@ -479,9 +492,7 @@ htm_sources = \
 	$(srcdir)/htm_exec.c \
 	$(srcdir)/htm_exec_work.c \
 	$(srcdir)/htm_emo.c \
-	$(srcdir)/htm_laplace.cpp \
 	$(srcdir)/htm_layer.c \
-	$(srcdir)/htm_map.c \
 	$(srcdir)/htm_mem.c \
 	$(srcdir)/htm_motor.c \
 	$(srcdir)/htm_neo.c \
@@ -489,11 +500,10 @@ htm_sources = \
 	$(srcdir)/htm_position.c \
 	$(srcdir)/htm_tree.c \
 	$(srcdir)/htm_zpu.c \
-	$(srcdir)/util/htm_buff.c \
-	$(srcdir)/util/htm_time.c \
 	$(htm_lang_sources) \
 	$(htm_op_sources) \
-	$(htm_quat_sources)
+	$(htm_quat_sources) \
+	$(htm_sys_sources)
 
 lib_LIBRARIES = libhtm.a
 libhtm_a_SOURCES = $(htm_sources) $(htm_headers)
@@ -644,20 +654,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-libhtm_a-htm_adler64.o: $(srcdir)/htm_adler64.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_adler64.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_adler64.Tpo -c -o libhtm_a-htm_adler64.o `test -f '$(srcdir)/htm_adler64.c' || echo '$(srcdir)/'`$(srcdir)/htm_adler64.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_adler64.Tpo $(DEPDIR)/libhtm_a-htm_adler64.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/htm_adler64.c' object='libhtm_a-htm_adler64.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_adler64.o `test -f '$(srcdir)/htm_adler64.c' || echo '$(srcdir)/'`$(srcdir)/htm_adler64.c
-
-libhtm_a-htm_adler64.obj: $(srcdir)/htm_adler64.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_adler64.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_adler64.Tpo -c -o libhtm_a-htm_adler64.obj `if test -f '$(srcdir)/htm_adler64.c'; then $(CYGPATH_W) '$(srcdir)/htm_adler64.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_adler64.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_adler64.Tpo $(DEPDIR)/libhtm_a-htm_adler64.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/htm_adler64.c' object='libhtm_a-htm_adler64.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_adler64.obj `if test -f '$(srcdir)/htm_adler64.c'; then $(CYGPATH_W) '$(srcdir)/htm_adler64.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_adler64.c'; fi`
 
 libhtm_a-htm_brane.o: $(srcdir)/htm_brane.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_brane.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_brane.Tpo -c -o libhtm_a-htm_brane.o `test -f '$(srcdir)/htm_brane.c' || echo '$(srcdir)/'`$(srcdir)/htm_brane.c
@@ -813,20 +809,6 @@ libhtm_a-htm_layer.obj: $(srcdir)/htm_layer.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_layer.obj `if test -f '$(srcdir)/htm_layer.c'; then $(CYGPATH_W) '$(srcdir)/htm_layer.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_layer.c'; fi`
 
-libhtm_a-htm_map.o: $(srcdir)/htm_map.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_map.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_map.Tpo -c -o libhtm_a-htm_map.o `test -f '$(srcdir)/htm_map.c' || echo '$(srcdir)/'`$(srcdir)/htm_map.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_map.Tpo $(DEPDIR)/libhtm_a-htm_map.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/htm_map.c' object='libhtm_a-htm_map.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_map.o `test -f '$(srcdir)/htm_map.c' || echo '$(srcdir)/'`$(srcdir)/htm_map.c
-
-libhtm_a-htm_map.obj: $(srcdir)/htm_map.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_map.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_map.Tpo -c -o libhtm_a-htm_map.obj `if test -f '$(srcdir)/htm_map.c'; then $(CYGPATH_W) '$(srcdir)/htm_map.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_map.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_map.Tpo $(DEPDIR)/libhtm_a-htm_map.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/htm_map.c' object='libhtm_a-htm_map.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_map.obj `if test -f '$(srcdir)/htm_map.c'; then $(CYGPATH_W) '$(srcdir)/htm_map.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_map.c'; fi`
-
 libhtm_a-htm_mem.o: $(srcdir)/htm_mem.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_mem.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_mem.Tpo -c -o libhtm_a-htm_mem.o `test -f '$(srcdir)/htm_mem.c' || echo '$(srcdir)/'`$(srcdir)/htm_mem.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_mem.Tpo $(DEPDIR)/libhtm_a-htm_mem.Po
@@ -924,34 +906,6 @@ libhtm_a-htm_zpu.obj: $(srcdir)/htm_zpu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/htm_zpu.c' object='libhtm_a-htm_zpu.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_zpu.obj `if test -f '$(srcdir)/htm_zpu.c'; then $(CYGPATH_W) '$(srcdir)/htm_zpu.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_zpu.c'; fi`
-
-libhtm_a-htm_buff.o: $(srcdir)/util/htm_buff.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_buff.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_buff.Tpo -c -o libhtm_a-htm_buff.o `test -f '$(srcdir)/util/htm_buff.c' || echo '$(srcdir)/'`$(srcdir)/util/htm_buff.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_buff.Tpo $(DEPDIR)/libhtm_a-htm_buff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/util/htm_buff.c' object='libhtm_a-htm_buff.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_buff.o `test -f '$(srcdir)/util/htm_buff.c' || echo '$(srcdir)/'`$(srcdir)/util/htm_buff.c
-
-libhtm_a-htm_buff.obj: $(srcdir)/util/htm_buff.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_buff.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_buff.Tpo -c -o libhtm_a-htm_buff.obj `if test -f '$(srcdir)/util/htm_buff.c'; then $(CYGPATH_W) '$(srcdir)/util/htm_buff.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/util/htm_buff.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_buff.Tpo $(DEPDIR)/libhtm_a-htm_buff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/util/htm_buff.c' object='libhtm_a-htm_buff.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_buff.obj `if test -f '$(srcdir)/util/htm_buff.c'; then $(CYGPATH_W) '$(srcdir)/util/htm_buff.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/util/htm_buff.c'; fi`
-
-libhtm_a-htm_time.o: $(srcdir)/util/htm_time.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_time.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_time.Tpo -c -o libhtm_a-htm_time.o `test -f '$(srcdir)/util/htm_time.c' || echo '$(srcdir)/'`$(srcdir)/util/htm_time.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_time.Tpo $(DEPDIR)/libhtm_a-htm_time.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/util/htm_time.c' object='libhtm_a-htm_time.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_time.o `test -f '$(srcdir)/util/htm_time.c' || echo '$(srcdir)/'`$(srcdir)/util/htm_time.c
-
-libhtm_a-htm_time.obj: $(srcdir)/util/htm_time.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_time.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_time.Tpo -c -o libhtm_a-htm_time.obj `if test -f '$(srcdir)/util/htm_time.c'; then $(CYGPATH_W) '$(srcdir)/util/htm_time.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/util/htm_time.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_time.Tpo $(DEPDIR)/libhtm_a-htm_time.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/util/htm_time.c' object='libhtm_a-htm_time.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_time.obj `if test -f '$(srcdir)/util/htm_time.c'; then $(CYGPATH_W) '$(srcdir)/util/htm_time.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/util/htm_time.c'; fi`
 
 libhtm_a-lang_char.o: $(srcdir)/lang/lang_char.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-lang_char.o -MD -MP -MF $(DEPDIR)/libhtm_a-lang_char.Tpo -c -o libhtm_a-lang_char.o `test -f '$(srcdir)/lang/lang_char.c' || echo '$(srcdir)/'`$(srcdir)/lang/lang_char.c
@@ -1205,6 +1159,62 @@ libhtm_a-quat_string.obj: $(srcdir)/quat/quat_string.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-quat_string.obj `if test -f '$(srcdir)/quat/quat_string.c'; then $(CYGPATH_W) '$(srcdir)/quat/quat_string.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/quat/quat_string.c'; fi`
 
+libhtm_a-htm_adler64.o: $(srcdir)/sys/htm_adler64.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_adler64.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_adler64.Tpo -c -o libhtm_a-htm_adler64.o `test -f '$(srcdir)/sys/htm_adler64.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_adler64.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_adler64.Tpo $(DEPDIR)/libhtm_a-htm_adler64.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_adler64.c' object='libhtm_a-htm_adler64.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_adler64.o `test -f '$(srcdir)/sys/htm_adler64.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_adler64.c
+
+libhtm_a-htm_adler64.obj: $(srcdir)/sys/htm_adler64.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_adler64.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_adler64.Tpo -c -o libhtm_a-htm_adler64.obj `if test -f '$(srcdir)/sys/htm_adler64.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_adler64.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_adler64.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_adler64.Tpo $(DEPDIR)/libhtm_a-htm_adler64.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_adler64.c' object='libhtm_a-htm_adler64.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_adler64.obj `if test -f '$(srcdir)/sys/htm_adler64.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_adler64.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_adler64.c'; fi`
+
+libhtm_a-htm_buff.o: $(srcdir)/sys/htm_buff.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_buff.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_buff.Tpo -c -o libhtm_a-htm_buff.o `test -f '$(srcdir)/sys/htm_buff.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_buff.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_buff.Tpo $(DEPDIR)/libhtm_a-htm_buff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_buff.c' object='libhtm_a-htm_buff.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_buff.o `test -f '$(srcdir)/sys/htm_buff.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_buff.c
+
+libhtm_a-htm_buff.obj: $(srcdir)/sys/htm_buff.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_buff.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_buff.Tpo -c -o libhtm_a-htm_buff.obj `if test -f '$(srcdir)/sys/htm_buff.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_buff.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_buff.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_buff.Tpo $(DEPDIR)/libhtm_a-htm_buff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_buff.c' object='libhtm_a-htm_buff.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_buff.obj `if test -f '$(srcdir)/sys/htm_buff.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_buff.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_buff.c'; fi`
+
+libhtm_a-htm_map.o: $(srcdir)/sys/htm_map.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_map.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_map.Tpo -c -o libhtm_a-htm_map.o `test -f '$(srcdir)/sys/htm_map.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_map.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_map.Tpo $(DEPDIR)/libhtm_a-htm_map.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_map.c' object='libhtm_a-htm_map.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_map.o `test -f '$(srcdir)/sys/htm_map.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_map.c
+
+libhtm_a-htm_map.obj: $(srcdir)/sys/htm_map.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_map.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_map.Tpo -c -o libhtm_a-htm_map.obj `if test -f '$(srcdir)/sys/htm_map.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_map.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_map.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_map.Tpo $(DEPDIR)/libhtm_a-htm_map.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_map.c' object='libhtm_a-htm_map.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_map.obj `if test -f '$(srcdir)/sys/htm_map.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_map.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_map.c'; fi`
+
+libhtm_a-htm_time.o: $(srcdir)/sys/htm_time.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_time.o -MD -MP -MF $(DEPDIR)/libhtm_a-htm_time.Tpo -c -o libhtm_a-htm_time.o `test -f '$(srcdir)/sys/htm_time.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_time.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_time.Tpo $(DEPDIR)/libhtm_a-htm_time.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_time.c' object='libhtm_a-htm_time.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_time.o `test -f '$(srcdir)/sys/htm_time.c' || echo '$(srcdir)/'`$(srcdir)/sys/htm_time.c
+
+libhtm_a-htm_time.obj: $(srcdir)/sys/htm_time.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -MT libhtm_a-htm_time.obj -MD -MP -MF $(DEPDIR)/libhtm_a-htm_time.Tpo -c -o libhtm_a-htm_time.obj `if test -f '$(srcdir)/sys/htm_time.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_time.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_time.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhtm_a-htm_time.Tpo $(DEPDIR)/libhtm_a-htm_time.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/sys/htm_time.c' object='libhtm_a-htm_time.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhtm_a_CFLAGS) $(CFLAGS) -c -o libhtm_a-htm_time.obj `if test -f '$(srcdir)/sys/htm_time.c'; then $(CYGPATH_W) '$(srcdir)/sys/htm_time.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_time.c'; fi`
+
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
@@ -1226,19 +1236,19 @@ libhtm_a-quat_string.obj: $(srcdir)/quat/quat_string.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-htm_laplace.o: $(srcdir)/htm_laplace.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT htm_laplace.o -MD -MP -MF $(DEPDIR)/htm_laplace.Tpo -c -o htm_laplace.o `test -f '$(srcdir)/htm_laplace.cpp' || echo '$(srcdir)/'`$(srcdir)/htm_laplace.cpp
+htm_laplace.o: $(srcdir)/sys/htm_laplace.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT htm_laplace.o -MD -MP -MF $(DEPDIR)/htm_laplace.Tpo -c -o htm_laplace.o `test -f '$(srcdir)/sys/htm_laplace.cpp' || echo '$(srcdir)/'`$(srcdir)/sys/htm_laplace.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/htm_laplace.Tpo $(DEPDIR)/htm_laplace.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/htm_laplace.cpp' object='htm_laplace.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/sys/htm_laplace.cpp' object='htm_laplace.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o htm_laplace.o `test -f '$(srcdir)/htm_laplace.cpp' || echo '$(srcdir)/'`$(srcdir)/htm_laplace.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o htm_laplace.o `test -f '$(srcdir)/sys/htm_laplace.cpp' || echo '$(srcdir)/'`$(srcdir)/sys/htm_laplace.cpp
 
-htm_laplace.obj: $(srcdir)/htm_laplace.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT htm_laplace.obj -MD -MP -MF $(DEPDIR)/htm_laplace.Tpo -c -o htm_laplace.obj `if test -f '$(srcdir)/htm_laplace.cpp'; then $(CYGPATH_W) '$(srcdir)/htm_laplace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_laplace.cpp'; fi`
+htm_laplace.obj: $(srcdir)/sys/htm_laplace.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT htm_laplace.obj -MD -MP -MF $(DEPDIR)/htm_laplace.Tpo -c -o htm_laplace.obj `if test -f '$(srcdir)/sys/htm_laplace.cpp'; then $(CYGPATH_W) '$(srcdir)/sys/htm_laplace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_laplace.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/htm_laplace.Tpo $(DEPDIR)/htm_laplace.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/htm_laplace.cpp' object='htm_laplace.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(srcdir)/sys/htm_laplace.cpp' object='htm_laplace.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o htm_laplace.obj `if test -f '$(srcdir)/htm_laplace.cpp'; then $(CYGPATH_W) '$(srcdir)/htm_laplace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/htm_laplace.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o htm_laplace.obj `if test -f '$(srcdir)/sys/htm_laplace.cpp'; then $(CYGPATH_W) '$(srcdir)/sys/htm_laplace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/sys/htm_laplace.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

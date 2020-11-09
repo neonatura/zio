@@ -1,6 +1,12 @@
 
+htm_sys_headers = \
+	$(srcdir)/sys/htm_adler64.h \
+	$(srcdir)/sys/htm_buff.h \
+	$(srcdir)/sys/htm_laplace.h \
+	$(srcdir)/sys/htm_map.h \
+	$(srcdir)/sys/htm_time.h
+
 htm_headers = \
-	$(srcdir)/htm_adler64.h \
 	$(srcdir)/htm_brane.h \
 	$(srcdir)/htm.h \
 	$(srcdir)/htm_cache.h \
@@ -21,11 +27,17 @@ htm_headers = \
 	$(srcdir)/htm_position.h \
 	$(srcdir)/htm_tree.h \
 	$(srcdir)/htm_zpu.h \
-	$(srcdir)/util/htm_buff.h \
-	$(srcdir)/util/htm_time.h \
 	$(srcdir)/lang/lang_char.h \
 	$(srcdir)/op/htm_op.h \
-	$(srcdir)/quat/quat.h
+	$(srcdir)/quat/quat.h \
+	$(htm_sys_headers)
+
+htm_sys_sources = \
+	$(srcdir)/sys/htm_adler64.c \
+	$(srcdir)/sys/htm_buff.c \
+	$(srcdir)/sys/htm_laplace.cpp \
+	$(srcdir)/sys/htm_map.c \
+	$(srcdir)/sys/htm_time.c
 
 htm_lang_sources = \
 	$(srcdir)/lang/lang_char.c \
@@ -52,9 +64,7 @@ htm_quat_sources = \
 	$(srcdir)/quat/quat_set.c \
 	$(srcdir)/quat/quat_string.c
 
-
 htm_sources = \
-	$(srcdir)/htm_adler64.c \
 	$(srcdir)/htm_brane.c \
 	$(srcdir)/htm_cache.c \
 	$(srcdir)/htm_celerity.c \
@@ -65,9 +75,7 @@ htm_sources = \
 	$(srcdir)/htm_exec.c \
 	$(srcdir)/htm_exec_work.c \
 	$(srcdir)/htm_emo.c \
-	$(srcdir)/htm_laplace.cpp \
 	$(srcdir)/htm_layer.c \
-	$(srcdir)/htm_map.c \
 	$(srcdir)/htm_mem.c \
 	$(srcdir)/htm_motor.c \
 	$(srcdir)/htm_neo.c \
@@ -75,11 +83,10 @@ htm_sources = \
 	$(srcdir)/htm_position.c \
 	$(srcdir)/htm_tree.c \
 	$(srcdir)/htm_zpu.c \
-	$(srcdir)/util/htm_buff.c \
-	$(srcdir)/util/htm_time.c \
 	$(htm_lang_sources) \
 	$(htm_op_sources) \
-	$(htm_quat_sources)
+	$(htm_quat_sources) \
+	$(htm_sys_sources)
 
 lib_LIBRARIES = libhtm.a
 libhtm_a_SOURCES = $(htm_sources) $(htm_headers)

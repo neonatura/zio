@@ -76,7 +76,6 @@ zdev_t zio_itime_device =
 	/* op */
 	{ zio_itime_open, zio_itime_read, zio_itime_write, zio_itime_print, zio_itime_close, zio_itime_poll },
 	/* param */
-	{ /* freq_min */ 5, /* freq_max */ 15, 0, PIN_NULL }
-	//{ /* freq_min */ 15, /* freq_max */ 45, 0, PIN_NULL }
+	{ /* freq_min */ 15, /* freq_max */ 45, 0, PIN_NULL }
 };
 

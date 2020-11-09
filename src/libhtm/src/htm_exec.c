@@ -20,7 +20,6 @@
  */
 
 #include "htm.h"
-#include "htm_laplace.h"
 
 #if 0 
 static void *_memxor(void *dest, const void *src, size_t n)
