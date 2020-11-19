@@ -42,7 +42,7 @@ int zio_led_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
 	strncpy(dev->fifo.value, data, MIN(data_len, MAX_VALUE_BUFFER_SIZE-1));
@@ -73,7 +73,7 @@ int zio_led_poll(zdev_t *dev)
 	if (diff >= 2000) {
 		/* "sleep mode" */
 		zio_led_sleep(dev);
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 	}
 
 	zio_led_wake(dev);
@@ -91,7 +91,7 @@ int zio_led_poll(zdev_t *dev)
 zdev_t zio_led0_device =
 {
 	"led0", PIN_LED0, STRATUM_MAX, /* send notification */
-	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
+	ZDEV_DIAG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_led_open, NULL, zio_led_write, NULL, zio_led_close, zio_led_poll },
 	/* param */
@@ -101,7 +101,7 @@ zdev_t zio_led0_device =
 zdev_t zio_led1_device =
 {
 	"led1", PIN_LED1, STRATUM_MAX, /* send notification */
-	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_EXTERNAL, 
+	ZDEV_DIAG, DEVF_START | DEVF_OUTPUT, ZMOD_EXTERNAL, 
 	/* op */
 	{ zio_led_open, NULL, zio_led_write, NULL, zio_led_close, zio_led_poll },
 	/* param */

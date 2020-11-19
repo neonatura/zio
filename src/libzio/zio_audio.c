@@ -62,7 +62,7 @@ int zio_beep(void)
 
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 	if (!mod)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	return (zio_write16_r(mod,
 		(uint8_t *)_beep_samples, BEEP_SAMPLES*2, ZIO_AUDIO_32MS));
@@ -74,7 +74,7 @@ int zio_beep_negative(void)
 
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 	if (!mod)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	return (zio_write16_r(mod,
 		(uint8_t *)_negative_beep_samples, NEGATIVE_BEEP_SAMPLES*2, ZIO_AUDIO_64MS));
@@ -86,7 +86,7 @@ int zio_beep_positive(void)
 
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 	if (!mod)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	return (zio_write16_r(mod,
 		(uint8_t *)_positive_beep_samples, POSITIVE_BEEP_SAMPLES*2, ZIO_AUDIO_64MS));
@@ -101,7 +101,7 @@ int zio_audio_dtalk(uint8_t *data, size_t data_len)
 
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 	if (!mod)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	len = 0;
 	memset(buff, 0, sizeof(buff));
@@ -184,7 +184,7 @@ int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	mod = zio_mod_get(ZMOD_INTERNAL, ZDEV_AUDIO);
 	if (!mod)
-		return (ZERR_OPNOTSUPP);
+		return (ERR_OPNOTSUPP);
 
   synth_flags = espeakCHARS_AUTO;
 	espeak_Synth(data, strlen(data)+1, 0, 
@@ -197,7 +197,7 @@ int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len)
 #else
 int zio_audio_etalk(zdev_t *dev, uint8_t *data, size_t data_len)
 {
-	return (ZERR_OPNOTSUPP);
+	return (ERR_OPNOTSUPP);
 }
 #endif
 

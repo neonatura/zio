@@ -71,7 +71,7 @@ int zio_rtc_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	uint64_t stamp;
 
 	if (data_len != sizeof(uint64_t))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	memcpy(&stamp, data, sizeof(stamp));
 	_rtc_ds3231_write(dev, stamp);

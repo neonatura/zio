@@ -19,7 +19,7 @@ int zio_audio_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	zio_mod_write(dev, data, data_len);
 

@@ -58,7 +58,7 @@ zdev_t *zio_dev_get(int module, int type, int flags);
 
 void zio_debug(zdev_t *dev);
 
-void zio_error(zdev_t *dev, int err, char *tag);
+void zio_dev_error(zdev_t *dev, int err, char *tag);
 
 uint64_t zio_fifo_span(zdev_t *dev);
 
@@ -99,6 +99,10 @@ void zio_mood_incr(zdev_t *dev);
 void zio_mood_decr(zdev_t *dev);
 
 int zio_ctl(zdev_t *dev, int reg, void *data);
+
+void zio_init(void);
+
+void zio_term(void);
 
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \

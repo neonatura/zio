@@ -134,7 +134,7 @@ int zio_sc16is_open(zdev_t *dev)
 
 	fd = ZIO_I2C_INIT(dev->def_pin);
 	if (fd == -1)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	/* set baud */
 	REG_SET(fd, SC16IS750_REG_LCR, 0x80);
@@ -169,13 +169,13 @@ int zio_sc16is_read(zdev_t *dev)
 	int ok;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
-		return (ZERR_OVERFLOW);
+		return (ERR_OVERFLOW);
 
 	if ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) == 0)
-		return (ZERR_AGAIN); /* nothing to read */
+		return (ERR_AGAIN); /* nothing to read */
 
 	do {
 		dev->fifo.value[dev->fifo.value_len] = 
@@ -195,7 +195,7 @@ int zio_sc16is_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	for (i = 0; i < data_len; i++)
 		REG_SET(dev->dev_fd, SC16IS750_REG_THR, data[i]);
@@ -239,11 +239,11 @@ int zio_sc16is_ctl(zdev_t *dev, int reg, void *data)
 
 	switch (reg) {
 		case ZCTL_PING:
-			return (zio_sc16is_ping(dev) ? 0 : ZERR_INVAL);
+			return (zio_sc16is_ping(dev) ? 0 : ERR_INVAL);
 		case ZCTL_VERSION:
 			return (750);
 	}
-	return (ZERR_OPNOTSUPP);
+	return (ERR_OPNOTSUPP);
 }
 
 zdev_t zio_sc16is_4c_device =

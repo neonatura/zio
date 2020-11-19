@@ -37,7 +37,7 @@ int zio_geo_poll(zdev_t *dev)
 	int err;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	err = zio_geo_read(dev);
 	if (err)
@@ -59,7 +59,7 @@ int zio_geo_print(zdev_t *dev, int mode, void *retbuf)
 
 	geo = zio_geo_value(dev);
 	if (!geo)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	sprintf(buf, "@%f,%f", geo->lat, geo->lon);
 	strcpy((char *)retbuf, buf);

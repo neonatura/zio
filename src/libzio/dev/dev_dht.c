@@ -84,7 +84,7 @@ int zio_dht_read(zdev_t *dev)
 		return (0);
 	} 
 
-	return (ZERR_INVAL);
+	return (ERR_INVAL);
 }
 
 int zio_dht_poll(zdev_t *dev)
@@ -92,18 +92,18 @@ int zio_dht_poll(zdev_t *dev)
 	struct timeval tv;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (511 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, OUTPUT );
 		DIGITAL_WRITE( dev->def_pin, LOW );
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 	} else if (512 == (dev->stat.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, INPUT );
 		return (zio_dht_read(dev));
 	}
 
-	return (ZERR_AGAIN);
+	return (ERR_AGAIN);
 }
 
 int zio_dht_print(zdev_t *dev, int mode, void *retbuf)

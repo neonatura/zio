@@ -21,7 +21,7 @@ int zio_gtime_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int fd;
 
 	if (!zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (data_len == sizeof(uint64_t)) {
 		uint64_t val = *((uint64_t *)data);

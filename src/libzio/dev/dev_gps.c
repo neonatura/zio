@@ -219,10 +219,10 @@ int zio_gps_parse(zdev_t *dev, char *text)
 	if (0 == strncmp(text, "GPGSV", 5) ||
 			0 == strncmp(text, "GPVTG", 5) ||
 			0 == strncmp(text, "GPGSA", 5))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	if (0 == strncmp(text+5, ",,,,", 4))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	geo = NULL;
 	if (0 == strncmp(text, "GPGGA", 5)) {
@@ -233,7 +233,7 @@ int zio_gps_parse(zdev_t *dev, char *text)
 		geo = zio_geo_parse_RMC(dev, text);
 	}
 	if (!geo)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	zio_data_append(dev, (uint8_t *)geo, sizeof(zgeo_t));		
 
@@ -249,7 +249,7 @@ int zio_gps_open(zdev_t *dev)
 
 	fd = ZIO_UART_INIT(dev, dev->def_pin, 9600);
 	if (fd < 0)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	dev->dev_fd = fd; 
 	zio_dev_on(dev);
@@ -271,7 +271,7 @@ int zio_gps_read(zdev_t *dev)
 	memset(buf, 0, sizeof(buf));
 	len = ZIO_UART_READ(dev, buf, sizeof(buf)-1);
 	if (len <= 0)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	cur = buf;
 	while (next = strchr(cur, '\n')) {
@@ -280,7 +280,7 @@ int zio_gps_read(zdev_t *dev)
 		cur = next + 1;
 	}
 	if (!tot)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	return (0);
 }
@@ -316,7 +316,7 @@ int zio_gps_print(zdev_t *dev, int mode, void *retbuf)
 
 	geo = zio_geo_value(dev);
 	if (!geo)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	sprintf(buf, "@%f,%f", geo->lat, geo->lon);
 	strcpy((char *)retbuf, buf);

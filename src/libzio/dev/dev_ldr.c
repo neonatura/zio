@@ -22,7 +22,7 @@ int zio_ldr_read(zdev_t *dev)
 
 	val = (double)analogRead(dev->def_pin);
 	if (val == 0.0 || val == 255.0)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	volt = 3.3 / 255 * val;
 

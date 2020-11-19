@@ -28,6 +28,10 @@
 /* system */
 #include <sys/types.h>
 #include <unistd.h>
+#include <signal.h>
+
+/* libzsys */
+#include "zsys.h"
 
 /* libhtm */
 #include "htm.h"
@@ -37,9 +41,8 @@
 
 /* ziod */
 #include "ziod_main.h"
-#include "ziod_error.h"
-#include "ziod_log.h"
 #include "ziod_opt.h"
+#include "ziod_therm.h"
 
 #define RUN_NONE 0
 #define RUN_IDLE 1

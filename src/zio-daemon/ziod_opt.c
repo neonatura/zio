@@ -53,8 +53,10 @@ static opt_t _option_table[] = {
 	{ OPT_ZIO_PORT, OPT_TYPE_NUM, 22104, NULL,
 		"The port to accept incoming zio service connections." },
 
+#if 0
   { OPT_ZIO_KEY, OPT_TYPE_STR, 0, "",
     "A hex key for authenticating zio service requests." },
+#endif
 
 	{ "", OPT_TYPE_NULL, 0, "" },
 
@@ -109,19 +111,19 @@ void opt_print(void)
 				sprintf(buf, "%s set to \"%s\".", 
 						_option_table[idx].opt_name,
 						opt_bool(_option_table[idx].opt_name) ? "true" : "false");
-				zio_info("option", buf); 
+				zlog_info(buf); 
 				break;
 			case OPT_TYPE_NUM:
 				sprintf(buf, "%s set to \"%d\".", 
 						_option_table[idx].opt_name,
 						opt_num(_option_table[idx].opt_name));
-				zio_info("option", buf); 
+				zlog_info(buf); 
 				break;
 			case OPT_TYPE_STR:
 				sprintf(buf, "%s set to \"%s\".", 
 						_option_table[idx].opt_name,
 						opt_str(_option_table[idx].opt_name));
-				zio_info("option", buf); 
+				zlog_info(buf); 
 				break;
 		}
 	}
@@ -162,16 +164,16 @@ static int opt_set_defaults_datfile(char *path)
 
 	err = fstat(path, &st);
 	if (err)
-		return (zio_syserror());
+		return (zsyserror());
 
 	fl = fopen(path, "rb");
 	if (!fl)
-		return (zio_syserror());
+		return (zsyserror());
 
 	/* read file into memory */
 	data_len = st.st_size;
 	data = (char *)calloc(data_len, sizeof(uint8_t));
-	if (!data) return (zio_syserror());
+	if (!data) return (zsyserror());
 	(void)fread(data, data_len, sizeof(uint8_t), fl);
 	(void)fclose(fl);
 
@@ -273,7 +275,7 @@ static void opt_set_defaults(void)
 	}
 
 	/* "<data dir>/zio.conf" datafile */
-	sprintf(path, "%szio.conf", get_zio_data_path());
+	sprintf(path, "%szio.conf", zsys_data_path());
 	err = opt_set_defaults_datfile(path);
 	if (err)
 		write_default_zio_conf_file(path);
@@ -514,25 +516,3 @@ const char *opt_config_default_print(void)
 	return ((const char *)buff_data(ret_buff));
 }
 
-const char *get_zio_data_path(void)
-{
-	static char ret_path[PATH_MAX+1];
-
-	if (!*ret_path) {
-#ifdef WINDOWS
-		char *str;
-
-		str = getenv("ProgramData");
-		if (!str)
-			str = "C:\\ProgramData";
-
-		sprintf(ret_path, "%s\\zio\\", str);
-		mkdir(ret_path, 0777);
-#else
-		strcpy(ret_path, "/var/lib/zio/");
-		mkdir(ret_path, 0777);
-#endif
-	}
-
-	return (ret_path);
-}

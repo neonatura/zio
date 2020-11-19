@@ -3,7 +3,7 @@
 #ifndef __ZIO_TIME_H__
 #define __ZIO_TIME_H__
 
-#define ZIO_TIME_NULL HTM_TIME_NULL
+#define ZIO_TIME_NULL ZTIME_NULL
 
 typedef uint64_t ztime_t;
 

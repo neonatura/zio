@@ -65,7 +65,7 @@ int zio_lcd_twi1602_open(zdev_t *dev)
 
 	fd = ZIO_I2C_INIT(dev->def_pin);
 	if (fd < 0)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	dev->dev_fd = fd;
 	zio_lcd_init(dev);
@@ -79,7 +79,7 @@ int zio_lcd_twi1602_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	if (*dev->fifo.value) {
 		size_t len = strlen(dev->fifo.value);
@@ -122,7 +122,7 @@ int zio_lcd_twi1602_close(zdev_t *dev)
 zdev_t zio_lcd_twi1602_device =
 {
 	"lcd16", DEFAULT_LCD_I2C_ADDR, STRATUM_MAX, /* contoller: activity log */
-	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
+	ZDEV_DIAG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_lcd_twi1602_open, NULL, zio_lcd_twi1602_write, NULL, zio_lcd_twi1602_close },
 	/* param */

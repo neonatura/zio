@@ -18,7 +18,7 @@ int zio_itemp_read(zdev_t *dev)
 	fl = fopen(SYS_ITEMP_PATH, "r");
 	if (!fl) {
 		zio_dev_off(dev);
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 	}
 
 	memset(buf, 0, sizeof(buf));
@@ -26,7 +26,7 @@ int zio_itemp_read(zdev_t *dev)
 	fclose(fl);
 
 	if (!*buf) {
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 	}
 
 	/* store last obtained value. */

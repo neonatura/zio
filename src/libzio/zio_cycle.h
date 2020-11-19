@@ -9,5 +9,7 @@ void zio_cycle(void);
 
 void zio_cycle_step(void);
 
+unsigned char *zio_cycle_print(void);
+
 #endif /* ndef __ZIO_CYCLE_H__ */
 

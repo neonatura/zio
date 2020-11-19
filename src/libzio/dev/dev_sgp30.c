@@ -61,16 +61,16 @@ int zio_sgp30_version(zdev_t *dev, uint64_t *ver_p)
 
 	err = write(dev->dev_fd, _get_feature_set_version, 2);
 	if (err != 2)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	usleep(500);
 
 	memset(buf, 0, sizeof(buf));
 	err = read(dev->dev_fd, buf, 3);
 	if (err != 3)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 	if (gencrc8(buf, 2) != buf[2])
-		return (ZERR_ILSEQ);
+		return (ERR_ILSEQ);
 
 	*ver_p = ((uint64_t)buf[0] << 8) | (uint64_t)buf[1];
 
@@ -84,21 +84,21 @@ int zio_sgp30_serial(zdev_t *dev, uint64_t *ser_p)
 
 	err = write(dev->dev_fd, _get_serial_id, 2);
 	if (err != 2)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	usleep(500);
 
 	memset(buf, 0, sizeof(buf));
 	err = read(dev->dev_fd, buf, 9);
 	if (err != 9)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (gencrc8(buf, 2) != buf[2])
-		return (ZERR_ILSEQ);
+		return (ERR_ILSEQ);
 	if (gencrc8(buf+3, 2) != buf[5])
-		return (ZERR_ILSEQ);
+		return (ERR_ILSEQ);
 	if (gencrc8(buf+6, 2) != buf[8])
-		return (ZERR_ILSEQ);
+		return (ERR_ILSEQ);
 
 	uint64_t ser1 = ((uint64_t)buf[0] << 8) | (uint64_t)buf[1];
 	uint64_t ser2 = ((uint64_t)buf[3] << 8) | (uint64_t)buf[4];
@@ -120,7 +120,7 @@ int zio_sgp30_abs_humidity(zdev_t *dev, uint16_t hum)
 
 	err = write(dev->dev_fd, buf, 5);
 	if (err != 5)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	return (0);
 }
@@ -149,12 +149,12 @@ int zio_sgp30_baseline(zdev_t *dev, int *b_co2_p, int *b_voc_p)
 
 	err = write(dev->dev_fd, _get_baseline, 2);
 	if (err != 2)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	/* 6 bytes, baselineCO2 data(MSB) / data(LSB) / Checksum / baselineTVOC data(MSB) / data(LSB) / Checksum */
 	err = read(dev->dev_fd, buf, 6);
 	if (err != 6)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	*b_co2_p = ((uint32_t)buf[0] << 8) | (uint32_t)buf[1];
 	*b_voc_p = ((uint32_t)buf[3] << 8) | (uint32_t)buf[4];
@@ -190,7 +190,7 @@ int zio_sgp30_open(zdev_t *dev)
 
 	err = write(dev->dev_fd, _init_air_quality, 2);
 	if (err != 2)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	zio_sgp30_baseline_init(dev, _sgp30_baseline_co2, _sgp30_baseline_voc); 
 //	zio_sgp30_humidity_set(fd, SGP30_DEFAULT_HUMIDITY);
@@ -224,7 +224,7 @@ int zio_sgp30_read(zdev_t *dev)
 
 	err = read(dev->dev_fd, buf, 6);	
 	if (err != 6)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	co2 = ((uint16_t)buf[0] << 8) | buf[1];
 	zio_dvalue_set(dev, SGP30_CO2_AQ(co2));
@@ -242,11 +242,11 @@ int zio_sgp30_poll(zdev_t *dev)
 	int freq = dev->stat.freq_cycle % 90;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (45 == freq) {
 		zio_sgp30_read_init(dev);
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 	} 
 	if (46 == freq) {
 		return (zio_sgp30_read(dev));
@@ -259,7 +259,7 @@ int zio_sgp30_poll(zdev_t *dev)
 	}
 #endif
 
-	return (ZERR_AGAIN);
+	return (ERR_AGAIN);
 }
 
 int zio_sgp30_close(zdev_t *dev)
@@ -327,7 +327,7 @@ int zio_sgp30_ctl(zdev_t *dev, int reg, void *raw)
 
 				err = zio_sgp30_serial(dev, &ser);
 				if (err != 0 || ser == 0)
-					return (ZERR_INVAL);
+					return (ERR_INVAL);
 			}
 			return (0);
 

@@ -84,7 +84,7 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	data_len = MIN(data_len, 
 		(MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len));
 	if (data_len == 0)
-		return (ZERR_OVERFLOW);
+		return (ERR_OVERFLOW);
 
 	err = zio_speaker_wake(dev);
 	if (err)
@@ -108,7 +108,7 @@ int zio_speaker_poll(zdev_t *dev)
 	int of;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_INVAL); /* incorrect state */
+		return (ERR_INVAL); /* incorrect state */
 
 	if (dev->flags & DEVF_SLEEP)
 		return (0); /* all done */
@@ -121,7 +121,7 @@ int zio_speaker_poll(zdev_t *dev)
 	}
 	if (len == 0) {
 		(void)zio_speaker_sleep(dev);
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 	}
 
 	/* copy new 200ms segment of audio content into buffer. */

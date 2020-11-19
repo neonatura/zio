@@ -66,7 +66,7 @@ int zio_mod_claim(zio_mod_t *mod, zdev_t *dev)
 {
 
 	if (!mod||!dev)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	dev->mod_claim = zio_device_id(dev);
 	return (0);
@@ -83,7 +83,7 @@ int zio_mod_release(zdev_t *dev)
 {
 
 	if (!dev)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	dev->mod_claim = ZDEV_NULL;
 	return (0);
@@ -104,7 +104,7 @@ int zio_dev_on(zdev_t *dev)
 {
 
 	if (dev->module == ZMOD_NULL)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (dev->flags & DEVF_POWER)
 		return (0); /* already on */
@@ -122,7 +122,7 @@ int zio_dev_off(zdev_t *dev)
 {
 
 	if (dev->mod_claim == ZDEV_NULL)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (dev->param.pin_pwr != PIN_NULL) {
 		/* pull down designated power pin */
@@ -254,18 +254,6 @@ uint8_t *zio_data(zdev_t *dev)
 	return (dev->fifo.value);
 }
 
-static int stridx(const char *str, char ch)
-{
-  int i, len;
-  if (!str)
-    return (-1);
-  len =strlen(str);
-  for (i = 0; i < len; i++)
-    if (str[i] == ch)
-      return (i);
-  return (-1);
-}
-
 int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 	int idx;
@@ -274,10 +262,10 @@ int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	idx = stridx(dev->fifo.value, '\n');
 	if (idx == -1)
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	if (idx >= data_len)
-		return (ZERR_OVERFLOW);
+		return (ERR_OVERFLOW);
 
 	/* extract to return buffer */
 	memcpy(data, dev->fifo.value, idx);
@@ -337,8 +325,8 @@ int zio_dev_init(zdev_t *dev)
 int zio_dev_register(zdev_t *dev)
 {
 	char buf[256];
-	uint32_t ver;
-	uint32_t ser;
+	int32_t ver;
+	int32_t ser;
 	int err;
 
 	dev->next = zio_device_table;
@@ -349,16 +337,17 @@ int zio_dev_register(zdev_t *dev)
 
 	err = zio_dev_init(dev);
 	if (err) {
-		zio_error(dev, err, "init");
+		if (dev->type != ZDEV_DIAG)
+			zio_dev_error(dev, err, "init");
 		return (err);
 	}
 
 	ver = zio_ctl(dev, ZCTL_VERSION, NULL);
 	ser = zio_ctl(dev, ZCTL_SERIAL, NULL);
 	strcpy(buf, "init");
-	if (ver != 0)
+	if (ver > 0)
 		sprintf(buf + strlen(buf), " v%u", ver);
-	if (ser != 0)
+	if (ser > 0)
 		sprintf(buf + strlen(buf), " #%u", ser);
 	zio_notify_text(dev, buf);
 
@@ -419,9 +408,9 @@ int zio_print(zdev_t *dev, int format, char *ret_buf)
 	return ( (*dev->op.print)(dev, 0, ret_buf) );
 }
 
-void zio_debug(zdev_t *dev)
+void zio_dev_log(zdev_t *dev)
 {
-	zdev_t *debug;
+	zdev_t *log;
 	char buf[256];
 	char buf2[256];
 	int err;
@@ -429,8 +418,8 @@ void zio_debug(zdev_t *dev)
 	if (!dev->op.print)
 		return; /* n/a */
 
-	debug = zio_dev_get_name(dev, "log");
-	if (!debug)
+	log = zio_dev_get_name(dev, "log");
+	if (!log)
 		return;
 
 	memset(buf, 0, sizeof(buf));
@@ -443,7 +432,7 @@ void zio_debug(zdev_t *dev)
 		return;
 
 	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
-	zio_write(debug, buf, strlen(buf));
+	zio_write(log, buf, strlen(buf));
 }
 
 void zio_notify(zdev_t *dev)
@@ -453,7 +442,7 @@ void zio_notify(zdev_t *dev)
 	char buf2[256];
 	int err;
 
-	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_LOG);
+	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_DIAG);
 	if (!debug)
 		return;
 
@@ -476,7 +465,7 @@ void zio_notify_text(zdev_t *dev, char *text)
 	zdev_t *debug;
 	char buf[256];
 
-	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_LOG);
+	debug = zio_mod_get(ZMOD_INTERNAL, ZDEV_DIAG);
 	if (!debug)
 		return;
 
@@ -492,10 +481,10 @@ int zio_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int err;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	if (!dev->op.write)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	if (!data || data_len == 0)
 		return (0);
@@ -515,10 +504,10 @@ int zio_write16_r(zdev_t *dev, uint8_t *data, size_t data_len, size_t rep_len)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
         if (!dev->op.write)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	for (of = 0; of < data_len; of += 2) {
 		for (i = 0; i < rep_len; i++) {
@@ -540,11 +529,11 @@ int zio_write_r(zdev_t *dev, uint8_t *data, size_t data_len, int rep_no)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 
         if (!dev->op.write)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	for (len = 0; len < data_len; len++) {
 		for (i = 0; i < rep_no; i++) {
@@ -557,7 +546,23 @@ int zio_write_r(zdev_t *dev, uint8_t *data, size_t data_len, int rep_no)
 	return (0);
 }
 
-void zio_error(zdev_t *dev, int err, char *tag)
+void zio_dev_error(zdev_t *dev, int err, char *tag)
+{
+	zdev_t *error;
+	char buf[256];
+
+	error = zio_mod_get(ZMOD_INTERNAL, ZDEV_DIAG);
+	//error = zio_dev_get_name(dev, "log");
+	if (!error)
+		return;
+
+	memset(buf, 0, sizeof(buf));
+	sprintf(buf, "%s %s: %s (%d).", 
+			zio_dev_name(dev), tag, strerror(-err), err); 
+	zio_write(error, buf, strlen(buf));
+}
+
+void zio_dev_debug(zdev_t *dev, int err, char *tag)
 {
 	zdev_t *debug;
 	char buf[256];
@@ -568,7 +573,7 @@ void zio_error(zdev_t *dev, int err, char *tag)
 
 	memset(buf, 0, sizeof(buf));
 	sprintf(buf, "%s %s: %s (%d).", 
-			zio_dev_name(dev), tag, strerror(-err), err); 
+			zio_dev_name(dev), tag, zstrerror(err), err); 
 	zio_write(debug, buf, strlen(buf));
 }
 
@@ -583,7 +588,7 @@ int zio_digital_read(int pin)
 {
 	if (pin >= 80 && pin <= 95) {
 		zio_sc16is_pin_get(pin);
-		return;
+		return (0);
 	}
 
 #ifdef HAVE_LIBWIRINGPI
@@ -659,7 +664,7 @@ int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
 		int of;
 
 		if (dev->dev_fd == 0)
-			return (ZERR_INVAL);
+			return (ERR_INVAL);
 
 		of = 0;
 		while (of < retdata_len) {
@@ -688,7 +693,7 @@ int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
 
 	uart_dev = zio_sc16is_dev(dev->dev_fd);
 	if (!uart_dev)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	data_len = uart_dev->fifo.value_len;
 	for (of = 0; of < retdata_len && of < data_len; of++) {
@@ -755,5 +760,33 @@ int zio_ctl(zdev_t *dev, int reg, void *data)
 		return ( (*dev->op.ctl)(dev, reg, data) );
 	}
 
-	return (ZERR_OPNOTSUPP);
+	return (ERR_OPNOTSUPP);
 }
+
+void zio_init(void)
+{
+
+	/* log module */
+	REGISTER_LOG_DEVICE();
+	REGISTER_DIAG_DEVICE();
+
+	/* time module */
+	REGISTER_ITIME_DEVICE();
+	REGISTER_TIME_DEVICE();
+
+	/* therm module */
+//	REGISTER_DUMMY_TEMP_DEVICE();
+	REGISTER_ITEMP_DEVICE();
+	REGISTER_THERM_DEVICE();
+
+}
+
+void zio_term(void)
+{
+	zdev_t *dev;
+
+	for (dev = zio_device_table; dev; dev = dev->next) {
+		(*dev->op.term)(dev);
+	}
+}
+

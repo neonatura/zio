@@ -59,6 +59,7 @@ static int buffer[SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8];
 
 #define zio_ssd1306_swap(a, b) { int t = a; a = b; b = t; }
 
+#if 0
 static int stridx(const char *str, char ch)
 {
   int i, len;
@@ -70,6 +71,7 @@ static int stridx(const char *str, char ch)
       return (i);
   return (-1);
 }
+#endif
 
 // the most basic function, set a single pixel
 void zio_ssd1306_drawPixel(int x, int y, unsigned int color)
@@ -791,7 +793,7 @@ int zio_lcd_ssd1306_open(zdev_t *dev)
 
 	fd = ZIO_I2C_INIT(dev->def_pin);
 	if (fd < 0)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 memset(status_header, 1, STATUS_HEADER_SIZE);
 
@@ -813,7 +815,7 @@ int zio_lcd_ssd1306_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	int i;
 
 	if (!is_zio_dev_on(dev))
-		return (ZERR_AGAIN);
+		return (ERR_AGAIN);
 
 	if (!*data)
 		return (0);
@@ -890,7 +892,7 @@ int zio_lcd_ssd1306_poll(zdev_t *dev)
 zdev_t zio_lcd_ssd1306_device =
 {
 	"lcd", DEFAULT_LCD_I2C_ADDR, STRATUM_MAX, /* contoller: activity log */
-	ZDEV_LOG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
+	ZDEV_DIAG, DEVF_START | DEVF_OUTPUT, ZMOD_INTERNAL, 
 	/* op */
 	{ zio_lcd_ssd1306_open, NULL, zio_lcd_ssd1306_write, NULL, zio_lcd_ssd1306_close, zio_lcd_ssd1306_poll },
 	/* param */

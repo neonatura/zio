@@ -35,7 +35,7 @@ extern "C" {
 #define OPT_NET_DEBUG "net-debug"
 #define OPT_MAX_CONN "net-max"
 #define OPT_ZIO_PORT "zio-port"
-#define OPT_ZIO_KEY "zio-key"
+//#define OPT_ZIO_KEY "zio-key"
 
 void opt_init(void);
 

@@ -7,7 +7,7 @@ int zio_motion_open(zdev_t *dev)
 	int err;
 
 	if (dev->def_pin == PIN_NULL)
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	err = zio_dev_on(dev);
 	if (err)

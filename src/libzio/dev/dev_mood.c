@@ -20,7 +20,7 @@ int zio_mood_read(zdev_t *dev)
 
 	d = zio_mod_dvalue_avg(dev);
 	if (d == 0.00)
-		return (ZERR_AGAIN); /* skip */
+		return (ERR_AGAIN); /* skip */
 
 	/* store last obtained value. */
 	zio_dvalue_set(dev, d);

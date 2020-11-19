@@ -17,8 +17,7 @@ int zio_itime_read(zdev_t *dev)
 	/* sample system internal time. */
 	stamp = zio_time();
 	if (stamp <= 1000)
-		return (ZERR_AGAIN);
-fprintf(stderr, "DEBUG: zio_itime_read: stamp = %llu\n", (unsigned long long)stamp);
+		return (ERR_AGAIN);
 
 	/* store last obtained value. */
 	zio_value_set(dev, stamp);
@@ -32,7 +31,7 @@ int zio_itime_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	time_t stamp;
 
 	if (data_len != sizeof(time_t))
-		return (ZERR_INVAL);
+		return (ERR_INVAL);
 
 	memcpy(&stamp, data, sizeof(time_t));
 	zio_time_set(stamp);
@@ -62,7 +61,6 @@ int zio_itime_print(zdev_t *dev, int mode, void *retbuf)
 	ztime_t stamp; 
 
 	stamp = zio_value_get(dev);
-fprintf(stderr, "DEBUG: zio_itime_print: stamp = %llu\n", (unsigned long long)stamp);
 	strftime(buf, sizeof(buf)-1, "%X %x", zio_localtime(stamp));
 
 	strcpy((char *)retbuf, buf);

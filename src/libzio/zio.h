@@ -3,21 +3,7 @@
 #ifndef __ZIO_H__
 #define __ZIO_H__
 
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <math.h>
-
-/* autoconf */
-#include "config.h"
+#include "zsys.h"
 
 #ifdef HAVE_LIBESPEAK
 #include <espeak/speak_lib.h>
@@ -48,11 +34,11 @@
 #define MAX_VALUE_I64_SIZE 2048
 
 #define ZDEV_NULL 0
-#define ZDEV_LOG 1
+#define ZDEV_DIAG 1
 #define ZDEV_THERM 2 /* temperature */
 #define ZDEV_GEO 3 /* lat/lon/ele */
 #define ZDEV_AUDIO 4 /* Analog Microphone / Speaker */
-#define ZDEV_NET 5 
+#define ZDEV_COMM 5 
 #define ZDEV_POWER 6 /* Battery Voltage */
 #define ZDEV_PHOTO 7 /* Light Intensity */
 #define ZDEV_HUMIDITY 8 /* Humidity */
@@ -61,6 +47,7 @@
 #define ZDEV_EMOTE 11
 #define ZDEV_AIR 12
 #define ZDEV_UART 13
+#define MAX_ZIO_DEVICE_TYPES 14
 
 
 #define ZMOD_NULL 0
@@ -259,16 +246,16 @@ typedef struct zio_gyro_t
 #include "zio_ctl.h"
 #include "zio_cycle.h"
 #include "zio_dev.h"
-#include "zio_error.h"
 #include "zio_geo.h"
 #include "zio_i2c.h"
 #include "zio_mod.h"
 #include "zio_obj.h"
 #include "zio_pin.h"
+#include "zio_status.h"
 #include "zio_time.h"
 #include "dev/dev_air.h"
 #include "dev/dev_audio.h"
-#include "dev/dev_debug.h"
+#include "dev/dev_diag.h"
 #include "dev/dev_dht.h"
 #include "dev/dev_dummy_temp.h"
 #include "dev/dev_geo.h"
@@ -288,6 +275,7 @@ typedef struct zio_gyro_t
 #include "dev/dev_sc16is.h"
 #include "dev/dev_sgp30.h"
 #include "dev/dev_speaker.h"
+#include "dev/dev_stdout.h"
 #include "dev/dev_time.h"
 #include "dev/dev_therm.h"
 #include "dev/dev_thermistor.h"

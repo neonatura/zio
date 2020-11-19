@@ -185,13 +185,12 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
 AM_PROG_CC_C_O
+AC_PROG_CXX
 AC_ISC_POSIX
 AC_C_INLINE
 
-
 # Checks for header files.
 AC_CHECK_HEADERS(stdlib.h stdint.h stdio.h math.h time.h sys/select.h)
-
 
 AC_HEADER_SYS_WAIT
 AC_HEADER_DIRENT
@@ -226,9 +225,25 @@ AM_CONDITIONAL(LIBPTHREAD, [test -n "$HAVE_LIBPTHREAD"])
 
 AC_CHECK_LIB([wiringPi], [pinMode])
 
+# help2man
+AC_CHECK_PROG(HELP2MAN, [help2man], [help2man], [true])
+if test -z "$HELP2MAN";
+ then AC_MSG_WARN([help2man not found - continuing without manual page generation.])
+fi
+AM_CONDITIONAL(HAVE_HELP2MAN, [test x"$HELP2MAN" = x"help2man"])
+
+# doxygen
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN";
+   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
+fi
+AM_CONDITIONAL([LIBUNISTRING_COMPILE_UNIWIDTH_WIDTH], [false])
+AM_CONDITIONAL([HAVE_DOXYGEN],
+[test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([doc/doxygen.conf])])
+
 # libhtm
-AC_CONFIG_SUBDIRS([src/libhtm])
-LIBHTM="src/libhtm/src/libhtm.a"
+#AC_CONFIG_SUBDIRS([src/libhtm])
+LIBHTM="src/libhtm/libhtm.a"
 AC_SUBST(LIBHTM)
 
-AC_OUTPUT(Makefile src/libzio/Makefile src/zio-daemon/Makefile src/zio-console/Makefile)
+AC_OUTPUT(Makefile src/libzsys/Makefile src/libquat/Makefile src/libzdb/Makefile src/libzpu/Makefile src/libhtm/Makefile src/libzio/Makefile src/zio-daemon/Makefile src/zio-console/Makefile doc/Makefile)
