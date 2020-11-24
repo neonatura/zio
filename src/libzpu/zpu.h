@@ -263,6 +263,7 @@
 		) ? ZPU_FAMILY_S : \
 		( \
 			(_opcode) == ZINST_ADD || \
+			(_opcode) == ZINST_SUB || \
 			(_opcode) == ZINST_SLT || \
 			(_opcode) == ZINST_XOR || \
 			(_opcode) == ZINST_OR || \
@@ -281,10 +282,12 @@
 
 #define ZINST_SUBOP(_opcode) \
 	( \
-		(_opcode) == ZINST_SRAI || \
-		(_opcode) == ZINST_SUB || \
-		(_opcode) == ZINST_SRA \
-	) ?  ((_opcode) & 127) : 0; 
+		( \
+			(_opcode) == ZINST_SRAI || \
+			(_opcode) == ZINST_SUB || \
+			(_opcode) == ZINST_SRA \
+		) ?  ((_opcode) & 127) : 0 \
+	)
 
 /*
 	 OP_NEWTABLE
@@ -315,7 +318,7 @@ typedef struct zinst_t {
   uint32_t op:3;
   uint32_t src1:5;
   uint32_t src2:5;
-  uint32_t subop:5;
+  uint32_t subop:7;
 } zinst_t;
 
 typedef struct zinstU_t {
@@ -334,20 +337,86 @@ typedef struct zinstI_t {
 
 typedef struct zpu_t {
   zreg_t *reg;
-  zdb_t *page_table[65536];
+//  zdb_t *page_table[65536];
   zinst_t inst[MAX_ZPU_STACK];
-	uint64_t addr_logical_max;
+//	uint64_t addr_logical_max;
   uint32_t reg_size;
   uint32_t pc; /* program counter; index of next stack execution. */
   uint32_t sp; /* stack pointer; top of stack. */
   uint32_t flag; /* cpu flags */
 } zpu_t;
 
+typedef struct zprocessor_t {
+	zdb_t **page_table;//[65536];
+	zaddr_t core_max;
+	uint32_t logical_max;
+	zpu_t *core;	
+} zprocessor_t;
+
+/**
+ * A standardized set of mem-mapped IO configurable-space registers used for all devices.
+ */
+typedef struct zpu_ioconf_t {
+  uint16_t vid;
+  uint16_t did;
+  uint8_t rev[1]; /* revision */
+  uint8_t cl[3]; /* class */
+  uint32_t reg[6]; /* base registers */
+  uint32_t cis; /* cardbus cis pointer; */
+  uint16_t svid; /* sub-system vendor id */
+  uint16_t sdid; /* sub-system device id */
+  uint32_t rom_base; /* expansion rom base addr */
+  uint8_t cap; /* cap pointer */
+  uint8_t reserved_0[3];
+  uint32_t base_max; /* number of payload registers */ 
+	/* interrupt line */
+  uint8_t int_line;
+	/* interrupt pin */
+  uint8_t int_pin;
+  uint8_t min_gnt;
+  uint8_t max_lat;
+
+	/* a "Devicetree" <name@addr> specification */
+	int8_t label[32];
+
+	/* The total number of device read operations. */
+	uint32_t read_tot;
+
+	/* The total number of device write operations. */
+  uint32_t write_tot;
+
+	/* The initial time the device was initialized. */
+  time_t birth_t;
+
+	/* The last time the device was accessed. */
+  time_t access_t;
+
+  /* The number of MS between each device poll. */
+  uint32_t freq;
+
+  /* The preferred number of MS between each device poll. */
+  uint32_t freq_pref;
+
+  /* iteration count */
+  uint32_t freq_cycle;
+
+  /* The next time that a poll will take place. */
+  uint64_t freq_stamp;
+} zpu_ioconf_t;
+
+typedef struct zpu_iofifo_t {
+	uint32_t fifo_max;
+	uint32_t fifo_idx;
+	uint64_t fifo_time;
+	qvar *fifo;
+	zdb_t *db;
+} zpu_iofifo_t;
+
 #include "zpu_exec.h"
-#include "zpu_init.h"
 #include "zpu_vaddr.h"
 #include "zpu_vaddr_rom.h"
 #include "zpu_opcode.h"
+#include "zpu_processor.h"
 #include "zpu_reg.h"
 
 #endif /* ndef __ZPU_H__ */

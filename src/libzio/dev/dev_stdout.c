@@ -31,7 +31,6 @@ void zio_stdout_clearColor(void)
 void zio_stdout_init(zdev_t *dev)
 {
 	status = zio_status_init(MAX_STATUS_WIDTH, MAX_STATUS_HEIGHT);
-	fprintf(stderr, "DEBUG: zio_stdout_init: status {%x}\n", status);
 	zio_stdout_clearDisplay();
 }
 
@@ -124,11 +123,14 @@ int zio_stdout_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	if (!*data)
 		return (0);
 
+#if 0
 	of = dev->fifo.value_len;
 	len = MIN(data_len, MAX_VALUE_BUFFER_SIZE - of - 2);
 	strcpy(dev->fifo.value + of, data);
 	strcat(dev->fifo.value + of, "\n");
 	dev->fifo.value_len += (len + 1); 
+#endif
+	zio_data_append(dev, data, data_len);
 
 	return (0);
 }
@@ -139,7 +141,9 @@ int zio_stdout_close(zdev_t *dev)
 	if (!is_zio_dev_on(dev))
 		return (0);
 
+#if 0
 	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
+#endif
 
 	zio_dev_off(dev);
 
@@ -148,10 +152,13 @@ int zio_stdout_close(zdev_t *dev)
 
 int zio_stdout_poll(zdev_t *dev)
 {
+#if 0
 	uint8_t *raw = dev->fifo.value;
-	char buf[32];
 	int line;
 	int of;
+#endif
+	char buf[128];
+	int i;
 
 	zio_stdout_homeLine();
 
@@ -159,6 +166,21 @@ int zio_stdout_poll(zdev_t *dev)
 
 	printf ("\033[13;0H\033[40;34m\033[K\n");
 
+	for (i = 0; i < 6; i++) {
+		memset(buf, 0, sizeof(buf));
+		zio_data_peek(dev, i, buf, sizeof(buf));
+		zio_stdout_clearLine();
+		printf("%s\n", buf);
+
+		if (!*buf)
+			break;
+	}
+	if (i == 6) {
+		/* remove first line */
+		(void)zio_data_pull(dev, NULL, 0);
+	}
+
+#if 0
 	line = 0;
 	of = stridx(raw, '\n');
 	while (of != -1) {
@@ -189,6 +211,7 @@ int zio_stdout_poll(zdev_t *dev)
 			memset(dev->fifo.value + dev->fifo.value_len, 0, MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len);
 		}
 	}
+#endif
 
 	zio_stdout_clearColor();
 

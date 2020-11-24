@@ -4,6 +4,7 @@ zsys_headers = \
 	$(srcdir)/zsys_buff.h \
 	$(srcdir)/zsys_error.h \
 	$(srcdir)/zsys_font.h \
+	$(srcdir)/zsys_image.h \
 	$(srcdir)/zsys_laplace.h \
 	$(srcdir)/zsys_log.h \
 	$(srcdir)/zsys_map.h \
@@ -16,6 +17,7 @@ zsys_sources = \
 	$(srcdir)/zsys_buff.c \
 	$(srcdir)/zsys_error.c \
 	$(srcdir)/zsys_font.c \
+	$(srcdir)/zsys_image.c \
 	$(srcdir)/zsys_laplace.cpp \
 	$(srcdir)/zsys_log.c \
 	$(srcdir)/zsys_map.c \

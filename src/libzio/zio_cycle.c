@@ -5,8 +5,8 @@
 uint64_t cycle_ticks;
 uint64_t cycle_ops;
 
+#if 0
 static zio_f _api_table[MAX_ZIO_DEVICE_TYPES];
-
 int zio_notify_api(zdev_t *dev)
 {
 
@@ -19,7 +19,6 @@ int zio_notify_api(zdev_t *dev)
 
 	return ((*_api_table[dev->type])(dev));
 }
-
 void set_zio_api_func(int type, zio_f func)
 {
 
@@ -28,24 +27,27 @@ void set_zio_api_func(int type, zio_f func)
 
 	_api_table[type] = func;
 }
+#endif
 
 void zio_dev_cycle(zdev_t *dev)
 {
 	uint64_t now = zio_time();
 	int err;
 
-	if (now < dev->stat.freq_stamp) {
+	if (now < dev->conf.freq_stamp) {
 		return;
 	}
 
-	dev->stat.freq_stamp = now + dev->stat.freq;
+	dev->conf.freq_stamp = now + dev->conf.freq;
 
 	if (dev->op.timer) {
 		err = (*dev->op.timer)(dev);
 		if (!err) {
 			if (dev->flags & DEVF_MODULE) {
 				zio_notify(dev);
+#if 0
 				zio_notify_api(dev);
+#endif
 			} else {
 				zio_dev_log(dev);
 				if ((dev->type != ZDEV_EMOTE) &&
@@ -61,7 +63,7 @@ void zio_dev_cycle(zdev_t *dev)
 		}
 	}
 
-	dev->stat.freq_cycle++;
+	dev->conf.freq_cycle++;
 }
 
 void zio_cycle(void)

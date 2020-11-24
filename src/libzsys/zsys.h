@@ -44,7 +44,7 @@
 #include <fcntl.h>
 #include <math.h>
 #include <sys/select.h>
-
+#include <arpa/inet.h>
 
 #ifdef HAVE_LIBPTHREAD
 #include <pthread.h>
@@ -79,9 +79,16 @@ extern int pthread_yield(void);
 #define PATH_MAX NAME_MAX
 #endif
 
+#ifndef linux
+#define getpagesize() sysconf(_SC_PAGESIZE)
+#endif
+
+typedef unsigned int uint;
+
 #include "zsys_adler64.h"
 #include "zsys_buff.h"
 #include "zsys_error.h"
+#include "zsys_image.h"
 #include "zsys_font.h"
 #include "zsys_laplace.h"
 #include "zsys_log.h"

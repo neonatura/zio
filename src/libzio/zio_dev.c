@@ -138,6 +138,7 @@ int is_zio_dev_on(zdev_t *dev)
 	return ( (dev->flags & DEVF_POWER) );
 }
 
+#if 0
 void zio_dvalue_set(zdev_t *dev, double dvalue)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -152,7 +153,19 @@ void zio_dvalue_set(zdev_t *dev, double dvalue)
 	fifo->dvalue[idx] = dvalue;
 	fifo->value_stamp = zio_time();
 }
+#endif
+void zio_dvalue_set(zdev_t *dev, num_t dvalue)
+{
+	int idx;
 
+	idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	dev->fifo.fifo_idx++;
+
+	quat_set(dvalue, Q_NUM, dev->fifo.fifo[idx]);
+	dev->fifo.fifo_time = ztime();
+}
+
+#if 0 
 void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -167,7 +180,19 @@ void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
 	fifo->ivalue[idx] = ivalue;
 	fifo->value_stamp = zio_time();
 }
+#endif
+void zio_ivalue_set(zdev_t *dev, uint32_t ivalue)
+{
+	int idx;
 
+	idx = dev->fifo.fifo_idx % dev->fifo.fifo_max;
+	dev->fifo.fifo_idx++;
+
+	quat_set((num_t)ivalue, Q_NUM, dev->fifo.fifo[idx]);
+	dev->fifo.fifo_time = ztime();
+}
+
+#if 0
 void zio_value_set(zdev_t *dev, uint64_t lvalue)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -182,7 +207,19 @@ void zio_value_set(zdev_t *dev, uint64_t lvalue)
 	fifo->lvalue[idx] = lvalue;
 	fifo->value_stamp = zio_time();
 }
+#endif
+void zio_value_set(zdev_t *dev, uint64_t lvalue)
+{
+	int idx;
 
+	idx = dev->fifo.fifo_idx % dev->fifo.fifo_max;
+	dev->fifo.fifo_idx++;
+
+	quat_set((num_t)lvalue, Q_NUM, dev->fifo.fifo[idx]);
+	dev->fifo.fifo_time = ztime();
+}
+
+#if 0
 double zio_dvalue_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -197,7 +234,25 @@ double zio_dvalue_get(zdev_t *dev)
 	idx = (fifo->value_len - 1);
 	return (fifo->dvalue[idx]);
 }
+#endif
+num_t zio_dvalue_get(zdev_t *dev)
+{
+	int fifo_idx;
 
+	if (dev->fifo.fifo_idx == 0) {
+		return (0);
+	}
+
+	fifo_idx = (((uint)dev->fifo.fifo_idx - 1) % dev->fifo.fifo_max);
+
+	{
+		double f = quat_get(dev->fifo.fifo[fifo_idx]);
+	}
+
+	return (quat_get(dev->fifo.fifo[fifo_idx]));
+}
+
+#if 0
 uint32_t zio_ivalue_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -212,7 +267,20 @@ uint32_t zio_ivalue_get(zdev_t *dev)
 	idx = (fifo->value_len - 1);
 	return (fifo->ivalue[idx]);
 }
+#endif
+uint32_t zio_ivalue_get(zdev_t *dev)
+{
+	int idx;
 
+	if (dev->fifo.fifo_idx == 0)
+		return (0);
+
+	idx = ((dev->fifo.fifo_idx - 1) % dev->fifo.fifo_max);
+
+	return ((uint32_t)quat_get(dev->fifo.fifo[idx]));
+}
+
+#if 0
 uint64_t zio_value_get(zdev_t *dev)
 {
 	zio_fifo_t *fifo = &dev->fifo;
@@ -227,33 +295,56 @@ uint64_t zio_value_get(zdev_t *dev)
 	idx = (fifo->value_len - 1);
 	return (fifo->lvalue[idx]);
 }
-
-double zio_dvalue_avg(zdev_t *dev, int max_cycles)
+#endif
+uint64_t zio_value_get(zdev_t *dev)
 {
-	zio_fifo_t *fifo = &dev->fifo;
-	double avg;
+	int idx;
+
+	if (dev->fifo.fifo_idx == 0)
+		return (0);
+
+	idx = ((dev->fifo.fifo_idx - 1) % dev->fifo.fifo_max);
+
+	return ((uint64_t)quat_get(dev->fifo.fifo[idx]));
+}
+
+ztime_t zio_fifo_time(zdev_t *dev)
+{
+	return ((ztime_t)dev->fifo.fifo_time);
+}
+
+num_t zio_dvalue_avg(zdev_t *dev, uint max_cycles)
+{
+	num_t avg;
+	int fifo_idx;
 	int max;
 	int idx;
 
-	if (!fifo->dvalue)
+	avg = 0;
+	fifo_idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	max_cycles = MIN(max_cycles, fifo_idx);
+	if (max_cycles == 0)
 		return (0);
 
-	avg = 0;
-	max_cycles = MIN(max_cycles, fifo->value_len % MAX_VALUE_DOUBLE_SIZE);
-	for (idx = 0; idx < max_cycles; idx++) {
-		avg += fifo->dvalue[idx];
+	max = 0;
+	for (idx = (fifo_idx-1); idx >= 0; idx--) {
+		avg += quat_get(dev->fifo.fifo[idx]);
+
+		max++;
+		if (max >= max_cycles)
+			break;
 	}
-	if (max_cycles != 0)
-		avg /= max_cycles;
+	if (max != 0)
+		avg /= max;
 
 	return (avg);
 }
 
+#if 0
 uint8_t *zio_data(zdev_t *dev)
 {
 	return (dev->fifo.value);
 }
-
 int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 	int idx;
@@ -277,7 +368,49 @@ int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	return (0);
 }
+#endif
+int zio_data_pull(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
+{
+	qvar var;
+	off_t of;
+	int fifo_idx;
+	int i;
 
+	fifo_idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	if (fifo_idx == 0)
+		return (-1);
+
+	var = dev->fifo.fifo[0];
+	of = quat_stream(var, retdata, retdata_len);
+	/* note: if redata_len is too small, data is lost (fix me) */
+
+	for (i = 1; i < fifo_idx; i++) {
+		dev->fifo.fifo[i-1] = dev->fifo.fifo[i];
+	}
+	dev->fifo.fifo[i] = var;
+	dev->fifo.fifo_idx = (fifo_idx - 1);
+
+	return (of);
+}
+
+int zio_data_peek(zdev_t *dev, zaddr_t addr, uint8_t *retdata, size_t retdata_len)
+{
+	qvar var;
+	int fifo_idx;
+	off_t of;
+	int i;
+
+	fifo_idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	if (addr >= fifo_idx)
+		return (-1);
+
+	var = dev->fifo.fifo[addr];
+	of = quat_stream(var, retdata, retdata_len);
+
+	return (of);
+}
+
+#if 0
 void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len)
 {
 
@@ -286,18 +419,66 @@ void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len)
 	dev->fifo.value_len += data_len;
 
 }
+#endif
+void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len)
+{
+	qvar var;
+	int idx;
+
+	idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	dev->fifo.fifo_idx++;
+
+	if (dev->fifo.fifo[idx])
+		quat_free(&dev->fifo.fifo[idx]);
+
+	dev->fifo.fifo[idx] = quat_alloc(Q_ARRAY, data, data_len);
+	dev->fifo.fifo_time = ztime();
+}
 
 int zio_dev_null(zdev_t *dev)
 {
 	return (0);
 }
 
-
+#if 0
 void zio_fifo_init(zdev_t *dev)
 {
 	dev->fifo.dvalue = (double *)dev->fifo.value;
 	dev->fifo.ivalue = (uint32_t *)dev->fifo.value;
 	dev->fifo.lvalue = (uint64_t *)dev->fifo.value;
+}
+#endif
+void zio_fifo_init(zio_fifo_t *fifo, size_t buff_size)
+{
+	static num_t blank_num;
+	int i;
+
+	fifo->fifo = (qvar *)calloc(buff_size, sizeof(qvar));
+	if (fifo->fifo) {
+		fifo->fifo_max = buff_size;
+
+		for (i = 0; i < buff_size; i++) {
+			fifo->fifo[i] = quat_alloc(Q_NUM, (uint8_t *)&blank_num, sizeof(num_t)); 
+		}
+	}
+
+	fifo->fifo_idx = 0;
+}
+
+void zio_fifo_free(zio_fifo_t *fifo)
+{
+	int i;
+	
+	if (fifo->fifo) {
+		for (i = 0; i < fifo->fifo_max; i++) {
+			quat_free(&fifo->fifo[i]);
+		}
+		free(fifo->fifo);
+		fifo->fifo = NULL;
+	}
+
+	fifo->fifo_max = 0;
+	fifo->fifo_idx = 0;
 }
 
 int zio_dev_init(zdev_t *dev)
@@ -306,10 +487,10 @@ int zio_dev_init(zdev_t *dev)
 	int err;
 
 	freq = (dev->param.freq_min + dev->param.freq_max) / 2;
-	dev->stat.freq = MAX(HERTZ, freq * 1000);
-	dev->stat.freq_stamp = zio_time() + zio_dev_startup_wait(dev) * 1000;
+	dev->conf.freq = MAX(HERTZ, freq * 1000);
+	dev->conf.freq_stamp = zio_time() + zio_dev_startup_wait(dev) * 1000;
 
-	zio_fifo_init(dev);
+	zio_fifo_init(&dev->fifo, MAX_VALUE_BUFFER_SIZE);
 
 	if (dev->flags & DEVF_START) {
 		if (dev->op.init) {
@@ -332,8 +513,8 @@ int zio_dev_register(zdev_t *dev)
 	dev->next = zio_device_table;
 	zio_device_table = dev;
 
-	dev->stat.freq = (dev->param.freq_min + dev->param.freq_max) / 2;
-	dev->stat.freq = MAX(HERTZ, dev->stat.freq);
+	dev->conf.freq = (dev->param.freq_min + dev->param.freq_max) / 2;
+	dev->conf.freq = MAX(HERTZ, dev->conf.freq);
 
 	err = zio_dev_init(dev);
 	if (err) {
@@ -431,7 +612,8 @@ void zio_dev_log(zdev_t *dev)
 	if (err)
 		return;
 
-	sprintf(buf, "%s %s", zio_dev_name(dev), buf2); 
+	memset(buf, 0, sizeof(buf));
+	snprintf(buf, sizeof(buf)-1, "%s %s", zio_dev_name(dev), buf2); 
 	zio_write(log, buf, strlen(buf));
 }
 
@@ -581,7 +763,7 @@ uint64_t zio_fifo_span(zdev_t *dev)
 {
 	if (!dev)
 		return (0);
-	return (zio_time() - dev->fifo.value_stamp);
+	return ((uint64_t)(ztime() - dev->fifo.fifo_time));
 }
 
 int zio_digital_read(int pin)
@@ -695,6 +877,7 @@ int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
 	if (!uart_dev)
 		return (ERR_INVAL);
 
+#if 0
 	data_len = uart_dev->fifo.value_len;
 	for (of = 0; of < retdata_len && of < data_len; of++) {
 		retdata[of] = uart_dev->fifo.value[of];
@@ -704,21 +887,34 @@ int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len)
 			uart_dev->fifo.value_len - of);
 		uart_dev->fifo.value_len -= of;
 	}
+#endif
+	of = zio_data_pull(uart_dev, retdata, retdata_len);
 
 	return (of);
 }
 
 zgeo_t *zio_geo_value(zdev_t *dev)
 {
-	zgeo_t *geo;
+	static zgeo_t geo;
+	num_t val[4];
+	uint fifo_idx;
+	uint idx;
+	int i;
 
-	if (dev->fifo.value_len < sizeof(zgeo_t))
+	fifo_idx = (dev->fifo.fifo_idx % dev->fifo.fifo_max);
+	if (fifo_idx <= 4)
 		return (NULL);
 
-	geo = (zgeo_t *)(dev->fifo.value +
-			(dev->fifo.value_len - sizeof(zgeo_t)));
+	for (i = 0; i < 4; i++) {
+		idx = (fifo_idx - 4 + i);
+		val[idx] = quat_get(dev->fifo.fifo[idx]);
+	}
+	geo.lat = (double)val[0];
+	geo.lon = (double)val[1];
+	geo.alt = (double)val[2];
+	geo.stamp = (uint64_t)val[3];
 
-	return (geo);
+	return (&geo);
 }
 
 /* positively influence emotional mood. */
@@ -777,7 +973,7 @@ void zio_init(void)
 	/* therm module */
 //	REGISTER_DUMMY_TEMP_DEVICE();
 	REGISTER_ITEMP_DEVICE();
-	REGISTER_THERM_DEVICE();
+//	REGISTER_THERM_DEVICE();
 
 }
 

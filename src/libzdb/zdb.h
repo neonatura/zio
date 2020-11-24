@@ -38,10 +38,6 @@ typedef int bclock_t;
 extern "C" {
 #endif
 
-#ifndef linux
-#define getpagesize() sysconf(_SC_PAGESIZE)
-#endif
-
 #define ZDB_BLOCKS_PER_JOURNAL 65536
 
 #define ZDB_MAX_NAME_LENGTH 136
@@ -49,6 +45,11 @@ extern "C" {
 #define ZDB_MAGIC 0x22888822
 
 #define BCMAP_LOCK "bcmap_lock"
+
+/* The theoretical soft limit of a mmap'd address page size. */
+#define ZDB_MAX_MAP_SIZE 655360000
+
+#define ZDB_MAX_INDEX_SIZE (ZDB_MAX_MAP_SIZE / sizeof(zdb_idx_t))
 
 typedef uint32_t zdb_size_t;
 

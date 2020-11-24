@@ -44,9 +44,12 @@ int zio_led_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	if (!is_zio_dev_on(dev))
 		return (ERR_AGAIN);
 
+#if 0
 	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
 	strncpy(dev->fifo.value, data, MIN(data_len, MAX_VALUE_BUFFER_SIZE-1));
 	dev->fifo.value_stamp = zio_time();
+#endif
+	(void)zio_data_append(dev, data, data_len);
 
 	zio_led_wake(dev);
 

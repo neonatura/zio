@@ -51,6 +51,8 @@ void zlog(int level, int code, char *text);
 
 void f_zsys_log(int err_code, const char *tag, const char *text, const char *src_fname, long src_line);
 
+void zlog_term(void);
+
 #ifdef __cplusplus
 }
 #endif

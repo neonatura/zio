@@ -27,15 +27,20 @@
 
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
 
-typedef struct image_t {
+typedef struct image_font8_t {
   uint32_t width;
   uint32_t height;
   uint32_t bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */
-  uint8_t *pixel;
-} image_t;
+  uint8_t pixel[48];
+} image_font8_t;
 
 image_t *zfont_init(uint8_t ch, uint32_t color, uint32_t size);
 
 void zfont_free(image_t **image_p);
+
+/**
+ * Render a font with a pre-allocated structure.
+ */
+void zfont_render(uint8_t ch, image_font8_t *image);
 
 #endif /* __HTM_FONT_H__ */

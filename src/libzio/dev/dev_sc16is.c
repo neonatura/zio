@@ -166,17 +166,31 @@ int zio_sc16is_open(zdev_t *dev)
 
 int zio_sc16is_read(zdev_t *dev)
 {
+	char buf[4096];
+	int idx;
 	int ok;
 
 	if (!is_zio_dev_on(dev))
 		return (ERR_INVAL);
 
+#if 0
 	if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
 		return (ERR_OVERFLOW);
+#endif
 
 	if ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) == 0)
 		return (ERR_AGAIN); /* nothing to read */
 
+	idx = 0;
+	memset(buf, 0, sizeof(buf));
+	do {
+		uint8_t ch = REG_GET(dev->dev_fd, SC16IS750_REG_RHR); 
+		buf[idx++] = ch;
+	} while ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) != 0);
+
+	if (idx != 0)
+		zpu_data_append(dev, buf, idx); 
+#if 0
 	do {
 		dev->fifo.value[dev->fifo.value_len] = 
 			REG_GET(dev->dev_fd, SC16IS750_REG_RHR);
@@ -185,6 +199,7 @@ int zio_sc16is_read(zdev_t *dev)
 		if (dev->fifo.value_len >= MAX_VALUE_BUFFER_SIZE)
 			break;
 	} while ((REG_GET(dev->dev_fd, SC16IS750_REG_LSR) & 0x1) != 0);
+#endif
 
 
 	return (0);

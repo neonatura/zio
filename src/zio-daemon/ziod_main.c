@@ -2,7 +2,9 @@
 
 #include "ziod.h"
 
-int run_state;
+static ztime_t server_start_t;
+
+static int run_state;
 
 entity_t *entity;
 
@@ -16,13 +18,57 @@ static void ziod_signal(int sig_no)
 	zio_core_term();
 }
 
+static void ziod_entity_init(char *prog_name, zprocessor_t *zproc)
+{
+	char name[MAX_ENTITY_NAME_LENGTH];
+	char *ptr;
+	int err;
+
+	ptr = strrchr(prog_name, '/');
+	if (!ptr)
+		ptr = strrchr(prog_name, '\\');
+	memset(name, 0, sizeof(name));
+	strncpy(name, ptr, sizeof(name)-1);
+	(void)strtok(name, ".");
+
+	err = htm_entity_init(&entity, name, zproc);
+	if (err) {
+		zlog_error(err, "htm_entity_init");
+	}
+}
+
+int ziod_dev_init(zprocessor_t *zproc, zdev_t *dev)
+{
+	int err;
+
+	err = zio_dev_register(dev);
+	if (!err) {
+		zproc_io_init(zproc, &dev->conf, &dev->fifo);
+	} else {
+		/* .. log error .. */
+	}
+
+	return (err);
+}
+
 void ziod_init(const char *prog_name)
 {
+	zprocessor_t *zproc;
+	zdev_t *dev;
+	int err;
 
-	/* register internal devices */
+#ifdef HAVE_LIBWIRINGPI
+	wiringPiSetup();
+#endif
+
+	/* initialize devices (libzio) */
 	zio_init();
 
-	zlog_info("application initialized.");
+	/* intialize zpu cores */
+	zproc = zpu_init(MAX_ENTITY_BRANES, 0xFFFFFFFF);
+
+	/* intialize entity (libhtm) */
+	ziod_entity_init(prog_name, zproc);
 
 	signal(SIGINT, ziod_signal);
 	signal(SIGFPE, ziod_signal);
@@ -60,7 +106,6 @@ void ziod_init(const char *prog_name)
 #ifdef HAVE_RTC_DEVICE
 	REGISTER_RTEMP_DEVICE();
 #endif
-//	REGISTER_THERM_DEVICE(); /* module */
 
 	/* air periph */
 #ifdef HAVE_SGP_DEVICE
@@ -82,46 +127,144 @@ void ziod_init(const char *prog_name)
 	/* print status to console */
 //	REGISTER_STDOUT_DEVICE();
 
+	/* temperature sensor module */
+	ziod_dev_init(zproc, THERM_DEVICE());
+
 #if 0 /* DEBUG: */
 	set_zio_api_func(ZDEV_THERM, ziod_therm_notify);
 #endif
 
 	/* diag */
 	opt_print();
+
+	zlog_info("application initialized.");
+
+#if 0
+	{ /* DEBUG: */
+		uint8_t *data;
+		size_t data_len;
+		int err;
+
+		const uint8_t ch = 'A';
+
+		err = zpu_vaddr_get(zproc, ZPU_ROM_CHARSET_ADDR(ch), &data, &data_len); 
+fprintf(stderr, "DEBUG: TEST: %d = zpu_vaddr_get(0x%x[ch %d]): {%x}/<%d bytes>\n", err, ZPU_ROM_CHARSET_ADDR(ch), ch, data, data_len);
+
+		{
+			qvar var = (qvar)data;
+			size_t len = (size_t)quat_get(var);
+			uint8_t *buf;
+			int of;
+			int y, x;
+			int i;
+
+			buf = (uint8_t *)calloc(len, sizeof(uint8_t));
+			for (i = 0; i < len; i++) {
+				of = (i * 4) + 8;
+				var = (qvar)(data + of);
+				buf[i] = quat_get32(var); 
+			}
+
+			i = 0;
+			for (y = 0; y < 8; y++) {
+				for (x = 0; x < 6; x++) {
+					if (buf[i] != 0x0) {
+						printf ("*");
+					} else {
+						printf (" ");
+					}
+					i++;
+				}
+				printf ("\n");
+			}
+		}
+	}
+#endif
 }
 
 void ziod_term(void)
 {
+	zprocessor_t *zproc;
+
+	/* libzio */
 	zio_term();
+
+	/* libhtm */
+	if (entity) zproc = entity->zproc;
+	htm_entity_free(&entity);
+
+	zpu_free(&zproc);
+
+	/* libzsys */
+	zlog_term();
+
+	/* ziod */
 	opt_term();
+
+}
+
+void usage_help(void)
+{
+  fprintf(stdout,
+      "Usage: ziod [OPTIONS]\n"
+      "\n"
+#ifdef WINDOWS
+      "Service Options:\n"
+      "--install\tInstall the ziod service.\n"
+      "--remove\tRemove the ziod service.\n"
+      "\n"
+#endif
+      "Configuration Options:\n"
+      );
+
+  /* configurable runtime options */
+  fprintf(stdout, "%s", opt_usage_print());
+
+  fprintf(stdout,
+      "\n"
+      "Diagnostic Options:\n"
+      "\t-nf\n"
+      "\t\tRun daemon in foreground (no fork).\n"
+      "\n"
+      "Visit 'https://neo-natura.com/' for additional information.\n"
+      "Report bugs to <support@neo-natura.com>.\n"
+      );
+}
+
+
+void usage_version(void)
+{
+	fprintf(stdout,
+			"ziod version %s\n"
+			"\n"
+			"Copyright 2018 Neo Natural\n"
+			"Licensed under the GNU GENERAL PUBLIC LICENSE Version 3\n",
+			PACKAGE_VERSION);
 }
 
 int zio_core_main(int argc, char *argv[], char *env[])
 {
-	char name[MAX_ENTITY_NAME_LENGTH];
-	char *ptr;
-	int err;
 
-	ptr = strrchr(argv[0], '/');
-	if (!ptr)
-		ptr = strrchr(argv[0], '\\');
-	memset(name, 0, sizeof(name));
-	strncpy(name, ptr, sizeof(name)-1);
-	(void)strtok(name, ".");
-
-  err = htm_entity_init(&entity, name);
-	if (err) {
-		zlog_error(err, "htm_entity_init");
-		return (1);
+	if (argc >= 2 &&
+			(0 == strcmp(argv[1], "-h") ||
+			 0 == strcmp(argv[1], "--help"))) {
+		usage_help();
+		return (0);
 	}
+	if (argc >= 2 &&
+			(0 == strcmp(argv[1], "-v") ||
+			 0 == strcmp(argv[1], "--version"))) {
+		usage_version();
+		return (0);
+	}
+
+	server_start_t = ztime();
 
 	/* load configuration options */
 	opt_init();
+	opt_arg_interp(argc, argv);
 
-#ifdef HAVE_LIBWIRINGPI
-	wiringPiSetup();
-#endif
-
+	/* initialize entity */
 	ziod_init(argv[0]);
 
 	htm_control_state_set(entity, STATE_REST);
@@ -151,6 +294,14 @@ int zio_core_main(int argc, char *argv[], char *env[])
 
 int main(int argc, char *argv[])
 {
+
+#ifdef WINDOWS
+  /* quash stdin/stdout confusion for windows service. */
+  (void)open(".tmp-1", O_RDWR | O_CREAT, 0777);
+  (void)open(".tmp-2", O_RDWR | O_CREAT, 0777);
+  (void)open(".tmp-3", O_RDWR | O_CREAT, 0777);
+#endif
+
 	return (zio_core_main(argc, argv, NULL));
 }
 

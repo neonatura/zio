@@ -28,7 +28,7 @@ void quat_decode(qvar var, qkey key)
 	if (size < 16)
 		return;
 
-	memset(rawkey, 0, sizeof(key));
+	memset(rawkey, 0, sizeof(rawkey));
 	key_csum = (uint64_t)quat_get(key);
 	memcpy(rawkey, &key_csum, sizeof(key_csum));
 	key_csum = crc64(0, &key_csum, sizeof(key_csum));

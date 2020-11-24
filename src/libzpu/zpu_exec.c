@@ -26,7 +26,7 @@
 /**
  * Loads a single variable from memory.
  */
-int zpu_exec_load(zpu_t *z, uint32_t opcode, zaddr_t addr, zreg_t *rdest)
+int zpu_exec_load(zprocessor_t *zproc, zpu_t *z, uint32_t opcode, zaddr_t addr, zreg_t *rdest)
 {
 	qvar data;
 	size_t data_len;
@@ -34,7 +34,7 @@ int zpu_exec_load(zpu_t *z, uint32_t opcode, zaddr_t addr, zreg_t *rdest)
 	qnum tnum;
 	int err;
 
-	err = zpu_vaddr_get(z, addr, &data, &data_len);
+	err = zpu_vaddr_get(zproc, addr, &data, &data_len);
 	if (err)
 		return (err);
 
@@ -84,9 +84,9 @@ int zpu_exec_load(zpu_t *z, uint32_t opcode, zaddr_t addr, zreg_t *rdest)
 	return (0);
 }
 
-void zpu_exec_save(zpu_t *z, uint32_t opcode, off_t addr, zreg_t *reg)
+void zpu_exec_save(zprocessor_t *zproc, uint32_t opcode, off_t addr, zreg_t *reg)
 {
-	zpu_vaddr_set(z, addr, (uint8_t *)reg->data, quat_var_size(reg->data));
+	zpu_vaddr_set(zproc, addr, (uint8_t *)reg->data, quat_var_size(reg->data));
 }
 
 /* compare values and branch to relative stack address if operator resolves to true. */
@@ -116,7 +116,7 @@ void zpu_exec_branch(zpu_t *z, uint32_t opcode, off_t addr, zreg_t *r1, zreg_t *
 
 void zpu_exec_alc(zpu_t *z, uint32_t opcode, zreg_t *rdest, zreg_t *r1, zreg_t *r2)
 {
-	const int qcode = QOP_MASK_MATH + (ZINST_OP(opcode) & 15);
+	const int qcode = QOP_MASK_MATH + (ZINST_OP(opcode) & 7) + ((ZINST_SUBOP(opcode) != 0) ? 8 : 0);
 	qvar result;
 	int i;
 
@@ -127,7 +127,7 @@ fprintf(stderr, "DEBUG: zpu_exec_alc: qcode %d (%f, %f)\n", qcode, (double)quat_
 zvar zpu_num(uint64_t val)
 {
 	num_t r_val = (num_t)val;
-	zvar ret_var = (zvar)quat_alloc(Q_NUM, &r_val, sizeof(num_t)); 
+	zvar ret_var = (zvar)quat_alloc(Q_NUM, (uint8_t *)&r_val, sizeof(num_t)); 
 fprintf(stderr, "DEBUG: ZPU_NUM: ret_var = %llu\n", (unsigned long long)quat_get(ret_var));
 //	return ((zvar)quat_alloc(Q_NUM, &r_val, sizeof(num_t))); 
 	return (ret_var);
@@ -197,6 +197,7 @@ fprintf(stderr, "DEBUG: PUSH[#%d]: %s (type:0x%x) (op:0x%x) (subop:0x%x) (opcode
 			break;
 
 		case ZPU_FAMILY_I:
+			/* mem load & immediate alc */
 			rd = zpu_push_arg(z, argp);
 			inst->rdest = (rd & 31);
 
@@ -255,7 +256,7 @@ fprintf(stderr, "DEBUG: inst-type(%d) inst-op(%d) inst-subop(%d) opcode(%x)\n", 
 	return (code);
 }
 
-void zpu_exec_inst(zpu_t *z, uint32_t opcode, zreg_t *rdest, zreg_t *r1, zreg_t *r2)
+void zpu_exec_inst(zprocessor_t *zproc, zpu_t *z, uint32_t opcode, zreg_t *rdest, zreg_t *r1, zreg_t *r2)
 {
 	off_t addr;
 	int type;
@@ -265,11 +266,11 @@ fprintf(stderr, "DEBUG: zpu_exec_inst: opcode(0x%x) type(0x%x) {%x, %f, %f}\n", 
 	switch (type) {
 		case ZINST_TYPE_LOAD:
 			addr = (off_t)quat_get(r1->data);
-			zpu_exec_load(z, opcode, addr, rdest);
+			zpu_exec_load(zproc, z, opcode, addr, rdest);
 			break;
 		case ZINST_TYPE_SAVE:
 			addr = (off_t)quat_get(r1->data);
-			zpu_exec_save(z, opcode, addr, rdest);
+			zpu_exec_save(zproc, opcode, addr, rdest);
 			break;
 		case ZINST_TYPE_BRANCH:
 			addr = (off_t)quat_get(rdest->data);
@@ -283,7 +284,7 @@ fprintf(stderr, "DEBUG: zpu_exec_inst: opcode(0x%x) type(0x%x) {%x, %f, %f}\n", 
 
 }
 
-void zpu_exec(zpu_t *z)
+int zpu_exec(zprocessor_t *zproc, zpu_t *z)
 {
 	zinst_t *inst;
 	zreg_t *rd;
@@ -296,7 +297,7 @@ void zpu_exec(zpu_t *z)
 	inst = zpu_pop(z);
 fprintf(stderr, "DEBUG: EXEC: {%x} = zpu_pop (sp: %d) (pc: %d)\n", inst, z->sp, z->pc);
 	if (!inst)
-		return;
+		return (0);
 
 	rd = r1 = r2 = NULL;
 	code = zpu_opcode(inst);
@@ -313,9 +314,18 @@ fprintf(stderr, "DEBUG: EXEC: ZPU_FAMILY_R: inst-rdest(%d) inst-src1(%d) inst-sr
 			rd = zpu_reg_get(z, (int)inst->rdest);
 			r1 = zpu_reg_get(z, (int)inst->src1);
 			{
+				static zreg_t imm;
+				static qnum imm_var;
 				zinstI_t *I = (zinstI_t *)inst;
-				int64_t imm = (int64_t)I->addr;
+				int64_t imm_val = (int64_t)I->addr;
+#if 0
 				r2 = zpu_reg_temp(z, (num_t)imm, NULL);
+#endif
+
+				memset(&imm, 0, sizeof(imm));
+				imm.data = (uint8_t *)imm_var;
+				quat_set((num_t)imm_val, Q_NUM, imm_var);
+				r2 = &imm;
 			}
 			break;
 		case ZPU_FAMILY_B: /* branches */
@@ -340,7 +350,8 @@ fprintf(stderr, "DEBUG: EXEC: ZPU_FAMILY_R: inst-rdest(%d) inst-src1(%d) inst-sr
 			break;
 	}
 
-	zpu_exec_inst(z, code, rd, r1, r2);
+	zpu_exec_inst(zproc, z, code, rd, r1, r2);
+	return (1);
 }
 
 zinst_t *zpu_peek(zpu_t *z, int stack_index)

@@ -820,11 +820,14 @@ int zio_lcd_ssd1306_write(zdev_t *dev, uint8_t *data, size_t data_len)
 	if (!*data)
 		return (0);
 
+	zio_data_append(dev, data, data_len);
+#if 0
 	of = dev->fifo.value_len;
 	len = MIN(data_len, MAX_VALUE_BUFFER_SIZE - of - 2);
 	strcpy(dev->fifo.value + of, data);
 	strcat(dev->fifo.value + of, "\n");
 	dev->fifo.value_len += (len + 1); 
+#endif
 
 	return (0);
 }
@@ -835,7 +838,7 @@ int zio_lcd_ssd1306_close(zdev_t *dev)
 	if (!is_zio_dev_on(dev))
 		return (0);
 
-	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
+///	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
 
 	zio_ssd1306_clearDisplay();
 	zio_ssd1306_display(dev);
@@ -847,15 +850,22 @@ int zio_lcd_ssd1306_close(zdev_t *dev)
 
 int zio_lcd_ssd1306_poll(zdev_t *dev)
 {
-	uint8_t *raw = dev->fifo.value;
+	//uint8_t *raw = dev->fifo.value;
 	char buf[32];
 	int line;
-	int of;
+	//int of;
 
 	zio_ssd1306_clearDisplay();
 
 	zio_ssd1306_header(dev);
 
+	for (line = 0; line < 6; line++) {
+		memset(buf, 0, sizeof(buf));
+		zio_data(dev, line, buf, sizeof(buf));
+		zio_ssd1306_drawString(dev, buf);
+		zio_ssd1306_write('\n');
+	}
+#if 0
 	line = 0;
 	of = stridx(raw, '\n');
 	while (of != -1) {
@@ -871,10 +881,12 @@ int zio_lcd_ssd1306_poll(zdev_t *dev)
 		if (line > 6)
 			break;
 	}
+#endif
 
 	zio_ssd1306_display(dev);
 
 	if (line > 5) {
+#if 0
 		/* remove first string. */
 		of = stridx(dev->fifo.value, '\n');
 		if (of != -1) {
@@ -884,6 +896,8 @@ int zio_lcd_ssd1306_poll(zdev_t *dev)
 
 			memset(dev->fifo.value + dev->fifo.value_len, 0, MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len);
 		}
+#endif
+		(void)zio_data_pull(dev, NULL, 0);
 	}
 
 	return (0);

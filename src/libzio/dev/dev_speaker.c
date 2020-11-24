@@ -76,10 +76,14 @@ int zio_speaker_sleep(zdev_t *dev)
 
 int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
+#if 0
 	unsigned char *raw;
+#endif
 	size_t len;
 	int err;
+	int of;
 
+#if 0
 	raw = (unsigned char *)dev->fifo.value + dev->fifo.value_len;
 	data_len = MIN(data_len, 
 		(MAX_VALUE_BUFFER_SIZE - dev->fifo.value_len));
@@ -92,6 +96,22 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	memcpy(raw, data, data_len);
 	dev->fifo.value_len += data_len;
+#endif
+
+	/* write to fifo in chunks of <MAX_ZIO_BUFFER_SIZE> */
+	while (of < data_len) {
+		len = MIN(MAX_ZIO_BUFFER_SIZE, (data_len - of));
+		if (len == 0)
+			break;
+
+		zio_data_append(dev, data + of, len); 
+		of += len;
+	}
+
+	err = zio_speaker_wake(dev);
+	if (err)
+		return (err);
+
 
 	return (0);
 }
@@ -99,6 +119,7 @@ int zio_speaker_write(zdev_t *dev, uint8_t *data, size_t data_len)
 /* called every 200ms */
 int zio_speaker_poll(zdev_t *dev)
 {
+#if 0
 	static uint64_t last_t;
 	uint64_t t;
 	uint16_t sample;
@@ -127,6 +148,30 @@ int zio_speaker_poll(zdev_t *dev)
 	/* copy new 200ms segment of audio content into buffer. */
 	memmove(dev->fifo.value, dev->fifo.value + len, dev->fifo.value_len - len);
 	dev->fifo.value_len -= len;
+#endif
+	char data[MAX_ZIO_BUFFER_SIZE];
+	int buff_of;
+	int len;
+	int of;
+
+	if (!is_zio_dev_on(dev))
+		return (ERR_INVAL); /* incorrect state */
+
+	if (dev->flags & DEVF_SLEEP)
+		return (0); /* all done */
+
+	buff_of = zio_data_pull(dev, data, MAX_ZIO_BUFFER_SIZE);
+	if (buff_of == -1) {
+		(void)zio_speaker_sleep(dev);
+		return (ERR_AGAIN);
+	}
+
+	/* copy new 200ms segment into audio buffer. */
+	of = _zio_speaker_buffer_index;
+	for (len = 0; len < buff_of; len += 2) {
+		memcpy(&_zio_speaker_buffer[of % MAX_ZIO_BUFFER_SIZE], data + len, 2);
+		of++;
+	}
 
 	return (0);
 }

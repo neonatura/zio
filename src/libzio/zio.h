@@ -3,7 +3,14 @@
 #ifndef __ZIO_H__
 #define __ZIO_H__
 
+/* libzsys */
 #include "zsys.h"
+
+/* libquat */
+#include "quat.h"
+
+/* libzpu */
+#include "zpu.h"
 
 #ifdef HAVE_LIBESPEAK
 #include <espeak/speak_lib.h>
@@ -113,6 +120,7 @@ typedef struct zio_param_t
 
 } zio_param_t;
 
+#if 0
 typedef struct zio_fifo_t
 {
 	size_t value_of;
@@ -123,7 +131,9 @@ typedef struct zio_fifo_t
 	uint64_t *lvalue;
   double *dvalue;
 } zio_fifo_t;
+#endif
 
+#if 0
 typedef struct zio_stat_t
 {
   uint32_t read_tot;
@@ -143,6 +153,7 @@ typedef struct zio_stat_t
 	/* The next time that a poll will take place. */
 	uint64_t freq_stamp;
 } zio_stat_t;
+#endif
 
 typedef struct zio_op_t 
 {
@@ -196,6 +207,9 @@ typedef struct zgrid_t
 	uint32_t cell_max;
 } zgrid_t;
 
+typedef zpu_iofifo_t zio_fifo_t;
+typedef zpu_ioconf_t zio_conf_t;
+
 typedef struct zdev_t
 {
 	/* A abreviated name of the device. */
@@ -220,7 +234,11 @@ typedef struct zdev_t
 
 	zio_fifo_t fifo;
 
+	zio_conf_t conf;
+
+#if 0
 	zio_stat_t stat;
+#endif
 
 	/* The current module that this device is attached to. */
 	uint32_t mod_claim;

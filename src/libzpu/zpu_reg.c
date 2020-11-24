@@ -37,17 +37,22 @@ void zpu_reg_set(zpu_t *z, zreg_t *reg, qvar value)
 
 fprintf(stderr, "DEBUG: zpu_reg_set: value %f\n", (double)quat_get(value));
 
-	nlen = MAX(sizeof(qnum), quat_var_size(value));
-	if (reg->size != nlen) {
+	if (!value) {
 		if (reg->data) free(reg->data);
-		/* new value */
-		reg->size = nlen;
-		reg->data = (uint8_t *)calloc(reg->size, sizeof(uint8_t));
+		reg->data = NULL;
 	} else {
-		/* over-write */
-		memset(reg->data, 0, reg->size);
+		nlen = MAX(sizeof(qnum), quat_var_size(value));
+		if (reg->size != nlen) {
+			if (reg->data) free(reg->data);
+			/* new value */
+			reg->size = nlen;
+			reg->data = (uint8_t *)calloc(reg->size, sizeof(uint8_t));
+		} else {
+			/* over-write */
+			memset(reg->data, 0, reg->size);
+		}
+		memcpy(reg->data, value, nlen); 
 	}
-	memcpy(reg->data, value, nlen); 
 }
 
 void zpu_reg_nset(zpu_t *z, zreg_t *reg, num_t value)

@@ -3,12 +3,7 @@
 #ifndef __QUAT_H__
 #define __QUAT_H__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <math.h>
-#include <arpa/inet.h>
+#include "zsys.h"
 
 #define QUAT_PRECISION_BASE 10
 
@@ -122,8 +117,13 @@ size_t quat_print(qstr str);
 size_t quat_strlen(qstr str);
 
 /* ** quat_alloc ** */
-qvar quat_alloc(int flag, void *data, size_t data_len);
+qvar quat_alloc(int flag, uint8_t *data, size_t data_len);
 
+void quat_free(qvar *var_p);
+
+void quat_init(void);
+
+int quat_stream(qvar var, uint8_t *retdata, size_t retdata_len);
 
 #endif /* ndef __QUAT_H__ */
 

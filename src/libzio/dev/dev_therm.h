@@ -3,7 +3,8 @@
 #ifndef __DEV_THERM_H__
 #define __DEV_THERM_H__
 
-#define REGISTER_THERM_DEVICE() (zio_dev_register(&zio_therm_device))
+#define THERM_DEVICE() ((zdev_t *)(&zio_therm_device))
+#define REGISTER_THERM_DEVICE() (zio_dev_register(THERM_DEVICE()))
 
 extern zdev_t zio_therm_device;
 

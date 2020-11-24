@@ -29,19 +29,19 @@
 extern zdev_t *zio_device_table;
 
 
-void zio_dvalue_set(zdev_t *dev, double dvalue);
+void zio_dvalue_set(zdev_t *dev, num_t dvalue);
 
 void zio_ivalue_set(zdev_t *dev, uint32_t ivalue);
 
 void zio_value_set(zdev_t *dev, uint64_t lvalue);
 
-double zio_dvalue_get(zdev_t *dev);
+num_t zio_dvalue_get(zdev_t *dev);
 
 uint32_t zio_ivalue_get(zdev_t *dev);
 
 uint64_t zio_value_get(zdev_t *dev);
 
-double zio_dvalue_avg(zdev_t *dev, int max_cycles);
+num_t zio_dvalue_avg(zdev_t *dev, uint max_cycles);
 
 int zio_dev_register(zdev_t *dev);
 
@@ -88,8 +88,6 @@ int zio_uart_init(zdev_t *dev, int chan, int baud);
 
 int zio_uart_read(zdev_t *dev, uint8_t *retdata, size_t retdata_len);
 
-int zio_data_ln(zdev_t *dev, uint8_t *data, size_t data_len);
-
 void zio_data_append(zdev_t *dev, uint8_t *data, size_t data_len);
 
 zgeo_t *zio_geo_value(zdev_t *dev);
@@ -103,6 +101,12 @@ int zio_ctl(zdev_t *dev, int reg, void *data);
 void zio_init(void);
 
 void zio_term(void);
+
+int zio_data_peek(zdev_t *dev, zaddr_t addr, uint8_t *retdata, size_t retdata_len);
+
+int zio_data_pull(zdev_t *dev, uint8_t *retdata, size_t retdata_len);
+
+int is_zio_dev_on(zdev_t *dev);
 
 /** The time (in milliseconds) to wait before accessing a device. */
 #define zio_dev_startup_wait(_dev) \
@@ -150,6 +154,11 @@ void zio_term(void);
 #define ZIO_I2C_REG16_READ(_dev, _reg) 0
 #define ZIO_I2C_REG16_WRITE(_dev, _reg, _val) 0
 #define PCF8591_INIT(_addr) ZERR_INVAL
+
+/* no-op */
+#define ZIO_TONE_INIT(_pin) 0
+#define ZIO_TONE_TERM(_pin) 0
+#define ZIO_TONE(_pin, _val) 0
 
 #endif
 

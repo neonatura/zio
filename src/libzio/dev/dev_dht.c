@@ -94,11 +94,11 @@ int zio_dht_poll(zdev_t *dev)
 	if (!is_zio_dev_on(dev))
 		return (ERR_INVAL);
 
-	if (511 == (dev->stat.freq_cycle % 1024)) {
+	if (511 == (dev->conf.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, OUTPUT );
 		DIGITAL_WRITE( dev->def_pin, LOW );
 		return (ERR_AGAIN);
-	} else if (512 == (dev->stat.freq_cycle % 1024)) {
+	} else if (512 == (dev->conf.freq_cycle % 1024)) {
 		PIN_MODE( dev->def_pin, INPUT );
 		return (zio_dht_read(dev));
 	}

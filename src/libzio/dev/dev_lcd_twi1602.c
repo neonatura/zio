@@ -16,6 +16,9 @@
 #define LCD_CMD 0
 #define LCD_CHR 1
 
+#define zio_lcd_byte zio_lcd_twi1602_byte
+#define zio_lcd_line zio_lcd_twi1602_line
+
 int zio_lcd_twi1602_wait(zdev_t *dev, int bits)
 {
 	delayMicroseconds(500);
@@ -76,11 +79,28 @@ int zio_lcd_twi1602_open(zdev_t *dev)
  
 int zio_lcd_twi1602_write(zdev_t *dev, uint8_t *data, size_t data_len)
 {
+	char buf[256];
+	int len;
 	int i;
 
 	if (!is_zio_dev_on(dev))
 		return (ERR_AGAIN);
 
+	zio_data_append(dev, data, data_len);
+
+	memset(buf, 0, sizeof(buf));
+	zio_data_pull(dev, buf, sizeof(buf));
+
+	len = strlen(buf);
+	for (i = 0; i < LCD_DISPLAY_WIDTH; i++) {
+		if (i >= len || buf[i] == 0) {
+			zio_lcd_byte(dev, ' ', LCD_CHR);		
+		} else {
+			zio_lcd_byte(dev, buf[i], LCD_CHR);		
+		}
+	}
+
+#if 0
 	if (*dev->fifo.value) {
 		size_t len = strlen(dev->fifo.value);
 		zio_lcd_line(dev, LCD_LINE_1);
@@ -104,6 +124,7 @@ int zio_lcd_twi1602_write(zdev_t *dev, uint8_t *data, size_t data_len)
 
 	memset(dev->fifo.value, 0, MAX_VALUE_BUFFER_SIZE);
 	strncpy(dev->fifo.value, data, MIN(data_len, MAX_VALUE_BUFFER_SIZE-1));
+#endif
 
 	return (0);
 }

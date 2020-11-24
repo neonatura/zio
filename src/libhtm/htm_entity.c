@@ -34,7 +34,7 @@ static brane_def_t brane_def_table[MAX_ENTITY_BRANES] = {
   { BR_EXEC, "exec", 8388608, htm_exec_brane_init }
 };
 
-int htm_entity_init(entity_t **ent_p, const char *name)
+int htm_entity_init(entity_t **ent_p, const char *name, zprocessor_t *zproc)
 {
 	entity_t *ent;
 	int i;
@@ -45,11 +45,12 @@ int htm_entity_init(entity_t **ent_p, const char *name)
 
 	strncpy(ent->name, name, sizeof(ent->name)-1);
 	ent->id = crc64(0, ent->name, strlen(ent->name));
+	ent->zproc = zproc;
 
 	/* initialize neocortical branes */
 	for (i = 0; i < MAX_ENTITY_BRANES; i++) {
-		ent->brane[i] = htm_brane_init(ent->id,
-				brane_def_table[i].label, brane_def_table[i].size); 
+		ent->brane[i] = htm_brane_init(ent->id, brane_def_table[i].label, 
+				brane_def_table[i].size, zpu_core(zproc, i)); 
 		if (ent->brane[i]) ent->brane[i]->type = i;
 		if (ent->brane[i]) ent->brane[i]->def = &brane_def_table[i];
 		if (ent->brane[i]) ent->brane[i]->ent = ent;

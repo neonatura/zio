@@ -48,7 +48,7 @@ const char *htm_brane_fname(const char *name)
 	return (ret_path);
 }
 
-brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size)
+brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size, zpu_t *zpu)
 {
 	struct stat st;
 	brane_t *br;
@@ -88,6 +88,7 @@ brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size)
 	}
 
 	br->id = crc64(ent_id, tag, strlen(tag)); 
+	br->zpu = zpu;
 
 #ifdef WINDOWS
   fsync(map->fd); /* quash cache */
@@ -115,8 +116,6 @@ brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size)
 	/* TODO: .. count actual set paths via !0 */
 
 	br->cell_map = hmap_init();
-
-	zpu_init(&br->zpu);
 
 	return (br);
 }

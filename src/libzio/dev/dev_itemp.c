@@ -57,11 +57,11 @@ int zio_itemp_print(zdev_t *dev, int mode, void *retbuf)
 	char buf[256];
 
 	if (mode == ZIO_FMT_FAHRENHEIT) {
-		sprintf(retbuf, "%-2.2fF", zio_therm_f(zio_dvalue_avg(dev, 4)));
+		sprintf(retbuf, "%-2.2fF", zio_therm_f((double)zio_dvalue_avg(dev, 4)));
 	} else if (mode == ZIO_FMT_KELVIN) {
-		sprintf(retbuf, "%-2.2fK", zio_therm_k(zio_dvalue_avg(dev, 4)));
+		sprintf(retbuf, "%-2.2fK", zio_therm_k((double)zio_dvalue_avg(dev, 4)));
 	} else /* mode == ZIO_FMT_CELSIUS */ {
-		sprintf(retbuf, "%-2.2fC", zio_dvalue_avg(dev, 4));
+		sprintf(retbuf, "%-2.2fC", (double)zio_dvalue_avg(dev, 4));
 	}
 
 	return (0);
@@ -74,6 +74,7 @@ zdev_t zio_itemp_device =
 	/* op */
 	{ zio_itemp_open, zio_itemp_read, NULL, zio_itemp_print, zio_itemp_close, zio_itemp_poll },
 	/* param */
-	{ /* freq_min */ 30, /* freq_max */ 60, 0, PIN_NULL }
+	{ /* freq_min */ 5, /* freq_max */ 15, 0, PIN_NULL }
+	//{ /* freq_min */ 30, /* freq_max */ 60, 0, PIN_NULL }
 };
 

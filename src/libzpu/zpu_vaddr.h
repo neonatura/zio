@@ -23,25 +23,27 @@
 
 /*
  * Logical address table: 
- *	0x00000 - 0x1FFFF ROM
- *	0x10000           IO:AUDIO
- *	0x10001           IO:COMM
- *	0x10002           IO:GEO
- *	0x10003           IO:THERM
- *	0x10004           IO:VIDEO
- *	0x20000 - 0x2FFFF RAM:KERNEL
- *	0x30000 - 0xFFFFF RAM:USER
+ *	0x00000 - 0x0FFFF RAM:KERNEL
+ *	0x10000 - 0xCFFFF RAM:USER
+ *	0xD0000           IO:AUDIO
+ *	0xD0001           IO:COMM
+ *	0xD0002           IO:GEO
+ *	0xD0003           IO:THERM
+ *	0xD0004           IO:VIDEO
+ *	0xF0000 - 0xFFFFF ROM
 */
 
 /* The size of each memory "chunk" or page. */
 #define ZPU_VADDR_PAGE_SIZE 65536
+
 /* The number of pages allocated to the memory addressing. */
 #define MAX_ZPU_VADDR_SIZE 65536
 
-int zpu_vaddr_init(zpu_t *z, size_t block_size);
+int zpu_vaddr_init(zprocessor_t *zproc);
 
-int zpu_vaddr_set(zpu_t *z, size_t addr, uint8_t *data, size_t data_len);
+int zpu_vaddr_set(zprocessor_t *zproc, zaddr_t addr, uint8_t *data, size_t data_len);
 
-int zpu_vaddr_get(zpu_t *z, zaddr_t addr, uint8_t **data_p, size_t *data_len_p);
+int zpu_vaddr_get(zprocessor_t *zproc, zaddr_t addr, uint8_t **data_p, size_t *data_len_p);
 
 #endif /* ndef __ZPU_VADDR_H__ */
+

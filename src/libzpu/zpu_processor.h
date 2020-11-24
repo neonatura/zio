@@ -21,6 +21,10 @@
 #ifndef __ZPU_INIT_H__
 #define __ZPU_INIT_H__
 
-int zpu_init(zpu_t *z);
+zprocessor_t *zpu_init(int core_max, zaddr_t logical_max);
+
+zpu_t *zpu_core(zprocessor_t *zproc, int core);
+
+void zpu_free(zprocessor_t **zproc_p);
 
 #endif /* ndef __ZPU_INIT_H__ */

@@ -19,12 +19,14 @@
  *  along with libhtm.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "zpu.h"
+#ifndef __HTM_IMAGE_H__
+#define __HTM_IMAGE_H__
 
-int zpu_init(zpu_t *z)
-{
-	z->pc = z->sp = (MAX_ZPU_STACK-1);
-	z->addr_logical_max = 0xFFFFFFFF;
-	zpu_vaddr_init(z, MAX_ZPU_VADDR_SIZE);
-	zpu_reg_init(z, MAX_ZPU_REGISTER_SIZE);
-}
+typedef struct image_t {
+  uint32_t width;
+  uint32_t height;
+  uint32_t bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */
+  uint8_t *pixel;
+} image_t;
+
+#endif /* __HTM_IMAGE_H__ */

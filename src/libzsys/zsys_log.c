@@ -105,3 +105,10 @@ void f_zsys_log(int err_code, const char *tag, const char *text, const char *src
   buff_clear(buff);
 }
 
+void zlog_term(void)
+{
+	if (_zlog_fd != 0) {
+		close(_zlog_fd);
+		_zlog_fd = 0;
+	}
+}

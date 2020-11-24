@@ -68,4 +68,6 @@ int zdb_arch_write(zdb_t *db, zdb_hash_t hash, void *raw_data, zdb_size_t data_l
 
 int zdb_find(zdb_t *db, zdb_hash_t hash, bcpos_t *pos_p);
 
+int zdb_set(zdb_t *db, zdb_size_t pos, void *raw_data, int data_len);
+
 #endif /* ndef __ZDB__ZDB_BLOCK_H__ */

@@ -26,6 +26,48 @@
 
 static const unsigned char font_table[] PROGMEM;
 
+void zfont_render(uint8_t ch, image_font8_t *image)
+{
+	const uint32_t color = 0xFF;
+	const uint32_t size = 1;
+	int line;
+	int x, y;
+	int i, j, k;
+	int idx;
+
+	if (!image)
+		return;
+
+	memset(image, '\000', sizeof(image_font8_t));
+
+	image->bytes_per_pixel = 1;
+
+	image->width = (FONT_CHAR_WIDTH+1) * size;
+	image->height = (FONT_CHAR_HEIGHT+1) * size;
+
+	for (x = 0; x < image->width; x++) {
+		i = (x / size);
+		if (i == FONT_CHAR_WIDTH)
+			line = 0x0;
+		else
+			line = pgm_read_byte(font_table + ((ch * 5) + i));
+
+		for (j = 0; j < (FONT_CHAR_HEIGHT+1); j++) {
+			if (line & 0x1) {
+				for (k = 0; k < size; k++) {
+					y = ((j * size) + k);
+					idx = (y * image->width) + x;
+					image->pixel[idx] = color;
+				}
+			}
+
+			line >>= 1;
+		}
+	}
+
+	return (image);
+}
+
 image_t *zfont_init(uint8_t ch, uint32_t color, uint32_t size)
 {
 	image_t *image;

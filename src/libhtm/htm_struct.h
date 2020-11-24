@@ -293,7 +293,7 @@ typedef struct brane_t
 	tree_t cell_cache;
 
 	/* an embedded microprocessor */
-	zpu_t zpu;
+	zpu_t *zpu;
 } brane_t;
 
 typedef struct event_t
@@ -344,6 +344,8 @@ typedef struct entity_t
 		 */
 		double saliency;
 	} control;
+
+	zprocessor_t *zproc;
 
 } entity_t;
 

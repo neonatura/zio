@@ -52,9 +52,12 @@ static int _zdb_open(char *name, zdb_t **zdb_p)
 
 	zdb_mutex_init(db);
 
+#if 0
+	/* wait until needed.. */
   err = zdb_idx_open(db);
   if (err)
     return (err);
+#endif
 
   *zdb_p = db;
 
@@ -308,6 +311,12 @@ int zdb_write(zdb_t *db, zdb_size_t pos, zdb_hash_t hash, void *raw_data, int da
   zdb_unlock(db);
 
   return (err);
+}
+
+int zdb_set(zdb_t *db, zdb_size_t pos, void *raw_data, int data_len)
+{
+	static zdb_hash_t hash;
+	return (zdb_write(db, pos, hash, raw_data, data_len));
 }
 
 /**

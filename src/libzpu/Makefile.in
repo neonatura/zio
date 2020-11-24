@@ -110,8 +110,8 @@ am__v_AR_1 =
 libzpu_a_AR = $(AR) $(ARFLAGS)
 libzpu_a_LIBADD =
 am__objects_1 = libzpu_a-zpu_exec.$(OBJEXT) \
-	libzpu_a-zpu_init.$(OBJEXT) libzpu_a-zpu_vaddr.$(OBJEXT) \
-	libzpu_a-zpu_vaddr_rom.$(OBJEXT) libzpu_a-zpu_opcode.$(OBJEXT) \
+	libzpu_a-zpu_vaddr.$(OBJEXT) libzpu_a-zpu_vaddr_rom.$(OBJEXT) \
+	libzpu_a-zpu_opcode.$(OBJEXT) libzpu_a-zpu_processor.$(OBJEXT) \
 	libzpu_a-zpu_reg.$(OBJEXT)
 am__objects_2 =
 am_libzpu_a_OBJECTS = $(am__objects_1) $(am__objects_2)
@@ -132,8 +132,8 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/libzpu_a-zpu_exec.Po \
-	./$(DEPDIR)/libzpu_a-zpu_init.Po \
 	./$(DEPDIR)/libzpu_a-zpu_opcode.Po \
+	./$(DEPDIR)/libzpu_a-zpu_processor.Po \
 	./$(DEPDIR)/libzpu_a-zpu_reg.Po \
 	./$(DEPDIR)/libzpu_a-zpu_vaddr.Po \
 	./$(DEPDIR)/libzpu_a-zpu_vaddr_rom.Po
@@ -319,18 +319,18 @@ version_patch = @version_patch@
 zpu_headers = \
 	$(srcdir)/zpu.h \
 	$(srcdir)/zpu_exec.h \
-	$(srcdir)/zpu_init.h \
 	$(srcdir)/zpu_vaddr.h \
 	$(srcdir)/zpu_vaddr_rom.h \
 	$(srcdir)/zpu_opcode.h \
+	$(srcdir)/zpu_processor.h \
 	$(srcdir)/zpu_reg.h
 
 zpu_sources = \
 	$(srcdir)/zpu_exec.c \
-	$(srcdir)/zpu_init.c \
 	$(srcdir)/zpu_vaddr.c \
 	$(srcdir)/zpu_vaddr_rom.c \
 	$(srcdir)/zpu_opcode.c \
+	$(srcdir)/zpu_processor.c \
 	$(srcdir)/zpu_reg.c
 
 noinst_LIBRARIES = libzpu.a
@@ -390,8 +390,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_exec.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_init.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_opcode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_processor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_reg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_vaddr.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzpu_a-zpu_vaddr_rom.Po@am__quote@ # am--include-marker
@@ -437,20 +437,6 @@ libzpu_a-zpu_exec.obj: $(srcdir)/zpu_exec.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_exec.obj `if test -f '$(srcdir)/zpu_exec.c'; then $(CYGPATH_W) '$(srcdir)/zpu_exec.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_exec.c'; fi`
 
-libzpu_a-zpu_init.o: $(srcdir)/zpu_init.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_init.o -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_init.Tpo -c -o libzpu_a-zpu_init.o `test -f '$(srcdir)/zpu_init.c' || echo '$(srcdir)/'`$(srcdir)/zpu_init.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzpu_a-zpu_init.Tpo $(DEPDIR)/libzpu_a-zpu_init.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zpu_init.c' object='libzpu_a-zpu_init.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_init.o `test -f '$(srcdir)/zpu_init.c' || echo '$(srcdir)/'`$(srcdir)/zpu_init.c
-
-libzpu_a-zpu_init.obj: $(srcdir)/zpu_init.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_init.obj -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_init.Tpo -c -o libzpu_a-zpu_init.obj `if test -f '$(srcdir)/zpu_init.c'; then $(CYGPATH_W) '$(srcdir)/zpu_init.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_init.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzpu_a-zpu_init.Tpo $(DEPDIR)/libzpu_a-zpu_init.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zpu_init.c' object='libzpu_a-zpu_init.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_init.obj `if test -f '$(srcdir)/zpu_init.c'; then $(CYGPATH_W) '$(srcdir)/zpu_init.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_init.c'; fi`
-
 libzpu_a-zpu_vaddr.o: $(srcdir)/zpu_vaddr.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_vaddr.o -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_vaddr.Tpo -c -o libzpu_a-zpu_vaddr.o `test -f '$(srcdir)/zpu_vaddr.c' || echo '$(srcdir)/'`$(srcdir)/zpu_vaddr.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzpu_a-zpu_vaddr.Tpo $(DEPDIR)/libzpu_a-zpu_vaddr.Po
@@ -492,6 +478,20 @@ libzpu_a-zpu_opcode.obj: $(srcdir)/zpu_opcode.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zpu_opcode.c' object='libzpu_a-zpu_opcode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_opcode.obj `if test -f '$(srcdir)/zpu_opcode.c'; then $(CYGPATH_W) '$(srcdir)/zpu_opcode.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_opcode.c'; fi`
+
+libzpu_a-zpu_processor.o: $(srcdir)/zpu_processor.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_processor.o -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_processor.Tpo -c -o libzpu_a-zpu_processor.o `test -f '$(srcdir)/zpu_processor.c' || echo '$(srcdir)/'`$(srcdir)/zpu_processor.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzpu_a-zpu_processor.Tpo $(DEPDIR)/libzpu_a-zpu_processor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zpu_processor.c' object='libzpu_a-zpu_processor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_processor.o `test -f '$(srcdir)/zpu_processor.c' || echo '$(srcdir)/'`$(srcdir)/zpu_processor.c
+
+libzpu_a-zpu_processor.obj: $(srcdir)/zpu_processor.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_processor.obj -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_processor.Tpo -c -o libzpu_a-zpu_processor.obj `if test -f '$(srcdir)/zpu_processor.c'; then $(CYGPATH_W) '$(srcdir)/zpu_processor.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_processor.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzpu_a-zpu_processor.Tpo $(DEPDIR)/libzpu_a-zpu_processor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zpu_processor.c' object='libzpu_a-zpu_processor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -c -o libzpu_a-zpu_processor.obj `if test -f '$(srcdir)/zpu_processor.c'; then $(CYGPATH_W) '$(srcdir)/zpu_processor.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zpu_processor.c'; fi`
 
 libzpu_a-zpu_reg.o: $(srcdir)/zpu_reg.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzpu_a_CFLAGS) $(CFLAGS) -MT libzpu_a-zpu_reg.o -MD -MP -MF $(DEPDIR)/libzpu_a-zpu_reg.Tpo -c -o libzpu_a-zpu_reg.o `test -f '$(srcdir)/zpu_reg.c' || echo '$(srcdir)/'`$(srcdir)/zpu_reg.c
@@ -639,8 +639,8 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/libzpu_a-zpu_exec.Po
-	-rm -f ./$(DEPDIR)/libzpu_a-zpu_init.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_opcode.Po
+	-rm -f ./$(DEPDIR)/libzpu_a-zpu_processor.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_reg.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_vaddr.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_vaddr_rom.Po
@@ -690,8 +690,8 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/libzpu_a-zpu_exec.Po
-	-rm -f ./$(DEPDIR)/libzpu_a-zpu_init.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_opcode.Po
+	-rm -f ./$(DEPDIR)/libzpu_a-zpu_processor.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_reg.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_vaddr.Po
 	-rm -f ./$(DEPDIR)/libzpu_a-zpu_vaddr_rom.Po

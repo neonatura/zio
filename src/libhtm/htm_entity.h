@@ -25,7 +25,7 @@
 #define ENTITY_ZPU(_ent) \
 	(&(_ent)->zpu)
 
-int htm_entity_init(entity_t **ent_p, const char *name);
+int htm_entity_init(entity_t **ent_p, const char *name, zprocessor_t *zproc);
 
 void htm_entity_free(entity_t **ent_p);
 

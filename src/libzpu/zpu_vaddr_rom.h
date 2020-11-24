@@ -1,3 +1,4 @@
+
 /*
  *  Copyright 2020 Neo Natura
  *
@@ -23,17 +24,32 @@
 
 /*
  * ZPU ROM:
- *   0xF000 ASCII Font Charset
- *   0xF010 
+ *   0x0010 ASCII Font Charset
  */
 
 /* The page offset of ROM memory. */
-#define ZPU_VADDR_ROM_OFFSET 0xF0000
+#define ZPU_VADDR_ROM_PAGE 0xF0000
+
 /* The number of pages allocated to the ROM memory addressing. */
-#define MAX_ZPU_VADDR_ROM_SIZE 0xFFFF
+#define ZPU_VADDR_ROM_PAGE_SIZE 0xFFFF
 
-uint8_t *zpu_vaddr_rom_get(zpu_t *z, size_t addr);
+#define ZADDR_ROM_PAGE_CHARSET 10
 
-int zpu_vaddr_rom_init(zpu_t *z, off_t page_addr);
+#define ZPU_ROM_ADDR(_page) \
+	(ZPU_VADDR_ROM_PAGE * (_page))
+
+/**
+ * Address for rendered 6x8 8-bit white ASCII character.
+ * @params _char An 8-bit ASCII character code from 1 to 254.
+ */
+#define ZPU_ROM_CHARSET_ADDR(_char) \
+	(ZPU_ROM_ADDR(ZADDR_ROM_PAGE_CHARSET) + (_char % 256))
+
+uint8_t *zpu_vaddr_rom_get(size_t addr);
+
+int zpu_vaddr_rom_init(off_t page_addr);
+
+zdb_t *zpu_vaddr_rom_table(int page_addr);
 
 #endif /* ndef __ZPU_VADDR_H__ */
+

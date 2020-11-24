@@ -111,10 +111,10 @@ libzsys_a_AR = $(AR) $(ARFLAGS)
 libzsys_a_LIBADD =
 am__objects_1 = libzsys_a-zsys_adler64.$(OBJEXT) \
 	libzsys_a-zsys_buff.$(OBJEXT) libzsys_a-zsys_error.$(OBJEXT) \
-	libzsys_a-zsys_font.$(OBJEXT) zsys_laplace.$(OBJEXT) \
-	libzsys_a-zsys_log.$(OBJEXT) libzsys_a-zsys_map.$(OBJEXT) \
-	libzsys_a-zsys_path.$(OBJEXT) libzsys_a-zsys_string.$(OBJEXT) \
-	libzsys_a-zsys_time.$(OBJEXT)
+	libzsys_a-zsys_font.$(OBJEXT) libzsys_a-zsys_image.$(OBJEXT) \
+	zsys_laplace.$(OBJEXT) libzsys_a-zsys_log.$(OBJEXT) \
+	libzsys_a-zsys_map.$(OBJEXT) libzsys_a-zsys_path.$(OBJEXT) \
+	libzsys_a-zsys_string.$(OBJEXT) libzsys_a-zsys_time.$(OBJEXT)
 am__objects_2 =
 am_libzsys_a_OBJECTS = $(am__objects_1) $(am__objects_2)
 libzsys_a_OBJECTS = $(am_libzsys_a_OBJECTS)
@@ -137,6 +137,7 @@ am__depfiles_remade = ./$(DEPDIR)/libzsys_a-zsys_adler64.Po \
 	./$(DEPDIR)/libzsys_a-zsys_buff.Po \
 	./$(DEPDIR)/libzsys_a-zsys_error.Po \
 	./$(DEPDIR)/libzsys_a-zsys_font.Po \
+	./$(DEPDIR)/libzsys_a-zsys_image.Po \
 	./$(DEPDIR)/libzsys_a-zsys_log.Po \
 	./$(DEPDIR)/libzsys_a-zsys_map.Po \
 	./$(DEPDIR)/libzsys_a-zsys_path.Po \
@@ -344,6 +345,7 @@ zsys_headers = \
 	$(srcdir)/zsys_buff.h \
 	$(srcdir)/zsys_error.h \
 	$(srcdir)/zsys_font.h \
+	$(srcdir)/zsys_image.h \
 	$(srcdir)/zsys_laplace.h \
 	$(srcdir)/zsys_log.h \
 	$(srcdir)/zsys_map.h \
@@ -356,6 +358,7 @@ zsys_sources = \
 	$(srcdir)/zsys_buff.c \
 	$(srcdir)/zsys_error.c \
 	$(srcdir)/zsys_font.c \
+	$(srcdir)/zsys_image.c \
 	$(srcdir)/zsys_laplace.cpp \
 	$(srcdir)/zsys_log.c \
 	$(srcdir)/zsys_map.c \
@@ -420,6 +423,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_buff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_error.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_font.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_image.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_log.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzsys_a-zsys_path.Po@am__quote@ # am--include-marker
@@ -509,6 +513,20 @@ libzsys_a-zsys_font.obj: $(srcdir)/zsys_font.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zsys_font.c' object='libzsys_a-zsys_font.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -c -o libzsys_a-zsys_font.obj `if test -f '$(srcdir)/zsys_font.c'; then $(CYGPATH_W) '$(srcdir)/zsys_font.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zsys_font.c'; fi`
+
+libzsys_a-zsys_image.o: $(srcdir)/zsys_image.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -MT libzsys_a-zsys_image.o -MD -MP -MF $(DEPDIR)/libzsys_a-zsys_image.Tpo -c -o libzsys_a-zsys_image.o `test -f '$(srcdir)/zsys_image.c' || echo '$(srcdir)/'`$(srcdir)/zsys_image.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzsys_a-zsys_image.Tpo $(DEPDIR)/libzsys_a-zsys_image.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zsys_image.c' object='libzsys_a-zsys_image.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -c -o libzsys_a-zsys_image.o `test -f '$(srcdir)/zsys_image.c' || echo '$(srcdir)/'`$(srcdir)/zsys_image.c
+
+libzsys_a-zsys_image.obj: $(srcdir)/zsys_image.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -MT libzsys_a-zsys_image.obj -MD -MP -MF $(DEPDIR)/libzsys_a-zsys_image.Tpo -c -o libzsys_a-zsys_image.obj `if test -f '$(srcdir)/zsys_image.c'; then $(CYGPATH_W) '$(srcdir)/zsys_image.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zsys_image.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzsys_a-zsys_image.Tpo $(DEPDIR)/libzsys_a-zsys_image.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(srcdir)/zsys_image.c' object='libzsys_a-zsys_image.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -c -o libzsys_a-zsys_image.obj `if test -f '$(srcdir)/zsys_image.c'; then $(CYGPATH_W) '$(srcdir)/zsys_image.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/zsys_image.c'; fi`
 
 libzsys_a-zsys_log.o: $(srcdir)/zsys_log.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzsys_a_CFLAGS) $(CFLAGS) -MT libzsys_a-zsys_log.o -MD -MP -MF $(DEPDIR)/libzsys_a-zsys_log.Tpo -c -o libzsys_a-zsys_log.o `test -f '$(srcdir)/zsys_log.c' || echo '$(srcdir)/'`$(srcdir)/zsys_log.c
@@ -750,6 +768,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_buff.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_error.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_font.Po
+	-rm -f ./$(DEPDIR)/libzsys_a-zsys_image.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_log.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_map.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_path.Po
@@ -805,6 +824,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_buff.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_error.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_font.Po
+	-rm -f ./$(DEPDIR)/libzsys_a-zsys_image.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_log.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_map.Po
 	-rm -f ./$(DEPDIR)/libzsys_a-zsys_path.Po

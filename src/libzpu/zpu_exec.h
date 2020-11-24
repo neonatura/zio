@@ -32,12 +32,10 @@ qvar zpu_pop_var(zpu_t *z);
 /** Retrieve a specific variable on the stack. */
 zinst_t *zpu_pull(zpu_t *z, int stack_index);
 
-void zpu_exec(zpu_t *z);
-
 zvar zpu_num(uint64_t val);
 
 zinst_t *zpu_peek(zpu_t *z, int stack_index);
 
-int zpu_exec_load(zpu_t *z, uint32_t opcode, zaddr_t addr, zreg_t *rdest);
+int zpu_exec(zprocessor_t *zproc, zpu_t *z);
 
 #endif /* ndef __ZPU_EXEC_H__ */

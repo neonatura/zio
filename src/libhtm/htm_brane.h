@@ -22,7 +22,7 @@
 #ifndef __HTM_BRANE_H__
 #define __HTM_BRANE_H__
 
-brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size);
+brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size, zpu_t *zpu);
 
 void htm_brane_free(brane_t **br_p);
 
@@ -35,8 +35,6 @@ chord_t *htm_brane_map_set(brane_t *br, cell_t *cell);
 cell_t *htm_brane_map_get(brane_t *br, chord_t *hash);
 
 tree_t *htm_brane_cache(brane_t *br);
-
-brane_t *htm_brane_init(uint64_t ent_id, const char *tag, int size);
 
 cell_t *htm_brane_cell(entity_t *ent, int br);
 

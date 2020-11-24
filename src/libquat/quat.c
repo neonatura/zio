@@ -2,6 +2,11 @@
 
 #include "quat.h"
 
+void quat_init(void)
+{
+	quat_op_init();
+}
+
 size_t quat_var_length(qvar var)
 {
   int flag = quat_var_flag(var);

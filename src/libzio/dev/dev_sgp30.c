@@ -239,7 +239,7 @@ int zio_sgp30_read(zdev_t *dev)
 
 int zio_sgp30_poll(zdev_t *dev)
 {
-	int freq = dev->stat.freq_cycle % 90;
+	int freq = dev->conf.freq_cycle % 90;
 
 	if (!is_zio_dev_on(dev))
 		return (ERR_INVAL);
