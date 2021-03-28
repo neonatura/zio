@@ -7,7 +7,8 @@
  
 extern zdev_t zio_itemp_device;
 
-#define REGISTER_ITEMP_DEVICE() (zio_dev_register(&zio_itemp_device))
+#define ITEMP_DEVICE() ((zdev_t *)(&zio_itemp_device))
+#define REGISTER_ITEMP_DEVICE() (zio_dev_register(ITEMP_DEVICE()))
 
 #endif /* ndef __DEV_ITEMP_H__ */
 

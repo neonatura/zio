@@ -19,39 +19,30 @@
  *  along with the zio project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ZPU_VADDR_ROM_H__
-#define __ZPU_VADDR_ROM_H__
+#ifndef __ZPU_VADDR_IO_H__
+#define __ZPU_VADDR_IO_H__
 
 /*
- * ZPU ROM:
+ * ZPU IO:
  *   0x01 ASCII Font Charset
  */
 
-/* The page offset of ROM memory. */
-#define ZPU_VADDR_ROM_PAGE 0x80
+/* The page offset of IO memory. */
+#define ZPU_VADDR_IO_PAGE 0x100
 
-/* The number of pages allocated to the ROM memory addressing. */
-#define ZPU_VADDR_ROM_PAGE_SIZE ZPU_VADDR_PAGE_SIZE
+/* The number of pages allocated to the IO memory addressing. */
+#define ZPU_VADDR_IO_PAGE_SIZE ZPU_VADDR_PAGE_SIZE
 
-#define ZADDR_ROM_PAGE_CHARSET 1
+#define ZPU_IO_ADDR(_page) \
+	(ZPU_VADDR_IO_PAGE_SIZE * ((_page) + ZPU_VADDR_IO_PAGE))
 
-#define ZPU_ROM_ADDR(_page) \
-	(ZPU_VADDR_ROM_PAGE_SIZE * ((_page) + ZPU_VADDR_ROM_PAGE))
+uint8_t *zpu_vaddr_io_get(size_t addr);
 
-//	(ZPU_VADDR_ROM_PAGE * (_page))
+int zpu_vaddr_io_init(off_t page_addr);
 
-/**
- * Address for rendered 6x8 8-bit white ASCII character.
- * @params _char An 8-bit ASCII character code from 1 to 254.
- */
-#define ZPU_ROM_CHARSET_ADDR(_char) \
-	(ZPU_ROM_ADDR(ZADDR_ROM_PAGE_CHARSET) + (_char % 256))
+zdb_t *zpu_vaddr_io_table(int page_addr);
 
-uint8_t *zpu_vaddr_rom_get(size_t addr);
-
-int zpu_vaddr_rom_init(off_t page_addr);
-
-zdb_t *zpu_vaddr_rom_table(int page_addr);
+void zproc_io_init(zprocessor_t *zproc, zpu_ioconf_t *conf, zpu_iofifo_t *fifo);   
 
 #endif /* ndef __ZPU_VADDR_H__ */
 

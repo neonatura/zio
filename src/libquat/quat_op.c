@@ -109,6 +109,16 @@ static qvar quat_op_math_sub(qvar var_a, qvar var_b)
   return ((qvar)ret_var);
 }
 
+/* todo: manipulate directly (adjust precision based on base-10 shift(s) and carry) */
+static qvar quat_op_math_sll(qvar var_a, qvar var_b)
+{
+  static qnum ret_var;
+  uint64_t val_a = (uint64_t)quat_get(var_a);
+  uint64_t val_b = (uint64_t)quat_get(var_b);
+  quat_set((num_t)(val_a << val_b), Q_NUM, ret_var);
+  return ((qvar)ret_var);
+}
+
 void quat_op_init(void)
 {
 
@@ -123,6 +133,7 @@ void quat_op_init(void)
   /* math */
   quat_op_impl(QOP_MATH_SUM, &quat_op_math_sum);
   quat_op_impl(QOP_MATH_SUB, &quat_op_math_sub);
+  quat_op_impl(QOP_MATH_SLL, &quat_op_math_sll);
 
 }
 

@@ -5,7 +5,8 @@
 
 extern zdev_t zio_stdout_device;
 
-#define REGISTER_STDOUT_DEVICE() (zio_dev_register(&zio_stdout_device))
+#define STDOUT_DEVICE() ((zdev_t *)(&zio_stdout_device))
+#define REGISTER_STDOUT_DEVICE() (zio_dev_register(STDOUT_DEVICE()))
 
 #define REGISTER_STATUS_DEVICE REGISTER_STDOUT_DEVICE
 

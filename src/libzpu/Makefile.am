@@ -3,6 +3,7 @@ zpu_headers = \
 	$(srcdir)/zpu.h \
 	$(srcdir)/zpu_exec.h \
 	$(srcdir)/zpu_vaddr.h \
+	$(srcdir)/zpu_vaddr_io.h \
 	$(srcdir)/zpu_vaddr_rom.h \
 	$(srcdir)/zpu_opcode.h \
 	$(srcdir)/zpu_processor.h \
@@ -11,6 +12,7 @@ zpu_headers = \
 zpu_sources = \
 	$(srcdir)/zpu_exec.c \
 	$(srcdir)/zpu_vaddr.c \
+	$(srcdir)/zpu_vaddr_io.c \
 	$(srcdir)/zpu_vaddr_rom.c \
 	$(srcdir)/zpu_opcode.c \
 	$(srcdir)/zpu_processor.c \

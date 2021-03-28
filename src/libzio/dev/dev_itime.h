@@ -5,7 +5,8 @@
 
 extern zdev_t zio_itime_device;
 
-#define REGISTER_ITIME_DEVICE() (zio_dev_register(&zio_itime_device))
+#define ITIME_DEVICE() ((zdev_t *)(&zio_itime_device))
+#define REGISTER_ITIME_DEVICE() (zio_dev_register(ITIME_DEVICE()))
 
 #endif /* __DEV_ITIME_H__ */
 

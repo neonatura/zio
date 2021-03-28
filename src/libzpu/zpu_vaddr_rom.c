@@ -115,7 +115,7 @@ zdb_t *zpu_vaddr_rom_table(int page_addr)
 	zdb_t *db;
 	int err;
 
-	if (page_addr < 0 || page_addr > 0x1FF)
+	if (page_addr < 0 || page_addr >= 0x20)
 		return (NULL); /* ROM: out of bounds */
 
 	sprintf(buf, "rom%-4.4x", (unsigned int)page_addr);

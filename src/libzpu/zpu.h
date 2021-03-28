@@ -62,8 +62,6 @@
 #define ZINST_TYPE_BIT 0x0F    /* '0001111: extended bit operations. */
 #define ZINST_TYPE_MEM 0x17    /* '0010111: memory segment operations. */
 
-/* an operation that performs no action. */
-#define ZINST_NOP 0x00
 /* a global-scope variable */
 #define ZINST_GLO 0x01
 /* an instruction referencing a local variable. */
@@ -91,6 +89,9 @@
 /* write single value from stack to mem addr referenced by <param>. */
 #define ZINST_LDM 0x16
 #endif
+
+/* an operation that performs no action. */
+#define ZINST_NOP 0x00 /* 0000000:0000 */
 
 /* load from memory cache operations */
 #define ZINST_LB 0x30  /* 0000011:0000 */
@@ -126,21 +127,24 @@
 
 /* immediate ALC */
 #define ZINST_ADDI   0x4C00  /* '0010011:000:0000000 */
-#define ZINST_SUBI   0x4C20  /* '0010011:000:0100000 */
-#define ZINST_SLLI   0x4C80  /* '0010011:001:0000000 */
+//#define ZINST_SUBI   0x4C20  /* '0010011:000:0100000 */
+#define ZINST_SLLI   0x4C80  /* '0010011:001:0000000 (shift left logic) */
+/* "Set Less Than Immediate" places the value 1 in rdest if register rst1 is less than the immediate */
 #define ZINST_SLTI   0x4D00  /* '0010011:010:0000000 */
 #define ZINST_SLTUI  0x4D80  /* '0010011:011:0000000 */
 #define ZINST_XORI   0x4E00  /* '0010011:100:0000000 */
-#define ZINST_SRLI   0x4E80  /* '0010011:101:0000000 */
-#define ZINST_SRAI   0x4EA0  /* '0010011:101:0100000 */
+#define ZINST_SRLI   0x4E80  /* '0010011:101:0000000 (shift right logical) */
+#define ZINST_SRAI   0x4EA0  /* '0010011:101:0100000 (shift right arith) */
 #define ZINST_ORI    0x4F00  /* '0010011:110:0000000 */
 #define ZINST_ANDI   0x4F80  /* '0010011:111:0000000 */
 
 /* register ALC */
 #define ZINST_ADD    0xCC00  /* '0110011:000:0000000 */
 #define ZINST_SUB    0xCC20  /* '0110011:000:0100000 */
-#define ZINST_SLL    0xCC80  /* '0110011:001:0000000 */
+#define ZINST_SLL    0xCC80  /* '0110011:001:0000000 (shift left logical) */
+/* writes 1 to rdest if rs1<rs2, 0 otherwise */
 #define ZINST_SLT    0xCD00  /* '0110011:010:0000000 */
+/* unsigned comparison version of SLT */
 #define ZINST_SLTU   0xCD80  /* '0110011:011:0000000 */
 #define ZINST_XOR    0xCE00  /* '0110011:100:0000000 */
 #define ZINST_SRL    0xCE80  /* '0110011:101:0000000 */
@@ -262,6 +266,7 @@
 			(_opcode) == ZINST_SD \
 		) ? ZPU_FAMILY_S : \
 		( \
+			(_opcode) == ZINST_NOP || \
 			(_opcode) == ZINST_ADD || \
 			(_opcode) == ZINST_SUB || \
 			(_opcode) == ZINST_SLT || \
@@ -356,52 +361,113 @@ typedef struct zprocessor_t {
 /**
  * A standardized set of mem-mapped IO configurable-space registers used for all devices.
  */
+typedef struct zpu_pci_t {
+	/** Vendor ID */
+	uint16_t vid;
+	/** Device ID */
+	uint16_t did;
+
+	union {
+		/** Command Register */
+		uint16_t raw;
+		struct {
+			uint16_t iose:1;
+			uint16_t mse:1;
+			uint16_t bme:1;
+			uint16_t sce:1;
+			uint16_t mwie:1;
+			uint16_t vga:1;
+			uint16_t pee:1;
+			uint16_t wcc:1;
+			uint16_t see:1;
+			uint16_t fbe:1;
+			uint16_t id:1; /* Interrupt Disable */
+		} bit;
+	} cmd;
+
+	union {
+		/** Device Status */
+		uint16_t raw;
+		struct {
+			uint16_t __reserved0__:1;
+			uint16_t __reserved1__:1;
+			uint16_t __reserved2__:1;
+			uint16_t is:1; /* Interrupt Status */
+			uint16_t cl:1; /* Capabilities List */
+			uint16_t c66:1; /* 66MHz Capable */
+			uint16_t __reserved3__:1;
+			uint16_t fbc:1; /* Fast Back-to-Back Capable */
+			uint16_t dpd:1; /* Master Data Parity Error Detected */
+			uint16_t devt:2; /* Device Select Time */
+			uint16_t sta:1; /* Signaled Target-Abort */
+			uint16_t rta:1; /* Received Target Abort */
+			uint16_t rma:1; /* Received Master-Abort */
+			uint16_t sse:1; /* Signaled System Error */
+			uint16_t dpe:1; /* Detected Parity Error */
+		} bit;
+	} sts;
+
+	/** Revision ID */
+	uint8_t rid;
+	/** Class Codes */
+  uint8_t cl[3];
+	/** Cache Line Size */
+	uint8_t cls;
+	/** Master Latency Timer: Indicates the number of clocks the device is allowed to act as a master on PCI. */
+	uint8_t mlt;
+	/** Header Type */
+	uint8_t htype;
+	/** Built In Self Test (optional) */
+	uint8_t bist;
+
+	union {
+		/** Base Address Registers */
+		uint32_t raw[6];
+		struct {
+			uint64_t addr:58; /* memory address */ 
+			uint64_t pf:3; /* pre-fetchable */
+			uint64_t type:2; /* 0 = memory, 1 = i/o */
+			uint64_t reserved:1;
+		} bit;
+	} bars;
+
+	/** Subsytem Vendor ID (SS) */
+  uint16_t svid;
+	/** Subsytem Device ID (SS) */
+  uint16_t sdid;
+	/** Expansion ROM Base Address */
+	uint32_t erom;
+	/** Capabilities Pointer */
+	uint8_t cap;
+	/** Interrupt Information */
+	uint16_t intr;
+	/** Min Grant (optional):  Indicates the minimum grant time (in ¼ microseconds) that the device wishes grant asserted. */
+	uint8_t mgnt;
+	/** Max Latency (optional): Indicates the maximum latency (in ¼ microseconds) that the device can withstand. */
+	uint8_t mlat;
+} zpu_pci_t;
+
+typedef struct zpu_dma_t {
+	/* the source memory address */
+  uint64_t src;
+  /* the destination memory address */
+  uint64_t dest;
+  /* the total number of bytes to transfer. */
+  uint32_t len;
+  /* control and configuration bitvector */
+  uint32_t ctrl;
+  /* the number of bytes transferred. */
+  uint32_t offset;
+  /* the priority of the transfer. */
+  uint32_t prio;
+  /* a temporary storage buffer. */
+  uint64_t tmp;
+} zpu_dma_t;
+
 typedef struct zpu_ioconf_t {
-  uint16_t vid;
-  uint16_t did;
-  uint8_t rev[1]; /* revision */
-  uint8_t cl[3]; /* class */
-  uint32_t reg[6]; /* base registers */
-  uint32_t cis; /* cardbus cis pointer; */
-  uint16_t svid; /* sub-system vendor id */
-  uint16_t sdid; /* sub-system device id */
-  uint32_t rom_base; /* expansion rom base addr */
-  uint8_t cap; /* cap pointer */
-  uint8_t reserved_0[3];
-  uint32_t base_max; /* number of payload registers */ 
-	/* interrupt line */
-  uint8_t int_line;
-	/* interrupt pin */
-  uint8_t int_pin;
-  uint8_t min_gnt;
-  uint8_t max_lat;
-
-	/* a "Devicetree" <name@addr> specification */
-	int8_t label[32];
-
-	/* The total number of device read operations. */
-	uint32_t read_tot;
-
-	/* The total number of device write operations. */
-  uint32_t write_tot;
-
-	/* The initial time the device was initialized. */
-  time_t birth_t;
-
-	/* The last time the device was accessed. */
-  time_t access_t;
-
-  /* The number of MS between each device poll. */
-  uint32_t freq;
-
-  /* The preferred number of MS between each device poll. */
-  uint32_t freq_pref;
-
-  /* iteration count */
-  uint32_t freq_cycle;
-
-  /* The next time that a poll will take place. */
-  uint64_t freq_stamp;
+	zpu_pci_t pci;
+	zpu_dma_t dma;
+	uint64_t barlen[3];
 } zpu_ioconf_t;
 
 typedef struct zpu_iofifo_t {
@@ -414,6 +480,7 @@ typedef struct zpu_iofifo_t {
 
 #include "zpu_exec.h"
 #include "zpu_vaddr.h"
+#include "zpu_vaddr_io.h"
 #include "zpu_vaddr_rom.h"
 #include "zpu_opcode.h"
 #include "zpu_processor.h"

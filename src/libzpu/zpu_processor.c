@@ -108,8 +108,3 @@ void zpu_free(zprocessor_t **zproc_p)
 	free(zproc);
 }
 
-int zproc_io_init(zprocessor_t *zproc, zpu_ioconf_t *conf, zpu_iofifo_t *fifo)
-{
-fprintf(stderr, "DEBUG: zproc_io_init: (fifo-max %d)\n", fifo->fifo_max);
-}
-

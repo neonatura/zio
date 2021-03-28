@@ -208,7 +208,40 @@ typedef struct zgrid_t
 } zgrid_t;
 
 typedef zpu_iofifo_t zio_fifo_t;
-typedef zpu_ioconf_t zio_conf_t;
+
+typedef struct zio_conf_t {
+	/* pci-compatible configuration header */
+	zpu_ioconf_t dev;
+
+#if 0 /* not curently used */
+	/* a "Devicetree" <name@addr> specification */
+  int8_t label[32];
+
+  /* The total number of device read operations. */
+  uint32_t read_tot;
+
+  /* The total number of device write operations. */
+  uint32_t write_tot;
+
+  /* The initial time the device was initialized. */
+  time_t birth_t;
+
+  /* The last time the device was accessed. */
+  time_t access_t;
+#endif
+
+  /* The number of MS between each device poll. */
+  uint32_t freq;
+
+  /* The preferred number of MS between each device poll. */
+  uint32_t freq_pref;
+
+  /* iteration count */
+  uint32_t freq_cycle;
+
+  /* The next time that a poll will take place. */
+  uint64_t freq_stamp;
+} zio_conf_t;
 
 typedef struct zdev_t
 {

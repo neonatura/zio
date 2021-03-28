@@ -53,7 +53,7 @@ static struct inst_table_s _inst_table[] =
 	{ "BGEU", ZINST_BGEU, REV_I32 },
 
 	{ "ADDI", ZINST_ADDI, REV_I32 },
-	{ "SUBI", ZINST_SUBI, REV_I32 },
+//	{ "SUBI", ZINST_SUBI, REV_I32 },
 	{ "SLLI", ZINST_SLLI, REV_I32 },
 	{ "SLTI", ZINST_SLTI, REV_I32 },
 	{ "XORI", ZINST_XORI, REV_I32 },

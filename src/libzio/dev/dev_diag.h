@@ -7,7 +7,8 @@
  
 extern zdev_t zio_diag_device;
 
-#define REGISTER_DIAG_DEVICE() (zio_dev_register(&zio_diag_device))
+#define DIAG_DEVICE() ((zdev_t *)(&zio_diag_device))
+#define REGISTER_DIAG_DEVICE() (zio_dev_register(DIAG_DEVICE()))
 
 #endif /* ndef __DEV_DIAG_H__ */
 

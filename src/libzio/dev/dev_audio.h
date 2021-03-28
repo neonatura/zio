@@ -6,7 +6,8 @@
 
 #define DEV_AUDIO_FREQ 32
 
-#define REGISTER_AUDIO_DEVICE() (zio_dev_register(&zio_audio_device))
+#define AUDIO_DEVICE() ((zdev_t *)(&zio_audio_device))
+#define REGISTER_AUDIO_DEVICE() (zio_dev_register(AUDIO_DEVICE()))
 
 extern zdev_t zio_audio_device;
 

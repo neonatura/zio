@@ -3,7 +3,8 @@
 #ifndef __DEV_LUX_H__
 #define __DEV_LUX_H__
 
-#define REGISTER_LUX_DEVICE() (zio_dev_register(&zio_lux_device))
+#define LUX_DEVICE() ((zdev_t *)(&zio_lux_device))
+#define REGISTER_LUX_DEVICE() (zio_dev_register(LUX_DEVICE()))
 
 extern zdev_t zio_lux_device;
 

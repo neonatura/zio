@@ -44,6 +44,8 @@ int zpu_vaddr_get(zprocessor_t *zproc, zaddr_t addr, uint8_t **data_p, size_t *d
 
 	*data_p = NULL;
 
+fprintf(stderr, "DEBUG: page %d\n", page);
+
 	/* retrieve data segment. */
 	db = zproc->page_table[page];
 	if (!db)
@@ -97,10 +99,12 @@ int zpu_vaddr_init(zprocessor_t *zproc)
 
 	max_page = (logical_max / ZPU_VADDR_PAGE_SIZE);
 	for (page = 0; page < max_page; page++) {
-		if (page >= 0xF0000) { /* rom */
-			zproc->page_table[page] = zpu_vaddr_rom_table(page - 0xF0000);
-		} else if (page >= 0xD0000) { /* i/o */
-			zproc->page_table[page] = zpu_vaddr_io_table(page - 0xD0000);
+		if (page < 0x80) { /* kernel */
+			zproc->page_table[page] = zpu_vaddr_ram_table(page);
+		} else if (page < 0x100) { /* rom */
+			zproc->page_table[page] = zpu_vaddr_rom_table(page - 0x80);
+		} else if (page < 0x300) { /* i/o */
+			zproc->page_table[page] = zpu_vaddr_io_table(page - 0x100);
 		} else {
 			zproc->page_table[page] = zpu_vaddr_ram_table(page);
 		}

@@ -43,12 +43,39 @@ int ziod_dev_init(zprocessor_t *zproc, zdev_t *dev)
 
 	err = zio_dev_register(dev);
 	if (!err) {
-		zproc_io_init(zproc, &dev->conf, &dev->fifo);
+		zproc_io_init(zproc, &dev->conf.dev, &dev->fifo);
 	} else {
 		/* .. log error .. */
 	}
 
 	return (err);
+}
+
+void ziod_module_start(zprocessor_t *zproc)
+{
+
+  /* diagnostic module */
+	ziod_dev_init(zproc, STDOUT_DEVICE()); /* --console */
+	ziod_dev_init(zproc, LOG_DEVICE());
+	ziod_dev_init(zproc, DIAG_DEVICE()); 
+
+	/* temperature sensor module */
+	ziod_dev_init(zproc, ITEMP_DEVICE());
+	ziod_dev_init(zproc, THERM_DEVICE());
+
+	/* air quality sensor module */
+	ziod_dev_init(zproc, AIR_DEVICE());
+
+	/* lux/light sensor module */
+	ziod_dev_init(zproc, LUX_DEVICE());
+
+	/* audio module */
+	ziod_dev_init(zproc, AUDIO_DEVICE());
+
+	/* system time module */
+	ziod_dev_init(zproc, ITIME_DEVICE());
+	ziod_dev_init(zproc, TIME_DEVICE());
+
 }
 
 void ziod_init(const char *prog_name)
@@ -61,14 +88,12 @@ void ziod_init(const char *prog_name)
 	wiringPiSetup();
 #endif
 
-	/* initialize devices (libzio) */
-	zio_init();
-
 	/* intialize zpu cores */
 	zproc = zpu_init(MAX_ENTITY_BRANES, 0xFFFFFFFF);
 
-	/* intialize entity (libhtm) */
-	ziod_entity_init(prog_name, zproc);
+	/* initialize devices (libzio) */
+//	zio_init();
+
 
 	signal(SIGINT, ziod_signal);
 	signal(SIGFPE, ziod_signal);
@@ -84,51 +109,46 @@ void ziod_init(const char *prog_name)
 	REGISTER_LED1_DEVICE();
 #endif
 
-	/* time periph */
-#ifdef HAVE_GPS_DEVICE
-	REGISTER_GTIME_DEVICE();
-#endif
 //	REGISTER_ITIME_DEVICE();
 //	REGISTER_TIME_DEVICE(); /* module */
 
-	/* therm periph */
 //	REGISTER_DUMMY_TEMP_DEVICE();
 //	REGISTER_ITEMP_DEVICE();
-#ifdef HAVE_DHT0_DEVICE
-	REGISTER_DHT0_DEVICE();
+#ifdef HAVE_DHT_DEVICE
+	/* thermal sensor devices. */
+	REGISTER_DHT_DEVICE();
 #endif
-#ifdef HAVE_DHT1_DEVICE
-	REGISTER_DHT1_DEVICE();
+
+#ifdef HAVE_GPS_DEVICE
+	/* gps device (time) */
+	REGISTER_GTIME_DEVICE();
 #endif
-#ifdef HAVE_DHT2_DEVICE
-	REGISTER_DHT2_DEVICE();
-#endif
+
 #ifdef HAVE_RTC_DEVICE
+	/* real-time-clock devices. */
 	REGISTER_RTEMP_DEVICE();
 #endif
 
-	/* air periph */
 #ifdef HAVE_SGP_DEVICE
+	/* air periph */
 	REGISTER_SGP30_DEVICE();
-	REGISTER_AIR_DEVICE(); /* module */
 #endif
 
 #ifdef HAVE_LDR_DEVICE
+	/* lux/light sensor devices */
 	REGISTER_LDR_DEVICE();
-	REGISTER_LUX_DEVICE(); /* module */
 #endif
 
-	/* audio */
 #ifdef HAVE_SPEAKER_DEVICE
+	/* audio devices */
 	REGISTER_SPEAKER_DEVICE();
 #endif
-	REGISTER_AUDIO_DEVICE();
 
-	/* print status to console */
-//	REGISTER_STDOUT_DEVICE();
+	/* start device modules */
+	ziod_module_start(zproc);
 
-	/* temperature sensor module */
-	ziod_dev_init(zproc, THERM_DEVICE());
+	/* intialize entity (libhtm) */
+	ziod_entity_init(prog_name, zproc);
 
 #if 0 /* DEBUG: */
 	set_zio_api_func(ZDEV_THERM, ziod_therm_notify);
@@ -180,6 +200,7 @@ fprintf(stderr, "DEBUG: TEST: %d = zpu_vaddr_get(0x%x[ch %d]): {%x}/<%d bytes>\n
 		}
 	}
 #endif
+
 }
 
 void ziod_term(void)
